@@ -32,7 +32,7 @@ vala_precompile(YRCD_C ${YRCD_NAME}
     src/main.vala
     src/server.vala
     src/user.vala
-    
+    src/router.vala    
 PACKAGES
     gio-2.0
 )
