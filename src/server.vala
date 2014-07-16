@@ -32,6 +32,9 @@ namespace yrcd {
     private async void process_request(yrcd_user user) {
       log("data streams open, entering main loop.");
       while (true) {
+        if (!user.sock.is_connected()) {
+          break;
+        }
         try {
           string msg = yield user.dis.read_line_async (Priority.DEFAULT);
           router.route(user, msg);

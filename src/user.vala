@@ -11,5 +11,12 @@ namespace yrcd {
       dis = new DataInputStream(sock.input_stream);
       dos = new DataOutputStream(sock.output_stream);
     }
+    public void quit (string? msg) {
+      try {
+        sock.get_socket().close();
+      } catch (Error e) {
+        server.log("Error closing socket: %s".printf(e.message));
+      }
+    }
   }
 }

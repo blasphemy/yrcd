@@ -6,11 +6,7 @@ namespace yrcd {
       user.server.log("Received line %s".printf(stripped));
       if (args[0] == "QUIT") {
         user.server.log("Received QUIT");
-        try {
-          user.sock.get_socket().close();
-        } catch (Error e) {
-          user.server.log("Error closing socket: %s".printf(e.message));
-        }
+        user.quit(null);
       }
     }
     public string strip_end (string msg) {
