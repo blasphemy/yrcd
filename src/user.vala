@@ -5,6 +5,12 @@ namespace yrcd {
     public DataOutputStream dos { get; set; }
     public yrcd_server server { get; set; }
     public int id { get; set; }
+    public string nick { get; set; }
+    public string ident { get; set; }
+    public string realname { get; set; }
+    public bool nick_set { get; set; }
+    public bool user_set { get; set; }
+    public bool reg_complete { get; set; }
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
       sock = conn;
       server = _server;
@@ -19,6 +25,20 @@ namespace yrcd {
         sock.get_socket().close();
       } catch (Error e) {
         server.log("Error closing socket: %s".printf(e.message));
+      }
+    }
+    public void change_nick (string newnick) {
+      nick = newnick;
+      if (!nick_set) {
+        nick_set = true;
+        if (!reg_complete && user_set) {
+          reg_complete = true;
+        }
+      }
+    }
+    public void user_reg (string[] args) {
+      if (!user_set) {
+        //stub
       }
     }
   }

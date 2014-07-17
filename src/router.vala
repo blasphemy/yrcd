@@ -11,9 +11,14 @@ namespace yrcd {
       string stripped = strip_end(msg);
       string[] args = tokenize(stripped);
       user.server.log("USER %d: received line %s".printf(user.id,stripped));
-      if (args[0] == "QUIT") {
-        user.server.log("Received QUIT");
-        user.quit(null);
+      switch (args[0]) {
+        case "quit" :
+          user.server.log("Received QUIT");
+          user.quit(null);
+          break;
+        case "nick" :
+          user.change_nick(args[1]);
+          break;
       }
     }
     public string strip_end (string msg) {
