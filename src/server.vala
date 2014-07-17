@@ -16,6 +16,9 @@ namespace yrcd {
       stdout.printf("LOG: %s\n", msg);
     } 
     public void init () {
+      foreach (uint16 k in consts.listen_ports) {
+        add_port(k);
+      }
       ss.incoming.connect(on_connection);
       ss.start();
       loop.run();
