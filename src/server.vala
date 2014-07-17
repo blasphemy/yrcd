@@ -7,6 +7,7 @@ namespace yrcd {
     private yrcd_router router = new yrcd_router();
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
+    public yrcd_constants consts = new yrcd_constants();
     public int new_userid() {
       user_counter++;
       return user_counter;
