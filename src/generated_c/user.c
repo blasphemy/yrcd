@@ -48,6 +48,12 @@ struct _yrcdyrcd_userPrivate {
 	GDataOutputStream* _dos;
 	yrcdyrcd_server* _server;
 	gint _id;
+	gchar* _nick;
+	gchar* _ident;
+	gchar* _realname;
+	gboolean _nick_set;
+	gboolean _user_set;
+	gboolean _reg_complete;
 };
 
 
@@ -62,7 +68,13 @@ enum  {
 	YRCD_YRCD_USER_DIS,
 	YRCD_YRCD_USER_DOS,
 	YRCD_YRCD_USER_SERVER,
-	YRCD_YRCD_USER_ID
+	YRCD_YRCD_USER_ID,
+	YRCD_YRCD_USER_NICK,
+	YRCD_YRCD_USER_IDENT,
+	YRCD_YRCD_USER_REALNAME,
+	YRCD_YRCD_USER_NICK_SET,
+	YRCD_YRCD_USER_USER_SET,
+	YRCD_YRCD_USER_REG_COMPLETE
 };
 yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server);
 yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server);
@@ -77,8 +89,22 @@ gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
+void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, const gchar* newnick);
+void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
+gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
+void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value);
+gboolean yrcd_yrcd_user_get_reg_complete (yrcdyrcd_user* self);
+gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self);
+void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
+void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
+const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
+const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
+const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
+void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
+void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
 static void yrcd_yrcd_user_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
 static void _vala_yrcd_yrcd_user_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
@@ -184,6 +210,42 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
 		return;
+	}
+}
+
+
+void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, const gchar* newnick) {
+	const gchar* _tmp0_ = NULL;
+	gboolean _tmp1_ = FALSE;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (newnick != NULL);
+	_tmp0_ = newnick;
+	yrcd_yrcd_user_set_nick (self, _tmp0_);
+	_tmp1_ = self->priv->_nick_set;
+	if (!_tmp1_) {
+		gboolean _tmp2_ = FALSE;
+		gboolean _tmp3_ = FALSE;
+		yrcd_yrcd_user_set_nick_set (self, TRUE);
+		_tmp3_ = self->priv->_reg_complete;
+		if (!_tmp3_) {
+			gboolean _tmp4_ = FALSE;
+			_tmp4_ = self->priv->_user_set;
+			_tmp2_ = _tmp4_;
+		} else {
+			_tmp2_ = FALSE;
+		}
+		if (_tmp2_) {
+			yrcd_yrcd_user_set_reg_complete (self, TRUE);
+		}
+	}
+}
+
+
+void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1) {
+	gboolean _tmp0_ = FALSE;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = self->priv->_user_set;
+	if (!_tmp0_) {
 	}
 }
 
@@ -300,6 +362,129 @@ void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value) {
 }
 
 
+const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self) {
+	const gchar* result;
+	const gchar* _tmp0_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = self->priv->_nick;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value) {
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	_tmp1_ = g_strdup (_tmp0_);
+	_g_free0 (self->priv->_nick);
+	self->priv->_nick = _tmp1_;
+	g_object_notify ((GObject *) self, "nick");
+}
+
+
+const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self) {
+	const gchar* result;
+	const gchar* _tmp0_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = self->priv->_ident;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value) {
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	_tmp1_ = g_strdup (_tmp0_);
+	_g_free0 (self->priv->_ident);
+	self->priv->_ident = _tmp1_;
+	g_object_notify ((GObject *) self, "ident");
+}
+
+
+const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self) {
+	const gchar* result;
+	const gchar* _tmp0_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = self->priv->_realname;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value) {
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	_tmp1_ = g_strdup (_tmp0_);
+	_g_free0 (self->priv->_realname);
+	self->priv->_realname = _tmp1_;
+	g_object_notify ((GObject *) self, "realname");
+}
+
+
+gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self) {
+	gboolean result;
+	gboolean _tmp0_ = FALSE;
+	g_return_val_if_fail (self != NULL, FALSE);
+	_tmp0_ = self->priv->_nick_set;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value) {
+	gboolean _tmp0_ = FALSE;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	self->priv->_nick_set = _tmp0_;
+	g_object_notify ((GObject *) self, "nick-set");
+}
+
+
+gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self) {
+	gboolean result;
+	gboolean _tmp0_ = FALSE;
+	g_return_val_if_fail (self != NULL, FALSE);
+	_tmp0_ = self->priv->_user_set;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value) {
+	gboolean _tmp0_ = FALSE;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	self->priv->_user_set = _tmp0_;
+	g_object_notify ((GObject *) self, "user-set");
+}
+
+
+gboolean yrcd_yrcd_user_get_reg_complete (yrcdyrcd_user* self) {
+	gboolean result;
+	gboolean _tmp0_ = FALSE;
+	g_return_val_if_fail (self != NULL, FALSE);
+	_tmp0_ = self->priv->_reg_complete;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value) {
+	gboolean _tmp0_ = FALSE;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	self->priv->_reg_complete = _tmp0_;
+	g_object_notify ((GObject *) self, "reg-complete");
+}
+
+
 static void yrcd_yrcd_user_class_init (yrcdyrcd_userClass * klass) {
 	yrcd_yrcd_user_parent_class = g_type_class_peek_parent (klass);
 	g_type_class_add_private (klass, sizeof (yrcdyrcd_userPrivate));
@@ -311,6 +496,12 @@ static void yrcd_yrcd_user_class_init (yrcdyrcd_userClass * klass) {
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_DOS, g_param_spec_object ("dos", "dos", "dos", g_data_output_stream_get_type (), G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_SERVER, g_param_spec_object ("server", "server", "server", YRCD_TYPE_YRCD_SERVER, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_ID, g_param_spec_int ("id", "id", "id", G_MININT, G_MAXINT, 0, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_NICK, g_param_spec_string ("nick", "nick", "nick", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_IDENT, g_param_spec_string ("ident", "ident", "ident", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_REALNAME, g_param_spec_string ("realname", "realname", "realname", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_NICK_SET, g_param_spec_boolean ("nick-set", "nick-set", "nick-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_USER_SET, g_param_spec_boolean ("user-set", "user-set", "user-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_REG_COMPLETE, g_param_spec_boolean ("reg-complete", "reg-complete", "reg-complete", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 }
 
 
@@ -326,6 +517,9 @@ static void yrcd_yrcd_user_finalize (GObject* obj) {
 	_g_object_unref0 (self->priv->_dis);
 	_g_object_unref0 (self->priv->_dos);
 	_g_object_unref0 (self->priv->_server);
+	_g_free0 (self->priv->_nick);
+	_g_free0 (self->priv->_ident);
+	_g_free0 (self->priv->_realname);
 	G_OBJECT_CLASS (yrcd_yrcd_user_parent_class)->finalize (obj);
 }
 
@@ -361,6 +555,24 @@ static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_
 		case YRCD_YRCD_USER_ID:
 		g_value_set_int (value, yrcd_yrcd_user_get_id (self));
 		break;
+		case YRCD_YRCD_USER_NICK:
+		g_value_set_string (value, yrcd_yrcd_user_get_nick (self));
+		break;
+		case YRCD_YRCD_USER_IDENT:
+		g_value_set_string (value, yrcd_yrcd_user_get_ident (self));
+		break;
+		case YRCD_YRCD_USER_REALNAME:
+		g_value_set_string (value, yrcd_yrcd_user_get_realname (self));
+		break;
+		case YRCD_YRCD_USER_NICK_SET:
+		g_value_set_boolean (value, yrcd_yrcd_user_get_nick_set (self));
+		break;
+		case YRCD_YRCD_USER_USER_SET:
+		g_value_set_boolean (value, yrcd_yrcd_user_get_user_set (self));
+		break;
+		case YRCD_YRCD_USER_REG_COMPLETE:
+		g_value_set_boolean (value, yrcd_yrcd_user_get_reg_complete (self));
+		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 		break;
@@ -386,6 +598,24 @@ static void _vala_yrcd_yrcd_user_set_property (GObject * object, guint property_
 		break;
 		case YRCD_YRCD_USER_ID:
 		yrcd_yrcd_user_set_id (self, g_value_get_int (value));
+		break;
+		case YRCD_YRCD_USER_NICK:
+		yrcd_yrcd_user_set_nick (self, g_value_get_string (value));
+		break;
+		case YRCD_YRCD_USER_IDENT:
+		yrcd_yrcd_user_set_ident (self, g_value_get_string (value));
+		break;
+		case YRCD_YRCD_USER_REALNAME:
+		yrcd_yrcd_user_set_realname (self, g_value_get_string (value));
+		break;
+		case YRCD_YRCD_USER_NICK_SET:
+		yrcd_yrcd_user_set_nick_set (self, g_value_get_boolean (value));
+		break;
+		case YRCD_YRCD_USER_USER_SET:
+		yrcd_yrcd_user_set_user_set (self, g_value_get_boolean (value));
+		break;
+		case YRCD_YRCD_USER_REG_COMPLETE:
+		yrcd_yrcd_user_set_reg_complete (self, g_value_get_boolean (value));
 		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);

@@ -17,7 +17,29 @@
 
 typedef struct _yrcdyrcd_server yrcdyrcd_server;
 typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
+typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
+
+#define YRCD_TYPE_YRCD_CONSTANTS (yrcd_yrcd_constants_get_type ())
+#define YRCD_YRCD_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constants))
+#define YRCD_YRCD_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constantsClass))
+#define YRCD_IS_YRCD_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONSTANTS))
+#define YRCD_IS_YRCD_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONSTANTS))
+#define YRCD_YRCD_CONSTANTS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constantsClass))
+
+typedef struct _yrcdyrcd_constants yrcdyrcd_constants;
+typedef struct _yrcdyrcd_constantsClass yrcdyrcd_constantsClass;
+#define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
+
+struct _yrcdyrcd_server {
+	GObject parent_instance;
+	yrcdyrcd_serverPrivate * priv;
+	yrcdyrcd_constants* consts;
+};
+
+struct _yrcdyrcd_serverClass {
+	GObjectClass parent_class;
+};
 
 
 
@@ -27,17 +49,29 @@ yrcdyrcd_server* yrcd_yrcd_server_new (void);
 yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 void yrcd_yrcd_server_add_port (yrcdyrcd_server* self, guint16 port);
+GType yrcd_yrcd_constants_get_type (void) G_GNUC_CONST;
+#define YRCD_YRCD_CONSTANTS_software "yrcd"
+#define YRCD_YRCD_CONSTANTS_version "0.1"
 void yrcd_yrcd_server_init (yrcdyrcd_server* self);
 
 
 void yrcd_main (void) {
 	yrcdyrcd_server* server = NULL;
 	yrcdyrcd_server* _tmp0_ = NULL;
+	yrcdyrcd_constants* _tmp1_ = NULL;
+	yrcdyrcd_constants* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	gchar* _tmp4_ = NULL;
 	_tmp0_ = yrcd_yrcd_server_new ();
 	server = _tmp0_;
 	yrcd_yrcd_server_log (server, "Created server object");
 	yrcd_yrcd_server_add_port (server, (guint16) 6667);
-	yrcd_yrcd_server_log (server, "Initializing server");
+	_tmp1_ = server->consts;
+	_tmp2_ = server->consts;
+	_tmp3_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
+	_tmp4_ = _tmp3_;
+	yrcd_yrcd_server_log (server, _tmp4_);
+	_g_free0 (_tmp4_);
 	yrcd_yrcd_server_init (server);
 	yrcd_yrcd_server_log (server, "For some reason, we're all done here.... goodbye");
 	_g_object_unref0 (server);
