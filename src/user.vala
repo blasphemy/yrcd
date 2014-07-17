@@ -32,7 +32,7 @@ namespace yrcd {
       if (!nick_set) {
         nick_set = true;
         if (!reg_complete && user_set) {
-          reg_complete = true;
+          reg_finished();
         }
       }
     }
@@ -41,11 +41,15 @@ namespace yrcd {
         ident = args[1];
         realname = args[2];
         if (nick_set) {
-          server.log("User %d registration complete.".printf(id));
+          reg_finished();
         }
       } else {
         server.log("User %d attempted user registration while already registered".printf(id));
       }
+    }
+    public void reg_finished () {
+      reg_complete = true;
+      server.log("User %d finished registration with nick %s".printf(id,nick));
     }
   }
 }

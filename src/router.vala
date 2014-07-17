@@ -19,6 +19,9 @@ namespace yrcd {
         case "nick" :
           user.change_nick(args);
           break;
+        case "user" :
+          user.user_reg(args);
+          break;
       }
     }
     public string strip_end (string msg) {
