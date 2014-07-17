@@ -90,18 +90,19 @@ void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
+const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
 gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value);
 gboolean yrcd_yrcd_user_get_reg_complete (yrcdyrcd_user* self);
 gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self);
-void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
+void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
+void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
-const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
@@ -217,30 +218,80 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1) {
 	gchar** _tmp0_ = NULL;
 	gint _tmp0__length1 = 0;
-	const gchar* _tmp1_ = NULL;
-	gboolean _tmp2_ = FALSE;
+	gchar* oldnick = NULL;
+	const gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
+	gchar** _tmp7_ = NULL;
+	gint _tmp7__length1 = 0;
+	const gchar* _tmp8_ = NULL;
+	gboolean _tmp9_ = FALSE;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = args;
 	_tmp0__length1 = args_length1;
-	_tmp1_ = _tmp0_[1];
-	yrcd_yrcd_user_set_nick (self, _tmp1_);
-	_tmp2_ = self->priv->_nick_set;
-	if (!_tmp2_) {
-		gboolean _tmp3_ = FALSE;
-		gboolean _tmp4_ = FALSE;
-		yrcd_yrcd_user_set_nick_set (self, TRUE);
-		_tmp4_ = self->priv->_reg_complete;
-		if (!_tmp4_) {
-			gboolean _tmp5_ = FALSE;
-			_tmp5_ = self->priv->_user_set;
-			_tmp3_ = _tmp5_;
-		} else {
-			_tmp3_ = FALSE;
-		}
-		if (_tmp3_) {
-			yrcd_yrcd_user_set_reg_complete (self, TRUE);
-		}
+	if (_tmp0__length1 < 2) {
+		yrcdyrcd_server* _tmp1_ = NULL;
+		gint _tmp2_ = 0;
+		gchar* _tmp3_ = NULL;
+		gchar* _tmp4_ = NULL;
+		_tmp1_ = self->priv->_server;
+		_tmp2_ = self->priv->_id;
+		_tmp3_ = g_strdup_printf ("User %d attempted NICK with invalid arguments", _tmp2_);
+		_tmp4_ = _tmp3_;
+		yrcd_yrcd_server_log (_tmp1_, _tmp4_);
+		_g_free0 (_tmp4_);
 	}
+	_tmp5_ = self->priv->_nick;
+	_tmp6_ = g_strdup (_tmp5_);
+	oldnick = _tmp6_;
+	_tmp7_ = args;
+	_tmp7__length1 = args_length1;
+	_tmp8_ = _tmp7_[1];
+	yrcd_yrcd_user_set_nick (self, _tmp8_);
+	_tmp9_ = self->priv->_nick_set;
+	if (!_tmp9_) {
+		yrcdyrcd_server* _tmp10_ = NULL;
+		gint _tmp11_ = 0;
+		const gchar* _tmp12_ = NULL;
+		gchar* _tmp13_ = NULL;
+		gchar* _tmp14_ = NULL;
+		gboolean _tmp15_ = FALSE;
+		gboolean _tmp16_ = FALSE;
+		_tmp10_ = self->priv->_server;
+		_tmp11_ = self->priv->_id;
+		_tmp12_ = self->priv->_nick;
+		_tmp13_ = g_strdup_printf ("User %d set nick to %s", _tmp11_, _tmp12_);
+		_tmp14_ = _tmp13_;
+		yrcd_yrcd_server_log (_tmp10_, _tmp14_);
+		_g_free0 (_tmp14_);
+		yrcd_yrcd_user_set_nick_set (self, TRUE);
+		_tmp16_ = self->priv->_reg_complete;
+		if (!_tmp16_) {
+			gboolean _tmp17_ = FALSE;
+			_tmp17_ = self->priv->_user_set;
+			_tmp15_ = _tmp17_;
+		} else {
+			_tmp15_ = FALSE;
+		}
+		if (_tmp15_) {
+			yrcd_yrcd_user_reg_finished (self);
+		}
+	} else {
+		yrcdyrcd_server* _tmp18_ = NULL;
+		gint _tmp19_ = 0;
+		const gchar* _tmp20_ = NULL;
+		const gchar* _tmp21_ = NULL;
+		gchar* _tmp22_ = NULL;
+		gchar* _tmp23_ = NULL;
+		_tmp18_ = self->priv->_server;
+		_tmp19_ = self->priv->_id;
+		_tmp20_ = oldnick;
+		_tmp21_ = self->priv->_nick;
+		_tmp22_ = g_strdup_printf ("User %d changed nick from %s to %s", _tmp19_, _tmp20_, _tmp21_);
+		_tmp23_ = _tmp22_;
+		yrcd_yrcd_server_log (_tmp18_, _tmp23_);
+		_g_free0 (_tmp23_);
+	}
+	_g_free0 (oldnick);
 }
 
 
@@ -266,29 +317,38 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 		yrcd_yrcd_user_set_realname (self, _tmp4_);
 		_tmp5_ = self->priv->_nick_set;
 		if (_tmp5_) {
-			yrcdyrcd_server* _tmp6_ = NULL;
-			gint _tmp7_ = 0;
-			gchar* _tmp8_ = NULL;
-			gchar* _tmp9_ = NULL;
-			_tmp6_ = self->priv->_server;
-			_tmp7_ = self->priv->_id;
-			_tmp8_ = g_strdup_printf ("User %d registration complete.", _tmp7_);
-			_tmp9_ = _tmp8_;
-			yrcd_yrcd_server_log (_tmp6_, _tmp9_);
-			_g_free0 (_tmp9_);
+			yrcd_yrcd_user_reg_finished (self);
 		}
 	} else {
-		yrcdyrcd_server* _tmp10_ = NULL;
-		gint _tmp11_ = 0;
-		gchar* _tmp12_ = NULL;
-		gchar* _tmp13_ = NULL;
-		_tmp10_ = self->priv->_server;
-		_tmp11_ = self->priv->_id;
-		_tmp12_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp11_);
-		_tmp13_ = _tmp12_;
-		yrcd_yrcd_server_log (_tmp10_, _tmp13_);
-		_g_free0 (_tmp13_);
+		yrcdyrcd_server* _tmp6_ = NULL;
+		gint _tmp7_ = 0;
+		gchar* _tmp8_ = NULL;
+		gchar* _tmp9_ = NULL;
+		_tmp6_ = self->priv->_server;
+		_tmp7_ = self->priv->_id;
+		_tmp8_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp7_);
+		_tmp9_ = _tmp8_;
+		yrcd_yrcd_server_log (_tmp6_, _tmp9_);
+		_g_free0 (_tmp9_);
 	}
+}
+
+
+void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
+	yrcdyrcd_server* _tmp0_ = NULL;
+	gint _tmp1_ = 0;
+	const gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	gchar* _tmp4_ = NULL;
+	g_return_if_fail (self != NULL);
+	yrcd_yrcd_user_set_reg_complete (self, TRUE);
+	_tmp0_ = self->priv->_server;
+	_tmp1_ = self->priv->_id;
+	_tmp2_ = self->priv->_nick;
+	_tmp3_ = g_strdup_printf ("User %d finished registration with nick %s", _tmp1_, _tmp2_);
+	_tmp4_ = _tmp3_;
+	yrcd_yrcd_server_log (_tmp0_, _tmp4_);
+	_g_free0 (_tmp4_);
 }
 
 
