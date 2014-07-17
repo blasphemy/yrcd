@@ -20,15 +20,15 @@ typedef struct _yrcdyrcd_router yrcdyrcd_router;
 typedef struct _yrcdyrcd_routerClass yrcdyrcd_routerClass;
 typedef struct _yrcdyrcd_routerPrivate yrcdyrcd_routerPrivate;
 
-#define YRCD_TYPE_VOID_FUNC_DATA (yrcd_void_func_data_get_type ())
-#define YRCD_VOID_FUNC_DATA(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_VOID_FUNC_DATA, yrcdVoidFuncData))
-#define YRCD_VOID_FUNC_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_VOID_FUNC_DATA, yrcdVoidFuncDataClass))
-#define YRCD_IS_VOID_FUNC_DATA(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_VOID_FUNC_DATA))
-#define YRCD_IS_VOID_FUNC_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_VOID_FUNC_DATA))
-#define YRCD_VOID_FUNC_DATA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_VOID_FUNC_DATA, yrcdVoidFuncDataClass))
+#define YRCD_TYPE_DELEGATE_WRAPPER (yrcd_delegate_wrapper_get_type ())
+#define YRCD_DELEGATE_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_DELEGATE_WRAPPER, yrcdDelegateWrapper))
+#define YRCD_DELEGATE_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_DELEGATE_WRAPPER, yrcdDelegateWrapperClass))
+#define YRCD_IS_DELEGATE_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_DELEGATE_WRAPPER))
+#define YRCD_IS_DELEGATE_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_DELEGATE_WRAPPER))
+#define YRCD_DELEGATE_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_DELEGATE_WRAPPER, yrcdDelegateWrapperClass))
 
-typedef struct _yrcdVoidFuncData yrcdVoidFuncData;
-typedef struct _yrcdVoidFuncDataClass yrcdVoidFuncDataClass;
+typedef struct _yrcdDelegateWrapper yrcdDelegateWrapper;
+typedef struct _yrcdDelegateWrapperClass yrcdDelegateWrapperClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
 #define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
@@ -70,18 +70,17 @@ struct _yrcdyrcd_routerPrivate {
 static gpointer yrcd_yrcd_router_parent_class = NULL;
 
 GType yrcd_yrcd_router_get_type (void) G_GNUC_CONST;
-gpointer yrcd_void_func_data_ref (gpointer instance);
-void yrcd_void_func_data_unref (gpointer instance);
-GParamSpec* yrcd_param_spec_void_func_data (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
-void yrcd_value_set_void_func_data (GValue* value, gpointer v_object);
-void yrcd_value_take_void_func_data (GValue* value, gpointer v_object);
-gpointer yrcd_value_get_void_func_data (const GValue* value);
-GType yrcd_void_func_data_get_type (void) G_GNUC_CONST;
 #define YRCD_YRCD_ROUTER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_routerPrivate))
 enum  {
 	YRCD_YRCD_ROUTER_DUMMY_PROPERTY
 };
-void yrcd_yrcd_router_register_command (yrcdyrcd_router* self, const gchar* trigger, yrcdVoidFuncData* com);
+gpointer yrcd_delegate_wrapper_ref (gpointer instance);
+void yrcd_delegate_wrapper_unref (gpointer instance);
+GParamSpec* yrcd_param_spec_delegate_wrapper (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void yrcd_value_set_delegate_wrapper (GValue* value, gpointer v_object);
+void yrcd_value_take_delegate_wrapper (GValue* value, gpointer v_object);
+gpointer yrcd_value_get_delegate_wrapper (const GValue* value);
+GType yrcd_delegate_wrapper_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
 GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
@@ -97,20 +96,6 @@ static void yrcd_yrcd_router_finalize (GObject* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static gint _vala_array_length (gpointer array);
-
-
-void yrcd_yrcd_router_register_command (yrcdyrcd_router* self, const gchar* trigger, yrcdVoidFuncData* com) {
-	GeeHashMap* _tmp0_ = NULL;
-	const gchar* _tmp1_ = NULL;
-	yrcdVoidFuncData* _tmp2_ = NULL;
-	g_return_if_fail (self != NULL);
-	g_return_if_fail (trigger != NULL);
-	g_return_if_fail (com != NULL);
-	_tmp0_ = self->priv->command_list;
-	_tmp1_ = trigger;
-	_tmp2_ = com;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, _tmp1_, _tmp2_);
-}
 
 
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg) {
@@ -269,7 +254,7 @@ static void yrcd_yrcd_router_class_init (yrcdyrcd_routerClass * klass) {
 static void yrcd_yrcd_router_instance_init (yrcdyrcd_router * self) {
 	GeeHashMap* _tmp0_ = NULL;
 	self->priv = YRCD_YRCD_ROUTER_GET_PRIVATE (self);
-	_tmp0_ = gee_hash_map_new (G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, YRCD_TYPE_VOID_FUNC_DATA, (GBoxedCopyFunc) yrcd_void_func_data_ref, yrcd_void_func_data_unref, NULL, NULL, NULL);
+	_tmp0_ = gee_hash_map_new (G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, YRCD_TYPE_DELEGATE_WRAPPER, (GBoxedCopyFunc) yrcd_delegate_wrapper_ref, yrcd_delegate_wrapper_unref, NULL, NULL, NULL);
 	self->priv->command_list = _tmp0_;
 }
 
