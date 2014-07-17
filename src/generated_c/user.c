@@ -89,7 +89,7 @@ gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
-void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, const gchar* newnick);
+void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
 gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value);
@@ -97,13 +97,13 @@ gboolean yrcd_yrcd_user_get_reg_complete (yrcdyrcd_user* self);
 gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
+void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
+void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
-void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
 const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
-void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
 static void yrcd_yrcd_user_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
@@ -214,27 +214,30 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 }
 
 
-void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, const gchar* newnick) {
-	const gchar* _tmp0_ = NULL;
-	gboolean _tmp1_ = FALSE;
+void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1) {
+	gchar** _tmp0_ = NULL;
+	gint _tmp0__length1 = 0;
+	const gchar* _tmp1_ = NULL;
+	gboolean _tmp2_ = FALSE;
 	g_return_if_fail (self != NULL);
-	g_return_if_fail (newnick != NULL);
-	_tmp0_ = newnick;
-	yrcd_yrcd_user_set_nick (self, _tmp0_);
-	_tmp1_ = self->priv->_nick_set;
-	if (!_tmp1_) {
-		gboolean _tmp2_ = FALSE;
+	_tmp0_ = args;
+	_tmp0__length1 = args_length1;
+	_tmp1_ = _tmp0_[1];
+	yrcd_yrcd_user_set_nick (self, _tmp1_);
+	_tmp2_ = self->priv->_nick_set;
+	if (!_tmp2_) {
 		gboolean _tmp3_ = FALSE;
+		gboolean _tmp4_ = FALSE;
 		yrcd_yrcd_user_set_nick_set (self, TRUE);
-		_tmp3_ = self->priv->_reg_complete;
-		if (!_tmp3_) {
-			gboolean _tmp4_ = FALSE;
-			_tmp4_ = self->priv->_user_set;
-			_tmp2_ = _tmp4_;
+		_tmp4_ = self->priv->_reg_complete;
+		if (!_tmp4_) {
+			gboolean _tmp5_ = FALSE;
+			_tmp5_ = self->priv->_user_set;
+			_tmp3_ = _tmp5_;
 		} else {
-			_tmp2_ = FALSE;
+			_tmp3_ = FALSE;
 		}
-		if (_tmp2_) {
+		if (_tmp3_) {
 			yrcd_yrcd_user_set_reg_complete (self, TRUE);
 		}
 	}
@@ -246,6 +249,45 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 	g_return_if_fail (self != NULL);
 	_tmp0_ = self->priv->_user_set;
 	if (!_tmp0_) {
+		gchar** _tmp1_ = NULL;
+		gint _tmp1__length1 = 0;
+		const gchar* _tmp2_ = NULL;
+		gchar** _tmp3_ = NULL;
+		gint _tmp3__length1 = 0;
+		const gchar* _tmp4_ = NULL;
+		gboolean _tmp5_ = FALSE;
+		_tmp1_ = args;
+		_tmp1__length1 = args_length1;
+		_tmp2_ = _tmp1_[1];
+		yrcd_yrcd_user_set_ident (self, _tmp2_);
+		_tmp3_ = args;
+		_tmp3__length1 = args_length1;
+		_tmp4_ = _tmp3_[2];
+		yrcd_yrcd_user_set_realname (self, _tmp4_);
+		_tmp5_ = self->priv->_nick_set;
+		if (_tmp5_) {
+			yrcdyrcd_server* _tmp6_ = NULL;
+			gint _tmp7_ = 0;
+			gchar* _tmp8_ = NULL;
+			gchar* _tmp9_ = NULL;
+			_tmp6_ = self->priv->_server;
+			_tmp7_ = self->priv->_id;
+			_tmp8_ = g_strdup_printf ("User %d registration complete.", _tmp7_);
+			_tmp9_ = _tmp8_;
+			yrcd_yrcd_server_log (_tmp6_, _tmp9_);
+			_g_free0 (_tmp9_);
+		}
+	} else {
+		yrcdyrcd_server* _tmp10_ = NULL;
+		gint _tmp11_ = 0;
+		gchar* _tmp12_ = NULL;
+		gchar* _tmp13_ = NULL;
+		_tmp10_ = self->priv->_server;
+		_tmp11_ = self->priv->_id;
+		_tmp12_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp11_);
+		_tmp13_ = _tmp12_;
+		yrcd_yrcd_server_log (_tmp10_, _tmp13_);
+		_g_free0 (_tmp13_);
 	}
 }
 

@@ -66,7 +66,7 @@ gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 gchar* yrcd_yrcd_router_strip_end (yrcdyrcd_router* self, const gchar* msg);
 gchar** yrcd_yrcd_router_tokenize (yrcdyrcd_router* self, const gchar* msg, int* result_length1);
-void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, const gchar* newnick);
+void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 yrcdyrcd_router* yrcd_yrcd_router_new (void);
 yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -176,12 +176,10 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 				yrcdyrcd_user* _tmp33_ = NULL;
 				gchar** _tmp34_ = NULL;
 				gint _tmp34__length1 = 0;
-				const gchar* _tmp35_ = NULL;
 				_tmp33_ = user;
 				_tmp34_ = args;
 				_tmp34__length1 = args_length1;
-				_tmp35_ = _tmp34_[1];
-				yrcd_yrcd_user_change_nick (_tmp33_, _tmp35_);
+				yrcd_yrcd_user_change_nick (_tmp33_, _tmp34_, _tmp34__length1);
 				break;
 			}
 		}
