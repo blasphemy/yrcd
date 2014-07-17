@@ -5,7 +5,7 @@ namespace yrcd {
     private SocketService ss = new SocketService();
     private MainLoop loop = new MainLoop();
     private yrcd_router router = new yrcd_router();
-    private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
+    public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
     public int new_userid() {
       user_counter++;
@@ -28,8 +28,12 @@ namespace yrcd {
           SocketAddress serversock = null;
           InetAddress inetaddr = new InetAddress.from_string(k);
           SocketAddress sockaddr = new InetSocketAddress(inetaddr,j);
-          ss.add_address(sockaddr, GLib.SocketType.STREAM, GLib.SocketProtocol.DEFAULT, ss, out serversock);
-        } 
+          try {
+            ss.add_address(sockaddr, GLib.SocketType.STREAM, GLib.SocketProtocol.DEFAULT, ss, out serversock);
+          } catch (Error e) {
+            log("Error opening socket: %s".printf(e.message));
+          }
+        }
       }
     }
     private bool on_connection (SocketConnection conn) {
