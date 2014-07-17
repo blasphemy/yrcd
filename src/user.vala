@@ -28,6 +28,9 @@ namespace yrcd {
       }
     }
     public void change_nick (string[] args) {
+      if (args.length < 2) {
+        server.log("User %d attempted NICK with invalid arguments".printf(id));
+      }
       nick = args[1];
       if (!nick_set) {
         nick_set = true;
