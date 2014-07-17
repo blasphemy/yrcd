@@ -38,10 +38,10 @@ enum  {
 #define YRCD_YRCD_CONSTANTS_version "0.1"
 #define YRCD_YRCD_CONSTANTS_software "yrcd"
 #define YRCD_YRCD_CONSTANTS_motd "Welcome!"
-#define YRCD_YRCD_CONSTANTS_listen_ip "127.0.0.1"
 yrcdyrcd_constants* yrcd_yrcd_constants_new (void);
 yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type);
 
+const gchar* YRCD_YRCD_CONSTANTS_listen_ips[1] = {"127.0.0.1"};
 const guint16 YRCD_YRCD_CONSTANTS_listen_ports[2] = {(guint16) 6667, (guint16) 6668};
 
 yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type) {

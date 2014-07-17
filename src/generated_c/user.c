@@ -183,11 +183,11 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		_tmp1_ = g_socket_connection_get_socket (_tmp0_);
 		g_socket_close (_tmp1_, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch2_g_error;
+			goto __catch1_g_error;
 		}
 	}
-	goto __finally2;
-	__catch2_g_error:
+	goto __finally1;
+	__catch1_g_error:
 	{
 		GError* e = NULL;
 		yrcdyrcd_server* _tmp2_ = NULL;
@@ -206,7 +206,7 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		_g_free0 (_tmp6_);
 		_g_error_free0 (e);
 	}
-	__finally2:
+	__finally1:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);

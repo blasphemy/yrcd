@@ -109,7 +109,7 @@ yrcdyrcd_server* yrcd_yrcd_server_new (void);
 yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type);
 #define YRCD_YRCD_CONSTANTS_software "yrcd"
 #define YRCD_YRCD_CONSTANTS_version "0.1"
-void yrcd_yrcd_server_add_port (yrcdyrcd_server* self, guint16 port);
+void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self);
 static gboolean yrcd_yrcd_server_on_connection (yrcdyrcd_server* self, GSocketConnection* conn);
 static gboolean _yrcd_yrcd_server_on_connection_g_socket_service_incoming (GSocketService* _sender, GSocketConnection* connection, GObject* source_object, gpointer self);
 yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server);
@@ -125,6 +125,7 @@ static void yrcd_yrcd_server_process_request_ready (GObject* source_object, GAsy
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
 static void yrcd_yrcd_server_finalize (GObject* obj);
 
+extern const gchar* YRCD_YRCD_CONSTANTS_listen_ips[1];
 extern const guint16 YRCD_YRCD_CONSTANTS_listen_ports[2];
 
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self) {
@@ -162,37 +163,21 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type) {
 	yrcdyrcd_server * self = NULL;
 	gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
+	GSocketService* _tmp2_ = NULL;
 	GSocketService* _tmp3_ = NULL;
-	GSocketService* _tmp4_ = NULL;
-	GMainLoop* _tmp5_ = NULL;
+	GMainLoop* _tmp4_ = NULL;
 	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
 	_tmp0_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
 	_tmp1_ = _tmp0_;
 	yrcd_yrcd_server_log (self, _tmp1_);
 	_g_free0 (_tmp1_);
-	{
-		guint16* k_collection = NULL;
-		gint k_collection_length1 = 0;
-		gint _k_collection_size_ = 0;
-		gint k_it = 0;
-		k_collection = YRCD_YRCD_CONSTANTS_listen_ports;
-		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports);
-		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports); k_it = k_it + 1) {
-			guint16 k = 0U;
-			k = k_collection[k_it];
-			{
-				guint16 _tmp2_ = 0U;
-				_tmp2_ = k;
-				yrcd_yrcd_server_add_port (self, _tmp2_);
-			}
-		}
-	}
+	yrcd_yrcd_server_add_listeners (self);
+	_tmp2_ = self->priv->ss;
+	g_signal_connect_object (_tmp2_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
 	_tmp3_ = self->priv->ss;
-	g_signal_connect_object (_tmp3_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
-	_tmp4_ = self->priv->ss;
-	g_socket_service_start (_tmp4_);
-	_tmp5_ = self->priv->loop;
-	g_main_loop_run (_tmp5_);
+	g_socket_service_start (_tmp3_);
+	_tmp4_ = self->priv->loop;
+	g_main_loop_run (_tmp4_);
 	return self;
 }
 
@@ -202,58 +187,83 @@ yrcdyrcd_server* yrcd_yrcd_server_new (void) {
 }
 
 
-void yrcd_yrcd_server_add_port (yrcdyrcd_server* self, guint16 port) {
-	guint16 _tmp0_ = 0U;
-	gchar* _tmp1_ = NULL;
-	gchar* _tmp2_ = NULL;
+void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
-	_tmp0_ = port;
-	_tmp1_ = g_strdup_printf ("attempting to add port %d", (gint) _tmp0_);
-	_tmp2_ = _tmp1_;
-	yrcd_yrcd_server_log (self, _tmp2_);
-	_g_free0 (_tmp2_);
 	{
-		GSocketService* _tmp3_ = NULL;
-		guint16 _tmp4_ = 0U;
-		guint16 _tmp5_ = 0U;
-		gchar* _tmp6_ = NULL;
-		gchar* _tmp7_ = NULL;
-		_tmp3_ = self->priv->ss;
-		_tmp4_ = port;
-		g_socket_listener_add_inet_port ((GSocketListener*) _tmp3_, _tmp4_, NULL, &_inner_error_);
-		if (_inner_error_ != NULL) {
-			goto __catch0_g_error;
+		const gchar** k_collection = NULL;
+		gint k_collection_length1 = 0;
+		gint _k_collection_size_ = 0;
+		gint k_it = 0;
+		k_collection = YRCD_YRCD_CONSTANTS_listen_ips;
+		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ips);
+		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ips); k_it = k_it + 1) {
+			const gchar* k = NULL;
+			k = k_collection[k_it];
+			{
+				{
+					guint16* j_collection = NULL;
+					gint j_collection_length1 = 0;
+					gint _j_collection_size_ = 0;
+					gint j_it = 0;
+					j_collection = YRCD_YRCD_CONSTANTS_listen_ports;
+					j_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports);
+					for (j_it = 0; j_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports); j_it = j_it + 1) {
+						guint16 j = 0U;
+						j = j_collection[j_it];
+						{
+							const gchar* _tmp0_ = NULL;
+							guint16 _tmp1_ = 0U;
+							gchar* _tmp2_ = NULL;
+							gchar* _tmp3_ = NULL;
+							GSocketAddress* serversock = NULL;
+							GInetAddress* inetaddr = NULL;
+							const gchar* _tmp4_ = NULL;
+							GInetAddress* _tmp5_ = NULL;
+							GSocketAddress* sockaddr = NULL;
+							GInetAddress* _tmp6_ = NULL;
+							guint16 _tmp7_ = 0U;
+							GInetSocketAddress* _tmp8_ = NULL;
+							GSocketService* _tmp9_ = NULL;
+							GSocketAddress* _tmp10_ = NULL;
+							GSocketService* _tmp11_ = NULL;
+							GSocketAddress* _tmp12_ = NULL;
+							_tmp0_ = k;
+							_tmp1_ = j;
+							_tmp2_ = g_strdup_printf ("Adding listener on IP: %s port %d", _tmp0_, (gint) _tmp1_);
+							_tmp3_ = _tmp2_;
+							yrcd_yrcd_server_log (self, _tmp3_);
+							_g_free0 (_tmp3_);
+							serversock = NULL;
+							_tmp4_ = k;
+							_tmp5_ = g_inet_address_new_from_string (_tmp4_);
+							inetaddr = _tmp5_;
+							_tmp6_ = inetaddr;
+							_tmp7_ = j;
+							_tmp8_ = (GInetSocketAddress*) g_inet_socket_address_new (_tmp6_, _tmp7_);
+							sockaddr = (GSocketAddress*) _tmp8_;
+							_tmp9_ = self->priv->ss;
+							_tmp10_ = sockaddr;
+							_tmp11_ = self->priv->ss;
+							g_socket_listener_add_address ((GSocketListener*) _tmp9_, _tmp10_, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, (GObject*) _tmp11_, &_tmp12_, &_inner_error_);
+							_g_object_unref0 (serversock);
+							serversock = _tmp12_;
+							if (_inner_error_ != NULL) {
+								_g_object_unref0 (sockaddr);
+								_g_object_unref0 (inetaddr);
+								_g_object_unref0 (serversock);
+								g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+								g_clear_error (&_inner_error_);
+								return;
+							}
+							_g_object_unref0 (sockaddr);
+							_g_object_unref0 (inetaddr);
+							_g_object_unref0 (serversock);
+						}
+					}
+				}
+			}
 		}
-		_tmp5_ = port;
-		_tmp6_ = g_strdup_printf ("port %d successfully added", (gint) _tmp5_);
-		_tmp7_ = _tmp6_;
-		yrcd_yrcd_server_log (self, _tmp7_);
-		_g_free0 (_tmp7_);
-	}
-	goto __finally0;
-	__catch0_g_error:
-	{
-		GError* e = NULL;
-		GError* _tmp8_ = NULL;
-		const gchar* _tmp9_ = NULL;
-		gchar* _tmp10_ = NULL;
-		gchar* _tmp11_ = NULL;
-		e = _inner_error_;
-		_inner_error_ = NULL;
-		_tmp8_ = e;
-		_tmp9_ = _tmp8_->message;
-		_tmp10_ = g_strdup_printf ("Add Port error: %s", _tmp9_);
-		_tmp11_ = _tmp10_;
-		yrcd_yrcd_server_log (self, _tmp11_);
-		_g_free0 (_tmp11_);
-		_g_error_free0 (e);
-	}
-	__finally0:
-	if (_inner_error_ != NULL) {
-		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
-		g_clear_error (&_inner_error_);
-		return;
 	}
 }
 
@@ -369,7 +379,7 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			_data_->_tmp7_ = g_data_input_stream_read_line_finish (_data_->_tmp6_, _data_->_res_, NULL, &_data_->_inner_error_);
 			_data_->msg = _data_->_tmp7_;
 			if (_data_->_inner_error_ != NULL) {
-				goto __catch1_g_error;
+				goto __catch0_g_error;
 			}
 			_data_->_tmp8_ = NULL;
 			_data_->_tmp8_ = _data_->self->priv->router;
@@ -380,8 +390,8 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			yrcd_yrcd_router_route (_data_->_tmp8_, _data_->_tmp9_, _data_->_tmp10_);
 			_g_free0 (_data_->msg);
 		}
-		goto __finally1;
-		__catch1_g_error:
+		goto __finally0;
+		__catch0_g_error:
 		{
 			_data_->e = _data_->_inner_error_;
 			_data_->_inner_error_ = NULL;
@@ -397,7 +407,7 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			_g_free0 (_data_->_tmp14_);
 			_g_error_free0 (_data_->e);
 		}
-		__finally1:
+		__finally0:
 		if (_data_->_inner_error_ != NULL) {
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _data_->_inner_error_->message, g_quark_to_string (_data_->_inner_error_->domain), _data_->_inner_error_->code);
 			g_clear_error (&_data_->_inner_error_);
