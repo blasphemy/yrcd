@@ -23,7 +23,7 @@ namespace yrcd {
     public void quit (string? msg) {
       try {
         sock.get_socket().close();
-        server.userlist.unset(id);
+        server.remove_user(id);
       } catch (Error e) {
         server.log("Error closing socket: %s".printf(e.message));
       }

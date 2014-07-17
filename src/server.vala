@@ -5,7 +5,7 @@ namespace yrcd {
     private SocketService ss = new SocketService();
     private MainLoop loop = new MainLoop();
     private yrcd_router router = new yrcd_router();
-    public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
+    private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
     public int new_userid() {
       user_counter++;
@@ -20,6 +20,9 @@ namespace yrcd {
       ss.incoming.connect(on_connection);
       ss.start();
       loop.run();
+    }
+    public void remove_user (int id) {
+      userlist.unset(id);
     }
     public void add_listeners () {
       foreach (var k in yrcd_constants.listen_ips) {
