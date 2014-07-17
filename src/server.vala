@@ -15,8 +15,9 @@ namespace yrcd {
     public void log (string msg) {
       stdout.printf("LOG: %s\n", msg);
     } 
-    public void init () {
-      foreach (uint16 k in consts.listen_ports) {
+    public yrcd_server () {
+      log("Initializing server: %s %s".printf(consts.software, consts.version));
+      foreach (var k in consts.listen_ports) {
         add_port(k);
       }
       ss.incoming.connect(on_connection);
