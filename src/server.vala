@@ -16,20 +16,20 @@ namespace yrcd {
     } 
     public yrcd_server () {
       log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
-      foreach (var k in yrcd_constants.listen_ports) {
-        add_port(k);
-      }
+      add_listeners();
       ss.incoming.connect(on_connection);
       ss.start();
       loop.run();
     }
-    public void add_port (uint16 port) {
-      log("attempting to add port %d".printf(port));
-      try {
-        ss.add_inet_port(port, null);
-        log("port %d successfully added".printf(port));
-      } catch (Error e) {
-        log("Add Port error: %s".printf(e.message));
+    public void add_listeners () {
+      foreach (var k in yrcd_constants.listen_ips) {
+        foreach (var j in yrcd_constants.listen_ports) {
+          log("Adding listener on IP: %s port %d".printf(k,j));
+          SocketAddress serversock = null;
+          InetAddress inetaddr = new InetAddress.from_string(k);
+          SocketAddress sockaddr = new InetSocketAddress(inetaddr,j);
+          ss.add_address(sockaddr, GLib.SocketType.STREAM, GLib.SocketProtocol.DEFAULT, ss, out serversock);
+        } 
       }
     }
     private bool on_connection (SocketConnection conn) {
