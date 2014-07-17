@@ -27,8 +27,8 @@ namespace yrcd {
         server.log("Error closing socket: %s".printf(e.message));
       }
     }
-    public void change_nick (string newnick) {
-      nick = newnick;
+    public void change_nick (string[] args) {
+      nick = args[1];
       if (!nick_set) {
         nick_set = true;
         if (!reg_complete && user_set) {
@@ -44,7 +44,7 @@ namespace yrcd {
           server.log("User %d registration complete.".printf(id));
         }
       } else {
-
+        server.log("User %d attempted user registration while already registered".printf(id));
       }
     }
   }

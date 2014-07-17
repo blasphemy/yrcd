@@ -17,7 +17,7 @@ namespace yrcd {
           user.quit(null);
           break;
         case "nick" :
-          user.change_nick(args[1]);
+          user.change_nick(args);
           break;
       }
     }
