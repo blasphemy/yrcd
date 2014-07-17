@@ -38,7 +38,13 @@ namespace yrcd {
     }
     public void user_reg (string[] args) {
       if (!user_set) {
-        //stub
+        ident = args[1];
+        realname = args[2];
+        if (nick_set) {
+          server.log("User %d registration complete.".printf(id));
+        }
+      } else {
+
       }
     }
   }
