@@ -4,7 +4,6 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include <gee.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,17 +18,6 @@
 typedef struct _yrcdyrcd_router yrcdyrcd_router;
 typedef struct _yrcdyrcd_routerClass yrcdyrcd_routerClass;
 typedef struct _yrcdyrcd_routerPrivate yrcdyrcd_routerPrivate;
-
-#define YRCD_TYPE_DELEGATE_WRAPPER (yrcd_delegate_wrapper_get_type ())
-#define YRCD_DELEGATE_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_DELEGATE_WRAPPER, yrcdDelegateWrapper))
-#define YRCD_DELEGATE_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_DELEGATE_WRAPPER, yrcdDelegateWrapperClass))
-#define YRCD_IS_DELEGATE_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_DELEGATE_WRAPPER))
-#define YRCD_IS_DELEGATE_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_DELEGATE_WRAPPER))
-#define YRCD_DELEGATE_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_DELEGATE_WRAPPER, yrcdDelegateWrapperClass))
-
-typedef struct _yrcdDelegateWrapper yrcdDelegateWrapper;
-typedef struct _yrcdDelegateWrapperClass yrcdDelegateWrapperClass;
-#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
 #define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
 #define YRCD_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_user))
@@ -62,25 +50,13 @@ struct _yrcdyrcd_routerClass {
 	GObjectClass parent_class;
 };
 
-struct _yrcdyrcd_routerPrivate {
-	GeeHashMap* command_list;
-};
-
 
 static gpointer yrcd_yrcd_router_parent_class = NULL;
 
 GType yrcd_yrcd_router_get_type (void) G_GNUC_CONST;
-#define YRCD_YRCD_ROUTER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_routerPrivate))
 enum  {
 	YRCD_YRCD_ROUTER_DUMMY_PROPERTY
 };
-gpointer yrcd_delegate_wrapper_ref (gpointer instance);
-void yrcd_delegate_wrapper_unref (gpointer instance);
-GParamSpec* yrcd_param_spec_delegate_wrapper (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
-void yrcd_value_set_delegate_wrapper (GValue* value, gpointer v_object);
-void yrcd_value_take_delegate_wrapper (GValue* value, gpointer v_object);
-gpointer yrcd_value_get_delegate_wrapper (const GValue* value);
-GType yrcd_delegate_wrapper_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
 GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
@@ -92,7 +68,6 @@ gchar* yrcd_yrcd_router_strip_end (yrcdyrcd_router* self, const gchar* msg);
 gchar** yrcd_yrcd_router_tokenize (yrcdyrcd_router* self, const gchar* msg, int* result_length1);
 yrcdyrcd_router* yrcd_yrcd_router_new (void);
 yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type);
-static void yrcd_yrcd_router_finalize (GObject* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static gint _vala_array_length (gpointer array);
@@ -246,24 +221,10 @@ yrcdyrcd_router* yrcd_yrcd_router_new (void) {
 
 static void yrcd_yrcd_router_class_init (yrcdyrcd_routerClass * klass) {
 	yrcd_yrcd_router_parent_class = g_type_class_peek_parent (klass);
-	g_type_class_add_private (klass, sizeof (yrcdyrcd_routerPrivate));
-	G_OBJECT_CLASS (klass)->finalize = yrcd_yrcd_router_finalize;
 }
 
 
 static void yrcd_yrcd_router_instance_init (yrcdyrcd_router * self) {
-	GeeHashMap* _tmp0_ = NULL;
-	self->priv = YRCD_YRCD_ROUTER_GET_PRIVATE (self);
-	_tmp0_ = gee_hash_map_new (G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, YRCD_TYPE_DELEGATE_WRAPPER, (GBoxedCopyFunc) yrcd_delegate_wrapper_ref, yrcd_delegate_wrapper_unref, NULL, NULL, NULL);
-	self->priv->command_list = _tmp0_;
-}
-
-
-static void yrcd_yrcd_router_finalize (GObject* obj) {
-	yrcdyrcd_router * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_router);
-	_g_object_unref0 (self->priv->command_list);
-	G_OBJECT_CLASS (yrcd_yrcd_router_parent_class)->finalize (obj);
 }
 
 
