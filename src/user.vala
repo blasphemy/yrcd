@@ -31,12 +31,16 @@ namespace yrcd {
       if (args.length < 2) {
         server.log("User %d attempted NICK with invalid arguments".printf(id));
       }
+      string oldnick = nick;
       nick = args[1];
       if (!nick_set) {
+        server.log("User %d set nick to %s".printf(id,nick));
         nick_set = true;
         if (!reg_complete && user_set) {
           reg_finished();
         }
+      } else {
+        server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
       }
     }
     public void user_reg (string[] args) {
