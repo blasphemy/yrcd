@@ -112,6 +112,7 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type);
 void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self);
 static gboolean yrcd_yrcd_server_on_connection (yrcdyrcd_server* self, GSocketConnection* conn);
 static gboolean _yrcd_yrcd_server_on_connection_g_socket_service_incoming (GSocketService* _sender, GSocketConnection* connection, GObject* source_object, gpointer self);
+void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
 yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server);
 yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
@@ -187,6 +188,16 @@ yrcdyrcd_server* yrcd_yrcd_server_new (void) {
 }
 
 
+void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id) {
+	GeeHashMap* _tmp0_ = NULL;
+	gint _tmp1_ = 0;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = self->priv->userlist;
+	_tmp1_ = id;
+	gee_abstract_map_unset ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) _tmp1_), NULL);
+}
+
+
 void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -224,10 +235,6 @@ void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 							GInetAddress* _tmp6_ = NULL;
 							guint16 _tmp7_ = 0U;
 							GInetSocketAddress* _tmp8_ = NULL;
-							GSocketService* _tmp9_ = NULL;
-							GSocketAddress* _tmp10_ = NULL;
-							GSocketService* _tmp11_ = NULL;
-							GSocketAddress* _tmp12_ = NULL;
 							_tmp0_ = k;
 							_tmp1_ = j;
 							_tmp2_ = g_strdup_printf ("Adding listener on IP: %s port %d", _tmp0_, (gint) _tmp1_);
@@ -242,12 +249,40 @@ void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 							_tmp7_ = j;
 							_tmp8_ = (GInetSocketAddress*) g_inet_socket_address_new (_tmp6_, _tmp7_);
 							sockaddr = (GSocketAddress*) _tmp8_;
-							_tmp9_ = self->priv->ss;
-							_tmp10_ = sockaddr;
-							_tmp11_ = self->priv->ss;
-							g_socket_listener_add_address ((GSocketListener*) _tmp9_, _tmp10_, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, (GObject*) _tmp11_, &_tmp12_, &_inner_error_);
-							_g_object_unref0 (serversock);
-							serversock = _tmp12_;
+							{
+								GSocketService* _tmp9_ = NULL;
+								GSocketAddress* _tmp10_ = NULL;
+								GSocketService* _tmp11_ = NULL;
+								GSocketAddress* _tmp12_ = NULL;
+								_tmp9_ = self->priv->ss;
+								_tmp10_ = sockaddr;
+								_tmp11_ = self->priv->ss;
+								g_socket_listener_add_address ((GSocketListener*) _tmp9_, _tmp10_, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, (GObject*) _tmp11_, &_tmp12_, &_inner_error_);
+								_g_object_unref0 (serversock);
+								serversock = _tmp12_;
+								if (_inner_error_ != NULL) {
+									goto __catch0_g_error;
+								}
+							}
+							goto __finally0;
+							__catch0_g_error:
+							{
+								GError* e = NULL;
+								GError* _tmp13_ = NULL;
+								const gchar* _tmp14_ = NULL;
+								gchar* _tmp15_ = NULL;
+								gchar* _tmp16_ = NULL;
+								e = _inner_error_;
+								_inner_error_ = NULL;
+								_tmp13_ = e;
+								_tmp14_ = _tmp13_->message;
+								_tmp15_ = g_strdup_printf ("Error opening socket: %s", _tmp14_);
+								_tmp16_ = _tmp15_;
+								yrcd_yrcd_server_log (self, _tmp16_);
+								_g_free0 (_tmp16_);
+								_g_error_free0 (e);
+							}
+							__finally0:
 							if (_inner_error_ != NULL) {
 								_g_object_unref0 (sockaddr);
 								_g_object_unref0 (inetaddr);
@@ -379,7 +414,7 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			_data_->_tmp7_ = g_data_input_stream_read_line_finish (_data_->_tmp6_, _data_->_res_, NULL, &_data_->_inner_error_);
 			_data_->msg = _data_->_tmp7_;
 			if (_data_->_inner_error_ != NULL) {
-				goto __catch0_g_error;
+				goto __catch1_g_error;
 			}
 			_data_->_tmp8_ = NULL;
 			_data_->_tmp8_ = _data_->self->priv->router;
@@ -390,8 +425,8 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			yrcd_yrcd_router_route (_data_->_tmp8_, _data_->_tmp9_, _data_->_tmp10_);
 			_g_free0 (_data_->msg);
 		}
-		goto __finally0;
-		__catch0_g_error:
+		goto __finally1;
+		__catch1_g_error:
 		{
 			_data_->e = _data_->_inner_error_;
 			_data_->_inner_error_ = NULL;
@@ -407,7 +442,7 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			_g_free0 (_data_->_tmp14_);
 			_g_error_free0 (_data_->e);
 		}
-		__finally0:
+		__finally1:
 		if (_data_->_inner_error_ != NULL) {
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _data_->_inner_error_->message, g_quark_to_string (_data_->_inner_error_->domain), _data_->_inner_error_->code);
 			g_clear_error (&_data_->_inner_error_);

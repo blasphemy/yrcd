@@ -89,6 +89,7 @@ gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
+void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
@@ -179,34 +180,39 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 	{
 		GSocketConnection* _tmp0_ = NULL;
 		GSocket* _tmp1_ = NULL;
+		yrcdyrcd_server* _tmp2_ = NULL;
+		gint _tmp3_ = 0;
 		_tmp0_ = self->priv->_sock;
 		_tmp1_ = g_socket_connection_get_socket (_tmp0_);
 		g_socket_close (_tmp1_, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch1_g_error;
+			goto __catch2_g_error;
 		}
+		_tmp2_ = self->priv->_server;
+		_tmp3_ = self->priv->_id;
+		yrcd_yrcd_server_remove_user (_tmp2_, _tmp3_);
 	}
-	goto __finally1;
-	__catch1_g_error:
+	goto __finally2;
+	__catch2_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp2_ = NULL;
-		GError* _tmp3_ = NULL;
-		const gchar* _tmp4_ = NULL;
-		gchar* _tmp5_ = NULL;
-		gchar* _tmp6_ = NULL;
+		yrcdyrcd_server* _tmp4_ = NULL;
+		GError* _tmp5_ = NULL;
+		const gchar* _tmp6_ = NULL;
+		gchar* _tmp7_ = NULL;
+		gchar* _tmp8_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp2_ = self->priv->_server;
-		_tmp3_ = e;
-		_tmp4_ = _tmp3_->message;
-		_tmp5_ = g_strdup_printf ("Error closing socket: %s", _tmp4_);
-		_tmp6_ = _tmp5_;
-		yrcd_yrcd_server_log (_tmp2_, _tmp6_);
-		_g_free0 (_tmp6_);
+		_tmp4_ = self->priv->_server;
+		_tmp5_ = e;
+		_tmp6_ = _tmp5_->message;
+		_tmp7_ = g_strdup_printf ("Error closing socket: %s", _tmp6_);
+		_tmp8_ = _tmp7_;
+		yrcd_yrcd_server_log (_tmp4_, _tmp8_);
+		_g_free0 (_tmp8_);
 		_g_error_free0 (e);
 	}
-	__finally1:
+	__finally2:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
