@@ -22,16 +22,6 @@ typedef struct _yrcdyrcd_server yrcdyrcd_server;
 typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
-#define YRCD_TYPE_YRCD_CONSTANTS (yrcd_yrcd_constants_get_type ())
-#define YRCD_YRCD_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constants))
-#define YRCD_YRCD_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constantsClass))
-#define YRCD_IS_YRCD_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONSTANTS))
-#define YRCD_IS_YRCD_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONSTANTS))
-#define YRCD_YRCD_CONSTANTS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constantsClass))
-
-typedef struct _yrcdyrcd_constants yrcdyrcd_constants;
-typedef struct _yrcdyrcd_constantsClass yrcdyrcd_constantsClass;
-
 #define YRCD_TYPE_YRCD_ROUTER (yrcd_yrcd_router_get_type ())
 #define YRCD_YRCD_ROUTER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_router))
 #define YRCD_YRCD_ROUTER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_routerClass))
@@ -60,7 +50,6 @@ typedef struct _YrcdYrcdServerProcessRequestData YrcdYrcdServerProcessRequestDat
 struct _yrcdyrcd_server {
 	GObject parent_instance;
 	yrcdyrcd_serverPrivate * priv;
-	yrcdyrcd_constants* consts;
 };
 
 struct _yrcdyrcd_serverClass {
@@ -106,7 +95,6 @@ struct _YrcdYrcdServerProcessRequestData {
 static gpointer yrcd_yrcd_server_parent_class = NULL;
 
 GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
-GType yrcd_yrcd_constants_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_router_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 #define YRCD_YRCD_SERVER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_serverPrivate))
@@ -115,8 +103,6 @@ enum  {
 };
 yrcdyrcd_router* yrcd_yrcd_router_new (void);
 yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type);
-yrcdyrcd_constants* yrcd_yrcd_constants_new (void);
-yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 yrcdyrcd_server* yrcd_yrcd_server_new (void);
@@ -174,22 +160,16 @@ static gboolean _yrcd_yrcd_server_on_connection_g_socket_service_incoming (GSock
 
 yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type) {
 	yrcdyrcd_server * self = NULL;
-	yrcdyrcd_constants* _tmp0_ = NULL;
-	yrcdyrcd_constants* _tmp1_ = NULL;
-	gchar* _tmp2_ = NULL;
-	gchar* _tmp3_ = NULL;
-	yrcdyrcd_constants* _tmp4_ = NULL;
-	GSocketService* _tmp6_ = NULL;
-	GSocketService* _tmp7_ = NULL;
-	GMainLoop* _tmp8_ = NULL;
+	gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	GSocketService* _tmp3_ = NULL;
+	GSocketService* _tmp4_ = NULL;
+	GMainLoop* _tmp5_ = NULL;
 	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
-	_tmp0_ = self->consts;
-	_tmp1_ = self->consts;
-	_tmp2_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
-	_tmp3_ = _tmp2_;
-	yrcd_yrcd_server_log (self, _tmp3_);
-	_g_free0 (_tmp3_);
-	_tmp4_ = self->consts;
+	_tmp0_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
+	_tmp1_ = _tmp0_;
+	yrcd_yrcd_server_log (self, _tmp1_);
+	_g_free0 (_tmp1_);
 	{
 		guint16* k_collection = NULL;
 		gint k_collection_length1 = 0;
@@ -201,18 +181,18 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type) {
 			guint16 k = 0U;
 			k = k_collection[k_it];
 			{
-				guint16 _tmp5_ = 0U;
-				_tmp5_ = k;
-				yrcd_yrcd_server_add_port (self, _tmp5_);
+				guint16 _tmp2_ = 0U;
+				_tmp2_ = k;
+				yrcd_yrcd_server_add_port (self, _tmp2_);
 			}
 		}
 	}
-	_tmp6_ = self->priv->ss;
-	g_signal_connect_object (_tmp6_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
-	_tmp7_ = self->priv->ss;
-	g_socket_service_start (_tmp7_);
-	_tmp8_ = self->priv->loop;
-	g_main_loop_run (_tmp8_);
+	_tmp3_ = self->priv->ss;
+	g_signal_connect_object (_tmp3_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
+	_tmp4_ = self->priv->ss;
+	g_socket_service_start (_tmp4_);
+	_tmp5_ = self->priv->loop;
+	g_main_loop_run (_tmp5_);
 	return self;
 }
 
@@ -446,7 +426,6 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	GMainLoop* _tmp1_ = NULL;
 	yrcdyrcd_router* _tmp2_ = NULL;
 	GeeHashMap* _tmp3_ = NULL;
-	yrcdyrcd_constants* _tmp4_ = NULL;
 	self->priv = YRCD_YRCD_SERVER_GET_PRIVATE (self);
 	_tmp0_ = g_socket_service_new ();
 	self->priv->ss = _tmp0_;
@@ -457,8 +436,6 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	_tmp3_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
 	self->priv->userlist = _tmp3_;
 	self->priv->user_counter = 0;
-	_tmp4_ = yrcd_yrcd_constants_new ();
-	self->consts = _tmp4_;
 }
 
 
@@ -469,7 +446,6 @@ static void yrcd_yrcd_server_finalize (GObject* obj) {
 	_g_main_loop_unref0 (self->priv->loop);
 	_g_object_unref0 (self->priv->router);
 	_g_object_unref0 (self->priv->userlist);
-	_g_object_unref0 (self->consts);
 	G_OBJECT_CLASS (yrcd_yrcd_server_parent_class)->finalize (obj);
 }
 
