@@ -4,6 +4,11 @@ namespace yrcd {
     private MainLoop loop = new MainLoop();
     private yrcd_user[] userlist = new yrcd_user[1];
     private yrcd_router router = new yrcd_router();
+    private int counter = 0;
+    public int new_userid() {
+      counter++;
+      return counter;
+    }
     public void log (string msg) {
       stdout.printf("LOG: %s\n", msg);
     } 
@@ -33,6 +38,7 @@ namespace yrcd {
       log("data streams open, entering main loop.");
       while (true) {
         if (!user.sock.is_connected()) {
+          log("Socket not connected...breaking");
           break;
         }
         try {

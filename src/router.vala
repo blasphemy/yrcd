@@ -3,7 +3,7 @@ namespace yrcd {
     public void route (yrcd_user user, string msg) {
       string stripped = strip_end(msg);
       string[] args = tokenize(stripped);
-      user.server.log("Received line %s".printf(stripped));
+      user.server.log("USER %d: received line %s".printf(user.id,stripped));
       if (args[0] == "QUIT") {
         user.server.log("Received QUIT");
         user.quit(null);
