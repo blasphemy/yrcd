@@ -1,0 +1,103 @@
+:atlanta2.ga.mac-mini.org NOTICE * :*** Looking up your hostname...
+:atlanta2.ga.mac-mini.org NOTICE * :*** Checking Ident
+:atlanta2.ga.mac-mini.org NOTICE * :*** No Ident response
+:atlanta2.ga.mac-mini.org NOTICE * :*** Your forward and reverse DNS do not match, ignoring hostname
+:atlanta2.ga.mac-mini.org 001 daniel342 :Welcome to the mac-mini Internet Relay Chat Network daniel342
+:atlanta2.ga.mac-mini.org 002 daniel342 :Your host is atlanta2.ga.mac-mini.org[192.73.234.106/6667], running version charybdis-3.5.0-dev
+:atlanta2.ga.mac-mini.org 003 daniel342 :This server was created Fri Apr 11 2014 at 18:36:49 EDT
+:atlanta2.ga.mac-mini.org 004 daniel342 atlanta2.ga.mac-mini.org charybdis-3.5.0-dev DQRSZagilopswxz ACFILOPQSbcefgijklmnopqrstvz bkloveqjfI
+:atlanta2.ga.mac-mini.org 005 daniel342 SAFELIST ELIST=CTU CHANTYPES=&# EXCEPTS INVEX CHANMODES=eIbq,k,flj,ACFLOPQScgimnprstz CHANLIMIT=&#:25 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=mac-mini KNOCK :are supported by this server
+:atlanta2.ga.mac-mini.org 005 daniel342 STATUSMSG=@+ CALLERID=g CASEMAPPING=rfc1459 NICKLEN=31 MAXNICKLEN=31 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 :are supported by this server
+:atlanta2.ga.mac-mini.org 005 daniel342 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: EXTBAN=$,acjorsxz WHOX CLIENTVER=3.0 :are supported by this server
+:atlanta2.ga.mac-mini.org 251 daniel342 :There are 0 users and 76 invisible on 10 servers
+:atlanta2.ga.mac-mini.org 252 daniel342 7 :IRC Operators online
+:atlanta2.ga.mac-mini.org 254 daniel342 16 :channels formed
+:atlanta2.ga.mac-mini.org 255 daniel342 :I have 4 clients and 1 servers
+:atlanta2.ga.mac-mini.org 265 daniel342 4 16 :Current local users 4, max 16
+:atlanta2.ga.mac-mini.org 266 daniel342 76 85 :Current global users 76, max 85
+:atlanta2.ga.mac-mini.org 250 daniel342 :Highest connection count: 17 (16 clients) (526 connections received)
+:atlanta2.ga.mac-mini.org 375 daniel342 :- atlanta2.ga.mac-mini.org Message of the Day - 
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *******************************************************************************
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *             MAC-MINI.ORG :: The Network That's Powered by Hamsters          *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *******************************************************************************
+:atlanta2.ga.mac-mini.org 372 daniel342 :-  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                                ..'~+=szhhzs=<-...                     
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                             .~+zBNNNNBBBBBBNNNNDs<~.                  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                           -shBNNBhs+<<((((<<+shBNNBh+.                
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                         'zNNNBs(------~~~~------(zBNNNs.              
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                        'sNNBh<----~~~~~~~~~~~~~~----+hBNN+.            
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                      .+BNBs(--~~~~~~~~~~~~~~~~~~~~~~--<sBND<           
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                     'zNNh~---~~~~~~~~~~~~~~~~~~~~~~~~~--(hNNs.         
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                    -DNB+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~--=BNh'        
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                   (DND(--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~--<DND-       
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                   (BNz~--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-(hND-      
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                  -BNz~-----~~~~~~~~~~~~~~~~~~~~~~-----~~~~~~~-(hND-     
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                 'hNh~-(+ss=(~-~~~~~~~~~~~~~~~~-~(+szs<(~-~~~~~-(DNz.    
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                .sND~(hNBhhDBD=--~~~~~~~~~~~~--+hNBhhDBBz<-~~~~~-<BN+    
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                (NB+(BB('..~BNBh--~~~~~~~~~~-~zBD~... +NNB=-~~~~~-=BN-   
+:atlanta2.ga.mac-mini.org 372 daniel342 :-               .DNz~hB-   .NNNNBz-~~~~~~~~~~~zNs     (BNNNN=-~~~~--hNz.  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-               <ND(=N<    (NNNNNB=-~~~~~~~~-+Ns      sNNNNNB(-~~~~-<BN~  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-              .BBs~Dh'    'NNNNNNh~-~~~~~~--BD.      <BNNNNND-~~~~~-hNz  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-              (NB(<N+      (NNNz=B<-~~~~~~-+B+        =NNN=sB(-~~~~-<BN' 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-              zNh'+N(        '. ~N=-~~~~~~-sB-         .-  (B=-~~~~~-DN+ 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             .NB=-=B(           ~Ns-~~~~~~-hB.             -Ns-~~~~~-sBD 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             -NB(-+N(           ~N=-~~~~~~-zB'             ~N=-~~~~~-<BN.
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             +NB--<N+           <B+-~~~~~~-=B(             +B+-~~~~~-~BN~
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             =ND'-(DNNBNNNNNNNNBND(-~~~~~~-(BNBBNNNBBBNBBBBNB~-~~~~~~'BN<
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             zNh--~<=++++++++++++<-~~~~~~~~-++++++++++++++++<-~~~~~~~-DN+
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             zNz-~~---------------~~~~~~~~~------------------~~~~~~~~-hN+
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             zNz--~~~~~--~~~~~~-~~~~~~~~~~~~~~~--~~--~~--~~~~~~~~~~~~-DN+
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             sNh-~~~----------------------------------------~~~~~~~~~'DN+
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             =ND'~~~=zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-~~~~~~~~-BN<
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             <NB--~~zBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB<-~~~~~~-~BN-
+:atlanta2.ga.mac-mini.org 372 daniel342 :-             -NB(-~~-'sNhzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzhBz-~~~~~~-+BN 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-              BB=-~~~-sBhzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzBD-~~~~~~-sBh 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-              sND-~~~-<BDzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzBB~~~~~~--DN+ 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-              ~NB<-~~-~DBhzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzBB~-~~~~-+BN' 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-               DNz-~~~-sBhzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzBB-~~~~~-hNz  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-               (ND<-~~-~DBzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzBD-~~~~-<BN-  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-               .hNh-~~~-=BDzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzDB=-~~~-~hNs.  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                ~NB=-~~~-hBhzzzzzzzzzzzzzzss=++=sszzzzzzzzBB~-~~~-sBB'   
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                .=ND<-~~-~BBhzzzzzzzzzzzs<~''''''-(=zzzzzBB+-~~~-<BN<    
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                 'zND(-~~-<BBzzzzzzzzzh+-'''''''''''(zzzDBz--~~-(DN=.    
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                  -DNh(--~-<BBhzzzzzzz<''''''''''''''~zBBh--~~-(DNz'     
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                   ~DNh(----+BBhzzzzz+-'''''''''''''-+BBz--~--(DNh'      
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                    -DND<----<DBDhzzs~'''''''''''''<hBD<--~--<BNh'       
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                     'hNN=----~sBBDh+-''''''''''-+DNB=~-----sNNz.        
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                      .sBND(----(hBBh+~-----~~+hBBBz~----~(DNB=          
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                       (DNNz<----(=hBBBBBBBNBDhs+~-----<zNNh~           
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                        .<NNBD+-----~((<<<<((~~-----~=DBNB(.            
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                          .=NNNBz<----------------<hBNNB<               
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                            .+hDNNNDz=+<<((<<+=zDNNNDz(                 
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                              -(=hBNNNNNNNNNNNNBz=('                   
+:atlanta2.ga.mac-mini.org 372 daniel342 :-                                 ..'~<++===+(-...                      
+:atlanta2.ga.mac-mini.org 372 daniel342 :-  
+:atlanta2.ga.mac-mini.org 372 daniel342 :-  
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                        Your host today is located in                        *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                               The United States                             *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                                                                              *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                              Your netadmins are:                            *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *       mac-mini, cyrusrayne, a3Dman, Fenrir, DiegoMax, srts, and jackr       *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *******************************************************************************
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                 The chat in the channel you join may be monitored           *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                           or relayed to other networks.                     *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                 You may also be subject to logging by other users.          *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                                    *****                                    *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *              Your computer will be scanned by us for open proxies.          *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *              If you do not consent to this, please disconnect now.          *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *******************************************************************************
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                Have a nice chat, be nice and enjoy your stay!               *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                             The mac-mini.org Team.                          *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                     PS: Remember, it could always be worse...               *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *                     you could be stuck at Denny's with Gabe_G23             *
+:atlanta2.ga.mac-mini.org 372 daniel342 :- *******************************************************************************
+:atlanta2.ga.mac-mini.org 372 daniel342 :-  
+:atlanta2.ga.mac-mini.org 376 daniel342 :End of /MOTD command.
+:daniel342 MODE daniel342 :+ix
+:atlanta2.ga.mac-mini.org 396 daniel342 192.73.ukh.pn :is now your hidden host
+:InfoServ!InfoServ@services.mac-mini.org NOTICE daniel342 :*** Message(s) of the Day ***
+:InfoServ!InfoServ@services.mac-mini.org NOTICE daniel342 :[Official Client] Notice from Joah, posted 16:53 on 03/02/2012:
+:InfoServ!InfoServ@services.mac-mini.org NOTICE daniel342 :Hello! Please note our official client is 12,1m4,1IR8,1C0,1®!
+:InfoServ!InfoServ@services.mac-mini.org NOTICE daniel342 :*** End of Message(s) of the Day ***
+:NickServ!NickServ@services.mac-mini.org NOTICE daniel342 :Welcome to mac-mini.org, daniel342! Here on mac-mini.org, we provide services to enable the registration of nicknames and channels! For details, type /msg NickServ help and /msg ChanServ help.
+:StatServ!stats@stats.int PRIVMSG daniel342 :VERSION
