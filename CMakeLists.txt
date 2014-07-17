@@ -16,10 +16,29 @@ set (VERSION_INFO "prealpha")
 # we're about to use pkgconfig to make sure dependencies are installed so let's find pkgconfig first
 find_package(PkgConfig)
 # now let's actually check for the required dependencies
-pkg_check_modules(DEPS REQUIRED gio-2.0)
-add_definitions(${DEPS_CFLAGS})
-link_libraries(${DEPS_LIBRARIES})
-link_directories(${DEPS_LIBRARY_DIRS})
+
+pkg_check_modules(GEE REQUIRED gee-1.0)
+pkg_check_modules(GIO REQUIRED gio-2.0)
+set( CFLAGS
+    ${GEE_CFLAGS}
+    ${GIO_CFLAGS}
+)
+
+add_definitions(${CFLAGS})
+
+set( LIBS
+    ${GEE_LIBRARIES}    
+    ${GIO_LIBRARIES}
+)
+
+link_libraries(${LIBS})
+
+set ( LIB_PATHS
+    ${GEE_LIBRARY_DIRS}    
+    ${GIO_LIBRARY_DIRS}
+)
+
+link_directories(${LIB_PATHS})
 # make sure we have vala
 find_package(Vala REQUIRED)
 # make sure we use vala
@@ -33,8 +52,10 @@ vala_precompile(YRCD_C ${YRCD_NAME}
     src/server.vala
     src/user.vala
     src/router.vala    
+
 PACKAGES
     gio-2.0
+    gee-1.0
 )
 # tell cmake what to call the executable we just made
 add_executable(${YRCD_NAME} ${YRCD_C})

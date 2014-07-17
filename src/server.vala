@@ -1,8 +1,11 @@
+using Gee;
+
 namespace yrcd {
   class yrcd_server : Object {
     private SocketService ss = new SocketService();
     private MainLoop loop = new MainLoop();
     private yrcd_router router = new yrcd_router();
+    private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
     public int new_userid() {
       user_counter++;
@@ -28,6 +31,7 @@ namespace yrcd {
     private bool on_connection (SocketConnection conn) {
       log("Connection received, routing to process_request.");
       yrcd_user user  = new yrcd_user(conn, this);
+      userlist[user.id] = user;
       process_request.begin(user);
       return true;
     }
