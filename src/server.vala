@@ -7,7 +7,6 @@ namespace yrcd {
     private yrcd_router router = new yrcd_router();
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
-    public yrcd_constants consts = new yrcd_constants();
     public int new_userid() {
       user_counter++;
       return user_counter;
@@ -16,8 +15,8 @@ namespace yrcd {
       stdout.printf("LOG: %s\n", msg);
     } 
     public yrcd_server () {
-      log("Initializing server: %s %s".printf(consts.software, consts.version));
-      foreach (var k in consts.listen_ports) {
+      log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
+      foreach (var k in yrcd_constants.listen_ports) {
         add_port(k);
       }
       ss.incoming.connect(on_connection);
