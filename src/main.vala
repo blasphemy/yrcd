@@ -1,5 +1,3 @@
-using Gee;
-
 namespace yrcd {
   void main() {
     var server = new yrcd_server();

@@ -1,11 +1,5 @@
-using Gee;
-
 namespace yrcd {
   class yrcd_router : Object {
-    private HashMap<string,VoidFuncData> command_list = new HashMap<string,VoidFuncData>();
-    public void register_command (string trigger, VoidFuncData com) {
-      command_list[trigger] = com;
-    }
     public void route (yrcd_user user, string? msg) {
       if (msg == null) {
         user.server.log("Received null message, disconnecting user %d".printf(user.id));
