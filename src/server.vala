@@ -4,10 +4,10 @@ namespace yrcd {
     private MainLoop loop = new MainLoop();
     private yrcd_user[] userlist = new yrcd_user[1];
     private yrcd_router router = new yrcd_router();
-    private int counter = 0;
+    private int user_counter = 0;
     public int new_userid() {
-      counter++;
-      return counter;
+      user_counter++;
+      return user_counter;
     }
     public void log (string msg) {
       stdout.printf("LOG: %s\n", msg);
