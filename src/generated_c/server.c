@@ -119,10 +119,13 @@ yrcdyrcd_constants* yrcd_yrcd_constants_new (void);
 yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
-void yrcd_yrcd_server_init (yrcdyrcd_server* self);
+yrcdyrcd_server* yrcd_yrcd_server_new (void);
+yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type);
+#define YRCD_YRCD_CONSTANTS_software "yrcd"
+#define YRCD_YRCD_CONSTANTS_version "0.1"
+void yrcd_yrcd_server_add_port (yrcdyrcd_server* self, guint16 port);
 static gboolean yrcd_yrcd_server_on_connection (yrcdyrcd_server* self, GSocketConnection* conn);
 static gboolean _yrcd_yrcd_server_on_connection_g_socket_service_incoming (GSocketService* _sender, GSocketConnection* connection, GObject* source_object, gpointer self);
-void yrcd_yrcd_server_add_port (yrcdyrcd_server* self, guint16 port);
 yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server);
 yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
@@ -134,10 +137,9 @@ GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 static void yrcd_yrcd_server_process_request_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
-yrcdyrcd_server* yrcd_yrcd_server_new (void);
-yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type);
 static void yrcd_yrcd_server_finalize (GObject* obj);
 
+extern const guint16 YRCD_YRCD_CONSTANTS_listen_ports[2];
 
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self) {
 	gint result = 0;
@@ -170,17 +172,53 @@ static gboolean _yrcd_yrcd_server_on_connection_g_socket_service_incoming (GSock
 }
 
 
-void yrcd_yrcd_server_init (yrcdyrcd_server* self) {
-	GSocketService* _tmp0_ = NULL;
-	GSocketService* _tmp1_ = NULL;
-	GMainLoop* _tmp2_ = NULL;
-	g_return_if_fail (self != NULL);
-	_tmp0_ = self->priv->ss;
-	g_signal_connect_object (_tmp0_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
-	_tmp1_ = self->priv->ss;
-	g_socket_service_start (_tmp1_);
-	_tmp2_ = self->priv->loop;
-	g_main_loop_run (_tmp2_);
+yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type) {
+	yrcdyrcd_server * self = NULL;
+	yrcdyrcd_constants* _tmp0_ = NULL;
+	yrcdyrcd_constants* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	yrcdyrcd_constants* _tmp4_ = NULL;
+	GSocketService* _tmp6_ = NULL;
+	GSocketService* _tmp7_ = NULL;
+	GMainLoop* _tmp8_ = NULL;
+	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
+	_tmp0_ = self->consts;
+	_tmp1_ = self->consts;
+	_tmp2_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
+	_tmp3_ = _tmp2_;
+	yrcd_yrcd_server_log (self, _tmp3_);
+	_g_free0 (_tmp3_);
+	_tmp4_ = self->consts;
+	{
+		guint16* k_collection = NULL;
+		gint k_collection_length1 = 0;
+		gint _k_collection_size_ = 0;
+		gint k_it = 0;
+		k_collection = YRCD_YRCD_CONSTANTS_listen_ports;
+		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports);
+		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports); k_it = k_it + 1) {
+			guint16 k = 0U;
+			k = k_collection[k_it];
+			{
+				guint16 _tmp5_ = 0U;
+				_tmp5_ = k;
+				yrcd_yrcd_server_add_port (self, _tmp5_);
+			}
+		}
+	}
+	_tmp6_ = self->priv->ss;
+	g_signal_connect_object (_tmp6_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
+	_tmp7_ = self->priv->ss;
+	g_socket_service_start (_tmp7_);
+	_tmp8_ = self->priv->loop;
+	g_main_loop_run (_tmp8_);
+	return self;
+}
+
+
+yrcdyrcd_server* yrcd_yrcd_server_new (void) {
+	return yrcd_yrcd_server_construct (YRCD_TYPE_YRCD_SERVER);
 }
 
 
@@ -393,18 +431,6 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 	}
 	g_object_unref (_data_->_async_result);
 	return FALSE;
-}
-
-
-yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type) {
-	yrcdyrcd_server * self = NULL;
-	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
-	return self;
-}
-
-
-yrcdyrcd_server* yrcd_yrcd_server_new (void) {
-	return yrcd_yrcd_server_construct (YRCD_TYPE_YRCD_SERVER);
 }
 
 
