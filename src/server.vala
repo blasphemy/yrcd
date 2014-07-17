@@ -2,7 +2,6 @@ namespace yrcd {
   class yrcd_server : Object {
     private SocketService ss = new SocketService();
     private MainLoop loop = new MainLoop();
-    private yrcd_user[] userlist = new yrcd_user[1];
     private yrcd_router router = new yrcd_router();
     private int user_counter = 0;
     public int new_userid() {
@@ -29,8 +28,6 @@ namespace yrcd {
     private bool on_connection (SocketConnection conn) {
       log("Connection received, routing to process_request.");
       yrcd_user user  = new yrcd_user(conn, this);
-      userlist += user;
-      log("User added to list - total count %d".printf(userlist.length));
       process_request.begin(user);
       return true;
     }
