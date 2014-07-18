@@ -66,6 +66,7 @@ gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 gchar* yrcd_yrcd_router_strip_end (yrcdyrcd_router* self, const gchar* msg);
 gchar** yrcd_yrcd_router_tokenize (yrcdyrcd_router* self, const gchar* msg, int* result_length1);
+void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
 yrcdyrcd_router* yrcd_yrcd_router_new (void);
@@ -86,24 +87,9 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 	gchar** _tmp14_ = NULL;
 	gint args_length1 = 0;
 	gint _args_size_ = 0;
-	yrcdyrcd_user* _tmp15_ = NULL;
-	yrcdyrcd_server* _tmp16_ = NULL;
-	yrcdyrcd_server* _tmp17_ = NULL;
-	yrcdyrcd_user* _tmp18_ = NULL;
-	gint _tmp19_ = 0;
-	gint _tmp20_ = 0;
-	const gchar* _tmp21_ = NULL;
-	gchar* _tmp22_ = NULL;
-	gchar* _tmp23_ = NULL;
-	gchar** _tmp24_ = NULL;
-	gint _tmp24__length1 = 0;
-	const gchar* _tmp25_ = NULL;
-	gchar* _tmp26_ = NULL;
-	gchar* _tmp27_ = NULL;
-	GQuark _tmp29_ = 0U;
-	static GQuark _tmp28_label0 = 0;
-	static GQuark _tmp28_label1 = 0;
-	static GQuark _tmp28_label2 = 0;
+	gchar** _tmp15_ = NULL;
+	gint _tmp15__length1 = 0;
+	const gchar* _tmp16_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (user != NULL);
 	_tmp0_ = msg;
@@ -139,67 +125,93 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 	args = _tmp14_;
 	args_length1 = _tmp13_;
 	_args_size_ = args_length1;
-	_tmp15_ = user;
-	_tmp16_ = yrcd_yrcd_user_get_server (_tmp15_);
-	_tmp17_ = _tmp16_;
-	_tmp18_ = user;
-	_tmp19_ = yrcd_yrcd_user_get_id (_tmp18_);
-	_tmp20_ = _tmp19_;
-	_tmp21_ = stripped;
-	_tmp22_ = g_strdup_printf ("USER %d: received line %s", _tmp20_, _tmp21_);
-	_tmp23_ = _tmp22_;
-	yrcd_yrcd_server_log (_tmp17_, _tmp23_);
-	_g_free0 (_tmp23_);
-	_tmp24_ = args;
-	_tmp24__length1 = args_length1;
-	_tmp25_ = _tmp24_[0];
-	_tmp26_ = g_utf8_strdown (_tmp25_, (gssize) (-1));
-	_tmp27_ = _tmp26_;
-	_tmp29_ = (NULL == _tmp27_) ? 0 : g_quark_from_string (_tmp27_);
-	g_free (_tmp27_);
-	if (_tmp29_ == ((0 != _tmp28_label0) ? _tmp28_label0 : (_tmp28_label0 = g_quark_from_static_string ("quit")))) {
-		switch (0) {
-			default:
-			{
-				yrcdyrcd_user* _tmp30_ = NULL;
-				yrcdyrcd_server* _tmp31_ = NULL;
-				yrcdyrcd_server* _tmp32_ = NULL;
-				yrcdyrcd_user* _tmp33_ = NULL;
-				_tmp30_ = user;
-				_tmp31_ = yrcd_yrcd_user_get_server (_tmp30_);
-				_tmp32_ = _tmp31_;
-				yrcd_yrcd_server_log (_tmp32_, "Received QUIT");
-				_tmp33_ = user;
-				yrcd_yrcd_user_quit (_tmp33_, NULL);
-				break;
+	_tmp15_ = args;
+	_tmp15__length1 = args_length1;
+	_tmp16_ = _tmp15_[0];
+	if (_tmp16_ != NULL) {
+		yrcdyrcd_user* _tmp17_ = NULL;
+		yrcdyrcd_server* _tmp18_ = NULL;
+		yrcdyrcd_server* _tmp19_ = NULL;
+		yrcdyrcd_user* _tmp20_ = NULL;
+		gint _tmp21_ = 0;
+		gint _tmp22_ = 0;
+		const gchar* _tmp23_ = NULL;
+		gchar* _tmp24_ = NULL;
+		gchar* _tmp25_ = NULL;
+		yrcdyrcd_user* _tmp26_ = NULL;
+		gchar** _tmp27_ = NULL;
+		gint _tmp27__length1 = 0;
+		const gchar* _tmp28_ = NULL;
+		gchar* _tmp29_ = NULL;
+		gchar* _tmp30_ = NULL;
+		GQuark _tmp32_ = 0U;
+		static GQuark _tmp31_label0 = 0;
+		static GQuark _tmp31_label1 = 0;
+		static GQuark _tmp31_label2 = 0;
+		_tmp17_ = user;
+		_tmp18_ = yrcd_yrcd_user_get_server (_tmp17_);
+		_tmp19_ = _tmp18_;
+		_tmp20_ = user;
+		_tmp21_ = yrcd_yrcd_user_get_id (_tmp20_);
+		_tmp22_ = _tmp21_;
+		_tmp23_ = stripped;
+		_tmp24_ = g_strdup_printf ("USER %d: received line %s", _tmp22_, _tmp23_);
+		_tmp25_ = _tmp24_;
+		yrcd_yrcd_server_log (_tmp19_, _tmp25_);
+		_g_free0 (_tmp25_);
+		_tmp26_ = user;
+		yrcd_yrcd_user_update_timestamp (_tmp26_);
+		_tmp27_ = args;
+		_tmp27__length1 = args_length1;
+		_tmp28_ = _tmp27_[0];
+		_tmp29_ = g_utf8_strdown (_tmp28_, (gssize) (-1));
+		_tmp30_ = _tmp29_;
+		_tmp32_ = (NULL == _tmp30_) ? 0 : g_quark_from_string (_tmp30_);
+		g_free (_tmp30_);
+		if (_tmp32_ == ((0 != _tmp31_label0) ? _tmp31_label0 : (_tmp31_label0 = g_quark_from_static_string ("quit")))) {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp33_ = NULL;
+					yrcdyrcd_server* _tmp34_ = NULL;
+					yrcdyrcd_server* _tmp35_ = NULL;
+					yrcdyrcd_user* _tmp36_ = NULL;
+					_tmp33_ = user;
+					_tmp34_ = yrcd_yrcd_user_get_server (_tmp33_);
+					_tmp35_ = _tmp34_;
+					yrcd_yrcd_server_log (_tmp35_, "Received QUIT");
+					_tmp36_ = user;
+					yrcd_yrcd_user_quit (_tmp36_, NULL);
+					break;
+				}
 			}
-		}
-	} else if (_tmp29_ == ((0 != _tmp28_label1) ? _tmp28_label1 : (_tmp28_label1 = g_quark_from_static_string ("nick")))) {
-		switch (0) {
-			default:
-			{
-				yrcdyrcd_user* _tmp34_ = NULL;
-				gchar** _tmp35_ = NULL;
-				gint _tmp35__length1 = 0;
-				_tmp34_ = user;
-				_tmp35_ = args;
-				_tmp35__length1 = args_length1;
-				yrcd_yrcd_user_change_nick (_tmp34_, _tmp35_, _tmp35__length1);
-				break;
+		} else if (_tmp32_ == ((0 != _tmp31_label1) ? _tmp31_label1 : (_tmp31_label1 = g_quark_from_static_string ("nick")))) {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp37_ = NULL;
+					gchar** _tmp38_ = NULL;
+					gint _tmp38__length1 = 0;
+					_tmp37_ = user;
+					_tmp38_ = args;
+					_tmp38__length1 = args_length1;
+					yrcd_yrcd_user_change_nick (_tmp37_, _tmp38_, _tmp38__length1);
+					break;
+				}
 			}
-		}
-	} else if (_tmp29_ == ((0 != _tmp28_label2) ? _tmp28_label2 : (_tmp28_label2 = g_quark_from_static_string ("user")))) {
-		switch (0) {
-			default:
-			{
-				yrcdyrcd_user* _tmp36_ = NULL;
-				gchar** _tmp37_ = NULL;
-				gint _tmp37__length1 = 0;
-				_tmp36_ = user;
-				_tmp37_ = args;
-				_tmp37__length1 = args_length1;
-				yrcd_yrcd_user_user_reg (_tmp36_, _tmp37_, _tmp37__length1);
-				break;
+		} else if (_tmp32_ == ((0 != _tmp31_label2) ? _tmp31_label2 : (_tmp31_label2 = g_quark_from_static_string ("user")))) {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp39_ = NULL;
+					gchar** _tmp40_ = NULL;
+					gint _tmp40__length1 = 0;
+					_tmp39_ = user;
+					_tmp40_ = args;
+					_tmp40__length1 = args_length1;
+					yrcd_yrcd_user_user_reg (_tmp39_, _tmp40_, _tmp40__length1);
+					break;
+				}
 			}
 		}
 	}

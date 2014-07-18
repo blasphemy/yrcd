@@ -32,6 +32,7 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
+#define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 
 struct _yrcdyrcd_user {
 	GObject parent_instance;
@@ -48,6 +49,7 @@ struct _yrcdyrcd_userPrivate {
 	GDataOutputStream* _dos;
 	yrcdyrcd_server* _server;
 	gint _id;
+	gint64 time_last_rcv;
 	gchar* _nick;
 	gchar* _ident;
 	gchar* _realname;
@@ -102,6 +104,7 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
+void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
@@ -355,6 +358,19 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	_tmp4_ = _tmp3_;
 	yrcd_yrcd_server_log (_tmp0_, _tmp4_);
 	_g_free0 (_tmp4_);
+}
+
+
+void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self) {
+	GDateTime* _tmp0_ = NULL;
+	GDateTime* _tmp1_ = NULL;
+	gint64 _tmp2_ = 0LL;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = g_date_time_new_now_utc ();
+	_tmp1_ = _tmp0_;
+	_tmp2_ = g_date_time_to_unix (_tmp1_);
+	self->priv->time_last_rcv = _tmp2_;
+	_g_date_time_unref0 (_tmp1_);
 }
 
 
