@@ -10,19 +10,21 @@ namespace yrcd {
       }
       string stripped = strip_end(msg);
       string[] args = tokenize(stripped);
-      user.server.log("USER %d: received line %s".printf(user.id,stripped));
-      user.update_timestamp();
-      switch (args[0].down()) {
-        case "quit" :
-          user.server.log("Received QUIT");
-          user.quit(null);
-          break;
-        case "nick" :
-          user.change_nick(args);
-          break;
-        case "user" :
-          user.user_reg(args);
-          break;
+      if (args[0] != null) {
+        user.server.log("USER %d: received line %s".printf(user.id,stripped));
+        user.update_timestamp();
+        switch (args[0].down()) {
+          case "quit" :
+            user.server.log("Received QUIT");
+            user.quit(null);
+            break;
+          case "nick" :
+            user.change_nick(args);
+            break;
+          case "user" :
+            user.user_reg(args);
+            break;
+        }
       }
     }
     public string strip_end (string msg) {
