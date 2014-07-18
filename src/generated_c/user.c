@@ -34,12 +34,14 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
+#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
 struct _yrcdyrcd_user {
 	GObject parent_instance;
 	yrcdyrcd_userPrivate * priv;
 	gint64 epoch;
 	gchar* ip;
+	gchar* host;
 };
 
 struct _yrcdyrcd_userClass {
@@ -92,6 +94,7 @@ void yrcd_yrcd_user_set_dos (yrcdyrcd_user* self, GDataOutputStream* value);
 yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
+gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
@@ -108,9 +111,10 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
-const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
+const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
@@ -139,11 +143,12 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	GDateTime* _tmp15_ = NULL;
 	GDateTime* _tmp16_ = NULL;
 	gint64 _tmp17_ = 0LL;
-	yrcdyrcd_server* _tmp18_ = NULL;
-	const gchar* _tmp19_ = NULL;
-	gint _tmp20_ = 0;
-	gchar* _tmp21_ = NULL;
+	gchar* _tmp18_ = NULL;
+	yrcdyrcd_server* _tmp19_ = NULL;
+	const gchar* _tmp20_ = NULL;
+	gint _tmp21_ = 0;
 	gchar* _tmp22_ = NULL;
+	gchar* _tmp23_ = NULL;
 	g_return_val_if_fail (conn != NULL, NULL);
 	g_return_val_if_fail (_server != NULL, NULL);
 	self = (yrcdyrcd_user*) g_object_new (object_type, NULL);
@@ -176,13 +181,16 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	_tmp17_ = g_date_time_to_unix (_tmp16_);
 	self->epoch = _tmp17_;
 	_g_date_time_unref0 (_tmp16_);
-	_tmp18_ = self->priv->_server;
-	_tmp19_ = self->ip;
-	_tmp20_ = self->priv->_id;
-	_tmp21_ = g_strdup_printf ("User connected from %s with ID %d", _tmp19_, _tmp20_);
-	_tmp22_ = _tmp21_;
-	yrcd_yrcd_server_log (_tmp18_, _tmp22_);
-	_g_free0 (_tmp22_);
+	_tmp18_ = yrcd_yrcd_user_get_host (self);
+	_g_free0 (self->host);
+	self->host = _tmp18_;
+	_tmp19_ = self->priv->_server;
+	_tmp20_ = self->host;
+	_tmp21_ = self->priv->_id;
+	_tmp22_ = g_strdup_printf ("User connected from %s with ID %d", _tmp20_, _tmp21_);
+	_tmp23_ = _tmp22_;
+	yrcd_yrcd_server_log (_tmp19_, _tmp23_);
+	_g_free0 (_tmp23_);
 	return self;
 }
 
@@ -527,8 +535,8 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	yrcdyrcd_server* _tmp0_ = NULL;
 	gint _tmp1_ = 0;
-	const gchar* _tmp2_ = NULL;
-	const gchar* _tmp3_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
 	const gchar* _tmp4_ = NULL;
 	gchar* _tmp5_ = NULL;
 	gchar* _tmp6_ = NULL;
@@ -536,13 +544,14 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	yrcd_yrcd_user_set_reg_complete (self, TRUE);
 	_tmp0_ = self->priv->_server;
 	_tmp1_ = self->priv->_id;
-	_tmp2_ = self->priv->_nick;
-	_tmp3_ = self->priv->_ident;
+	_tmp2_ = yrcd_yrcd_user_get_hostmask (self);
+	_tmp3_ = _tmp2_;
 	_tmp4_ = self->priv->_realname;
-	_tmp5_ = g_strdup_printf ("User %d finished registration with nick %s, ident %s, realname %s", _tmp1_, _tmp2_, _tmp3_, _tmp4_);
+	_tmp5_ = g_strdup_printf ("User %d finished registration with mask %s and realname %s", _tmp1_, _tmp3_, _tmp4_);
 	_tmp6_ = _tmp5_;
 	yrcd_yrcd_server_log (_tmp0_, _tmp6_);
 	_g_free0 (_tmp6_);
+	_g_free0 (_tmp3_);
 }
 
 
@@ -556,6 +565,96 @@ void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self) {
 	_tmp2_ = g_date_time_to_unix (_tmp1_);
 	self->priv->time_last_rcv = _tmp2_;
 	_g_date_time_unref0 (_tmp1_);
+}
+
+
+gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self) {
+	gchar* result = NULL;
+	GString* builder = NULL;
+	GString* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	const gchar* _tmp2_ = NULL;
+	const gchar* _tmp3_ = NULL;
+	const gchar* _tmp4_ = NULL;
+	gchar* _tmp5_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = g_string_new ("");
+	builder = _tmp0_;
+	_tmp1_ = self->priv->_nick;
+	g_string_append (builder, _tmp1_);
+	g_string_append (builder, "!");
+	_tmp2_ = self->priv->_ident;
+	g_string_append (builder, _tmp2_);
+	g_string_append (builder, "@");
+	_tmp3_ = self->host;
+	g_string_append (builder, _tmp3_);
+	_tmp4_ = builder->str;
+	_tmp5_ = g_strdup (_tmp4_);
+	result = _tmp5_;
+	_g_string_free0 (builder);
+	return result;
+}
+
+
+gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self) {
+	gchar* result = NULL;
+	GError * _inner_error_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	{
+		GInetAddress* address = NULL;
+		const gchar* _tmp0_ = NULL;
+		GInetAddress* _tmp1_ = NULL;
+		GResolver* resolver = NULL;
+		GResolver* _tmp2_ = NULL;
+		gchar* hostname = NULL;
+		gchar* _tmp3_ = NULL;
+		_tmp0_ = self->ip;
+		_tmp1_ = g_inet_address_new_from_string (_tmp0_);
+		address = _tmp1_;
+		_tmp2_ = g_resolver_get_default ();
+		resolver = _tmp2_;
+		_tmp3_ = g_resolver_lookup_by_address (resolver, address, NULL, &_inner_error_);
+		hostname = _tmp3_;
+		if (_inner_error_ != NULL) {
+			_g_object_unref0 (resolver);
+			_g_object_unref0 (address);
+			goto __catch5_g_error;
+		}
+		result = hostname;
+		_g_object_unref0 (resolver);
+		_g_object_unref0 (address);
+		return result;
+	}
+	goto __finally5;
+	__catch5_g_error:
+	{
+		GError* e = NULL;
+		yrcdyrcd_server* _tmp4_ = NULL;
+		gint _tmp5_ = 0;
+		const gchar* _tmp6_ = NULL;
+		gchar* _tmp7_ = NULL;
+		gchar* _tmp8_ = NULL;
+		const gchar* _tmp9_ = NULL;
+		gchar* _tmp10_ = NULL;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		_tmp4_ = self->priv->_server;
+		_tmp5_ = self->priv->_id;
+		_tmp6_ = self->ip;
+		_tmp7_ = g_strdup_printf ("Error resolving user %d IP %s", _tmp5_, _tmp6_);
+		_tmp8_ = _tmp7_;
+		yrcd_yrcd_server_log (_tmp4_, _tmp8_);
+		_g_free0 (_tmp8_);
+		_tmp9_ = self->ip;
+		_tmp10_ = g_strdup (_tmp9_);
+		result = _tmp10_;
+		_g_error_free0 (e);
+		return result;
+	}
+	__finally5:
+	g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+	g_clear_error (&_inner_error_);
+	return NULL;
 }
 
 
@@ -830,6 +929,7 @@ static void yrcd_yrcd_user_finalize (GObject* obj) {
 	_g_free0 (self->priv->_ident);
 	_g_free0 (self->priv->_realname);
 	_g_free0 (self->ip);
+	_g_free0 (self->host);
 	G_OBJECT_CLASS (yrcd_yrcd_user_parent_class)->finalize (obj);
 }
 
