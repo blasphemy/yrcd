@@ -6,6 +6,7 @@ namespace yrcd {
     public yrcd_server server { get; set; }
     public int id { get; set; }
     private int64 time_last_rcv;
+    public int64 epoch;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
@@ -19,6 +20,7 @@ namespace yrcd {
       dis = new DataInputStream(sock.input_stream);
       dos = new DataOutputStream(sock.output_stream);
       id = server.new_userid();
+      epoch = new DateTime.now_utc().to_unix();
       server.log("User registered with ID %d".printf(id));
     }
     public void quit (string? msg) {

@@ -7,6 +7,7 @@ namespace yrcd {
     private yrcd_router router = new yrcd_router();
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
+    public int64 epoch;
     public int new_userid() {
       user_counter++;
       return user_counter;
@@ -16,6 +17,7 @@ namespace yrcd {
     } 
     public yrcd_server () {
       log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
+      epoch = new DateTime.now_utc().to_unix();
       add_listeners();
       ss.incoming.connect(on_connection);
       ss.start();
