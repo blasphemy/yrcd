@@ -82,13 +82,8 @@ namespace yrcd {
       time_last_rcv = new DateTime.now_utc().to_unix();
     }
     public string get_hostmask() {
-      var builder = new StringBuilder();
-      builder.append(nick);
-      builder.append("!");
-      builder.append(ident);
-      builder.append("@");
-      builder.append(host);
-      return builder.str;
+      string hm = nick + "!" + ident + "@" + host;
+      return hm;
     }
     public string get_host() {
       try {
