@@ -8,6 +8,7 @@ namespace yrcd {
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
     public int64 epoch;
+    public int max_users = 0;
     public int new_userid() {
       user_counter++;
       return user_counter;
@@ -45,6 +46,11 @@ namespace yrcd {
       log("Connection received, routing to process_request.");
       yrcd_user user  = new yrcd_user(conn, this);
       userlist[user.id] = user;
+      int users = userlist.size;
+      if (users > max_users) {
+        max_users = users;
+        log("New max amount of users: %d".printf(max_users));
+      }
       process_request.begin(user);
       return true;
     }
