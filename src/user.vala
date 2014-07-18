@@ -48,7 +48,10 @@ namespace yrcd {
     public void user_reg (string[] args) {
       if (!user_set) {
         ident = args[1];
-        realname = args[2];
+        if (args[4].has_prefix(":")) {
+          args[4] = args[4].replace(":","");
+        }
+        realname = args[4];
         if (nick_set) {
           reg_finished();
         }
@@ -58,7 +61,7 @@ namespace yrcd {
     }
     public void reg_finished () {
       reg_complete = true;
-      server.log("User %d finished registration with nick %s".printf(id,nick));
+      server.log("User %d finished registration with nick %s, ident %s, realname %s".printf(id,nick,ident,realname));
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc().to_unix();
