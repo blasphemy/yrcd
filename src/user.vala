@@ -14,6 +14,7 @@ namespace yrcd {
     public bool user_set { get; set; }
     public bool reg_complete { get; set; }
     public string ip;
+    public string host;
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
       sock = conn;
       server = _server;
@@ -22,7 +23,8 @@ namespace yrcd {
       dos = new DataOutputStream(sock.output_stream);
       id = server.new_userid();
       epoch = new DateTime.now_utc().to_unix();
-      server.log("User connected from %s with ID %d".printf(ip,id));
+      host = get_host();
+      server.log("User connected from %s with ID %d".printf(host,id));
     }
     public string get_ip () {
       try { 
@@ -85,8 +87,19 @@ namespace yrcd {
       builder.append("!");
       builder.append(ident);
       builder.append("@");
-      builder.append(ip);
+      builder.append(host);
       return builder.str;
+    }
+    public string get_host() {
+      try {
+        InetAddress address = new InetAddress.from_string(ip);
+        Resolver resolver = Resolver.get_default();
+        string hostname = resolver.lookup_by_address(address,null);
+        return hostname;
+      } catch (Error e) {
+        server.log("Error resolving user %d IP %s".printf(id,ip));
+        return ip;
+      }
     }
   }
 }
