@@ -31,7 +31,7 @@ namespace yrcd {
       var builder = new StringBuilder ();
       builder.append(msg);
       builder.truncate(builder.len - 1);
-      return builder.str;  
+      return builder.str;
     }
     public string[] tokenize (string msg) {
       return msg.split(" ");
