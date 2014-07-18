@@ -4,9 +4,9 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include <gio/gio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gio/gio.h>
 
 
 #define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
@@ -39,6 +39,7 @@ struct _yrcdyrcd_user {
 	GObject parent_instance;
 	yrcdyrcd_userPrivate * priv;
 	gint64 epoch;
+	gchar* ip;
 };
 
 struct _yrcdyrcd_userClass {
@@ -84,13 +85,14 @@ yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _se
 yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server);
 void yrcd_yrcd_user_set_sock (yrcdyrcd_user* self, GSocketConnection* value);
 void yrcd_yrcd_user_set_server (yrcdyrcd_user* self, yrcdyrcd_server* value);
-yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self);
-void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
+gchar* yrcd_yrcd_user_get_ip (yrcdyrcd_user* self);
 GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_dis (yrcdyrcd_user* self, GDataInputStream* value);
 void yrcd_yrcd_user_set_dos (yrcdyrcd_user* self, GDataOutputStream* value);
+yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
+void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
@@ -121,7 +123,7 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	yrcdyrcd_user * self = NULL;
 	GSocketConnection* _tmp0_ = NULL;
 	yrcdyrcd_server* _tmp1_ = NULL;
-	yrcdyrcd_server* _tmp2_ = NULL;
+	gchar* _tmp2_ = NULL;
 	GSocketConnection* _tmp3_ = NULL;
 	GInputStream* _tmp4_ = NULL;
 	GInputStream* _tmp5_ = NULL;
@@ -138,9 +140,10 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	GDateTime* _tmp16_ = NULL;
 	gint64 _tmp17_ = 0LL;
 	yrcdyrcd_server* _tmp18_ = NULL;
-	gint _tmp19_ = 0;
-	gchar* _tmp20_ = NULL;
+	const gchar* _tmp19_ = NULL;
+	gint _tmp20_ = 0;
 	gchar* _tmp21_ = NULL;
+	gchar* _tmp22_ = NULL;
 	g_return_val_if_fail (conn != NULL, NULL);
 	g_return_val_if_fail (_server != NULL, NULL);
 	self = (yrcdyrcd_user*) g_object_new (object_type, NULL);
@@ -148,8 +151,9 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	yrcd_yrcd_user_set_sock (self, _tmp0_);
 	_tmp1_ = _server;
 	yrcd_yrcd_user_set_server (self, _tmp1_);
-	_tmp2_ = self->priv->_server;
-	yrcd_yrcd_server_log (_tmp2_, "User constructor called, opening data streams");
+	_tmp2_ = yrcd_yrcd_user_get_ip (self);
+	_g_free0 (self->ip);
+	self->ip = _tmp2_;
 	_tmp3_ = self->priv->_sock;
 	_tmp4_ = g_io_stream_get_input_stream ((GIOStream*) _tmp3_);
 	_tmp5_ = _tmp4_;
@@ -173,17 +177,86 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	self->epoch = _tmp17_;
 	_g_date_time_unref0 (_tmp16_);
 	_tmp18_ = self->priv->_server;
-	_tmp19_ = self->priv->_id;
-	_tmp20_ = g_strdup_printf ("User registered with ID %d", _tmp19_);
-	_tmp21_ = _tmp20_;
-	yrcd_yrcd_server_log (_tmp18_, _tmp21_);
-	_g_free0 (_tmp21_);
+	_tmp19_ = self->ip;
+	_tmp20_ = self->priv->_id;
+	_tmp21_ = g_strdup_printf ("User connected from %s with ID %d", _tmp19_, _tmp20_);
+	_tmp22_ = _tmp21_;
+	yrcd_yrcd_server_log (_tmp18_, _tmp22_);
+	_g_free0 (_tmp22_);
 	return self;
 }
 
 
 yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server) {
 	return yrcd_yrcd_user_construct (YRCD_TYPE_YRCD_USER, conn, _server);
+}
+
+
+gchar* yrcd_yrcd_user_get_ip (yrcdyrcd_user* self) {
+	gchar* result = NULL;
+	GError * _inner_error_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	{
+		GSocketAddress* _tmp0_ = NULL;
+		GSocketConnection* _tmp1_ = NULL;
+		GSocketAddress* _tmp2_ = NULL;
+		GInetSocketAddress* inetsockaddr = NULL;
+		GSocketAddress* _tmp3_ = NULL;
+		GInetSocketAddress* _tmp4_ = NULL;
+		gchar* ip = NULL;
+		GInetSocketAddress* _tmp5_ = NULL;
+		GInetAddress* _tmp6_ = NULL;
+		gchar* _tmp7_ = NULL;
+		_tmp1_ = self->priv->_sock;
+		_tmp2_ = g_socket_connection_get_remote_address (_tmp1_, &_inner_error_);
+		_tmp0_ = _tmp2_;
+		if (_inner_error_ != NULL) {
+			goto __catch2_g_error;
+		}
+		_tmp3_ = _tmp0_;
+		_tmp0_ = NULL;
+		_tmp4_ = G_TYPE_CHECK_INSTANCE_TYPE (_tmp3_, g_inet_socket_address_get_type ()) ? ((GInetSocketAddress*) _tmp3_) : NULL;
+		if (_tmp4_ == NULL) {
+			_g_object_unref0 (_tmp3_);
+		}
+		inetsockaddr = _tmp4_;
+		_tmp5_ = inetsockaddr;
+		_tmp6_ = g_inet_socket_address_get_address (_tmp5_);
+		_tmp7_ = g_inet_address_to_string (_tmp6_);
+		ip = _tmp7_;
+		result = ip;
+		_g_object_unref0 (inetsockaddr);
+		_g_object_unref0 (_tmp0_);
+		return result;
+	}
+	goto __finally2;
+	__catch2_g_error:
+	{
+		GError* e = NULL;
+		yrcdyrcd_server* _tmp8_ = NULL;
+		GError* _tmp9_ = NULL;
+		const gchar* _tmp10_ = NULL;
+		gchar* _tmp11_ = NULL;
+		gchar* _tmp12_ = NULL;
+		gchar* _tmp13_ = NULL;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		_tmp8_ = self->priv->_server;
+		_tmp9_ = e;
+		_tmp10_ = _tmp9_->message;
+		_tmp11_ = g_strdup_printf ("Error getting user ip: %s", _tmp10_);
+		_tmp12_ = _tmp11_;
+		yrcd_yrcd_server_log (_tmp8_, _tmp12_);
+		_g_free0 (_tmp12_);
+		_tmp13_ = g_strdup ("unknown");
+		result = _tmp13_;
+		_g_error_free0 (e);
+		return result;
+	}
+	__finally2:
+	g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+	g_clear_error (&_inner_error_);
+	return NULL;
 }
 
 
@@ -199,14 +272,14 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		_tmp1_ = g_socket_connection_get_socket (_tmp0_);
 		g_socket_close (_tmp1_, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch2_g_error;
+			goto __catch3_g_error;
 		}
 		_tmp2_ = self->priv->_server;
 		_tmp3_ = self->priv->_id;
 		yrcd_yrcd_server_remove_user (_tmp2_, _tmp3_);
 	}
-	goto __finally2;
-	__catch2_g_error:
+	goto __finally3;
+	__catch3_g_error:
 	{
 		GError* e = NULL;
 		yrcdyrcd_server* _tmp4_ = NULL;
@@ -225,7 +298,7 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		_g_free0 (_tmp8_);
 		_g_error_free0 (e);
 	}
-	__finally2:
+	__finally3:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -341,7 +414,7 @@ static gchar* string_replace (const gchar* self, const gchar* old, const gchar* 
 		regex = _tmp4_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == G_REGEX_ERROR) {
-				goto __catch3_g_regex_error;
+				goto __catch4_g_regex_error;
 			}
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -354,7 +427,7 @@ static gchar* string_replace (const gchar* self, const gchar* old, const gchar* 
 		if (_inner_error_ != NULL) {
 			_g_regex_unref0 (regex);
 			if (_inner_error_->domain == G_REGEX_ERROR) {
-				goto __catch3_g_regex_error;
+				goto __catch4_g_regex_error;
 			}
 			_g_regex_unref0 (regex);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -368,8 +441,8 @@ static gchar* string_replace (const gchar* self, const gchar* old, const gchar* 
 		_g_regex_unref0 (regex);
 		return result;
 	}
-	goto __finally3;
-	__catch3_g_regex_error:
+	goto __finally4;
+	__catch4_g_regex_error:
 	{
 		GError* e = NULL;
 		e = _inner_error_;
@@ -377,7 +450,7 @@ static gchar* string_replace (const gchar* self, const gchar* old, const gchar* 
 		g_assert_not_reached ();
 		_g_error_free0 (e);
 	}
-	__finally3:
+	__finally4:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -756,6 +829,7 @@ static void yrcd_yrcd_user_finalize (GObject* obj) {
 	_g_free0 (self->priv->_nick);
 	_g_free0 (self->priv->_ident);
 	_g_free0 (self->priv->_realname);
+	_g_free0 (self->ip);
 	G_OBJECT_CLASS (yrcd_yrcd_user_parent_class)->finalize (obj);
 }
 
