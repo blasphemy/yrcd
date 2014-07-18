@@ -13,15 +13,29 @@ namespace yrcd {
     public bool nick_set { get; set; }
     public bool user_set { get; set; }
     public bool reg_complete { get; set; }
+    public string ip;
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
       sock = conn;
       server = _server;
-      server.log("User constructor called, opening data streams");
+      ip = get_ip();
       dis = new DataInputStream(sock.input_stream);
       dos = new DataOutputStream(sock.output_stream);
       id = server.new_userid();
       epoch = new DateTime.now_utc().to_unix();
-      server.log("User registered with ID %d".printf(id));
+      server.log("User connected from %s with ID %d".printf(ip,id));
+    }
+    public string get_ip () {
+      //SocketAddress sockaddr = sock.get_remote_address();
+      //InetAddress inetaddr = sock.get_remote_address() as ;
+      //InetSocketAddress k = socketconnection.get_remote_address as InetSocketAddress; ip = k.get_address.to_string
+      try { 
+        InetSocketAddress inetsockaddr = sock.get_remote_address() as InetSocketAddress;
+        string ip = inetsockaddr.get_address().to_string();
+        return ip;
+      } catch (Error e) {
+        server.log("Error getting user ip: %s".printf(e.message));
+        return "unknown";
+      }
     }
     public void quit (string? msg) {
       try {
