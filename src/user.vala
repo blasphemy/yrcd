@@ -111,5 +111,12 @@ namespace yrcd {
         return ip;
       }
     }
+    public void send_line(string msg) {
+      try {
+        dos.put_string("%s\n");
+      } catch (Error e) {
+        server.log("Error sending message to UID %d : %s".printf(id,e.message));
+      }
+    }
   }
 }
