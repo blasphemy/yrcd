@@ -74,10 +74,19 @@ namespace yrcd {
     }
     public void reg_finished () {
       reg_complete = true;
-      server.log("User %d finished registration with nick %s, ident %s, realname %s".printf(id,nick,ident,realname));
+      server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc().to_unix();
+    }
+    public string get_hostmask() {
+      var builder = new StringBuilder();
+      builder.append(nick);
+      builder.append("!");
+      builder.append(ident);
+      builder.append("@");
+      builder.append(ip);
+      return builder.str;
     }
   }
 }
