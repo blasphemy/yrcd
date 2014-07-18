@@ -92,10 +92,19 @@ namespace yrcd {
     }
     public string get_host() {
       try {
-        //note check for liars
         InetAddress address = new InetAddress.from_string(ip);
         Resolver resolver = Resolver.get_default();
         string hostname = resolver.lookup_by_address(address,null);
+        List<InetAddress> addresses = resolver.lookup_by_name(hostname);
+        bool match = false;
+        foreach (var k in addresses) {
+          if (k.to_string() == ip) {
+            match = true;
+          }
+        }
+        if (!match) {
+          hostname = ip;
+        }
         return hostname;
       } catch (Error e) {
         server.log("Error resolving user %d IP %s".printf(id,ip));
