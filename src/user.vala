@@ -25,9 +25,6 @@ namespace yrcd {
       server.log("User connected from %s with ID %d".printf(ip,id));
     }
     public string get_ip () {
-      //SocketAddress sockaddr = sock.get_remote_address();
-      //InetAddress inetaddr = sock.get_remote_address() as ;
-      //InetSocketAddress k = socketconnection.get_remote_address as InetSocketAddress; ip = k.get_address.to_string
       try { 
         InetSocketAddress inetsockaddr = sock.get_remote_address() as InetSocketAddress;
         string ip = inetsockaddr.get_address().to_string();
