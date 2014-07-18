@@ -44,12 +44,15 @@ typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_main_loop_unref0(var) ((var == NULL) ? NULL : (var = (g_main_loop_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
+#define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 typedef struct _YrcdYrcdServerProcessRequestData YrcdYrcdServerProcessRequestData;
 
 struct _yrcdyrcd_server {
 	GObject parent_instance;
 	yrcdyrcd_serverPrivate * priv;
+	gint64 epoch;
+	gint max_users;
 };
 
 struct _yrcdyrcd_serverClass {
@@ -164,21 +167,29 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type) {
 	yrcdyrcd_server * self = NULL;
 	gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
-	GSocketService* _tmp2_ = NULL;
-	GSocketService* _tmp3_ = NULL;
-	GMainLoop* _tmp4_ = NULL;
+	GDateTime* _tmp2_ = NULL;
+	GDateTime* _tmp3_ = NULL;
+	gint64 _tmp4_ = 0LL;
+	GSocketService* _tmp5_ = NULL;
+	GSocketService* _tmp6_ = NULL;
+	GMainLoop* _tmp7_ = NULL;
 	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
 	_tmp0_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
 	_tmp1_ = _tmp0_;
 	yrcd_yrcd_server_log (self, _tmp1_);
 	_g_free0 (_tmp1_);
+	_tmp2_ = g_date_time_new_now_utc ();
+	_tmp3_ = _tmp2_;
+	_tmp4_ = g_date_time_to_unix (_tmp3_);
+	self->epoch = _tmp4_;
+	_g_date_time_unref0 (_tmp3_);
 	yrcd_yrcd_server_add_listeners (self);
-	_tmp2_ = self->priv->ss;
-	g_signal_connect_object (_tmp2_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
-	_tmp3_ = self->priv->ss;
-	g_socket_service_start (_tmp3_);
-	_tmp4_ = self->priv->loop;
-	g_main_loop_run (_tmp4_);
+	_tmp5_ = self->priv->ss;
+	g_signal_connect_object (_tmp5_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
+	_tmp6_ = self->priv->ss;
+	g_socket_service_start (_tmp6_);
+	_tmp7_ = self->priv->loop;
+	g_main_loop_run (_tmp7_);
 	return self;
 }
 
@@ -309,8 +320,17 @@ static gboolean yrcd_yrcd_server_on_connection (yrcdyrcd_server* self, GSocketCo
 	GSocketConnection* _tmp0_ = NULL;
 	yrcdyrcd_user* _tmp1_ = NULL;
 	GeeHashMap* _tmp2_ = NULL;
-	gint _tmp3_ = 0;
+	yrcdyrcd_user* _tmp3_ = NULL;
 	gint _tmp4_ = 0;
+	gint _tmp5_ = 0;
+	yrcdyrcd_user* _tmp6_ = NULL;
+	gint users = 0;
+	GeeHashMap* _tmp7_ = NULL;
+	gint _tmp8_ = 0;
+	gint _tmp9_ = 0;
+	gint _tmp10_ = 0;
+	gint _tmp11_ = 0;
+	yrcdyrcd_user* _tmp16_ = NULL;
 	g_return_val_if_fail (self != NULL, FALSE);
 	g_return_val_if_fail (conn != NULL, FALSE);
 	yrcd_yrcd_server_log (self, "Connection received, routing to process_request.");
@@ -318,10 +338,32 @@ static gboolean yrcd_yrcd_server_on_connection (yrcdyrcd_server* self, GSocketCo
 	_tmp1_ = yrcd_yrcd_user_new (_tmp0_, self);
 	user = _tmp1_;
 	_tmp2_ = self->priv->userlist;
-	_tmp3_ = yrcd_yrcd_user_get_id (user);
-	_tmp4_ = _tmp3_;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp2_, (gpointer) ((gintptr) _tmp4_), user);
-	yrcd_yrcd_server_process_request (self, user, NULL, NULL);
+	_tmp3_ = user;
+	_tmp4_ = yrcd_yrcd_user_get_id (_tmp3_);
+	_tmp5_ = _tmp4_;
+	_tmp6_ = user;
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp2_, (gpointer) ((gintptr) _tmp5_), _tmp6_);
+	_tmp7_ = self->priv->userlist;
+	_tmp8_ = gee_abstract_map_get_size ((GeeMap*) _tmp7_);
+	_tmp9_ = _tmp8_;
+	users = _tmp9_;
+	_tmp10_ = users;
+	_tmp11_ = self->max_users;
+	if (_tmp10_ > _tmp11_) {
+		gint _tmp12_ = 0;
+		gint _tmp13_ = 0;
+		gchar* _tmp14_ = NULL;
+		gchar* _tmp15_ = NULL;
+		_tmp12_ = users;
+		self->max_users = _tmp12_;
+		_tmp13_ = self->max_users;
+		_tmp14_ = g_strdup_printf ("New max amount of users: %d", _tmp13_);
+		_tmp15_ = _tmp14_;
+		yrcd_yrcd_server_log (self, _tmp15_);
+		_g_free0 (_tmp15_);
+	}
+	_tmp16_ = user;
+	yrcd_yrcd_server_process_request (self, _tmp16_, NULL, NULL);
 	result = TRUE;
 	_g_object_unref0 (user);
 	return result;
@@ -481,6 +523,7 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	_tmp3_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
 	self->priv->userlist = _tmp3_;
 	self->priv->user_counter = 0;
+	self->max_users = 0;
 }
 
 

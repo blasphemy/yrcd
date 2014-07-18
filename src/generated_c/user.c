@@ -31,12 +31,14 @@ typedef struct _yrcdyrcd_server yrcdyrcd_server;
 typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
-#define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
+#define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
+#define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 
 struct _yrcdyrcd_user {
 	GObject parent_instance;
 	yrcdyrcd_userPrivate * priv;
+	gint64 epoch;
 };
 
 struct _yrcdyrcd_userClass {
@@ -104,11 +106,11 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
+const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
-const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
-const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
 static void yrcd_yrcd_user_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
@@ -132,10 +134,13 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	GDataOutputStream* _tmp12_ = NULL;
 	yrcdyrcd_server* _tmp13_ = NULL;
 	gint _tmp14_ = 0;
-	yrcdyrcd_server* _tmp15_ = NULL;
-	gint _tmp16_ = 0;
-	gchar* _tmp17_ = NULL;
-	gchar* _tmp18_ = NULL;
+	GDateTime* _tmp15_ = NULL;
+	GDateTime* _tmp16_ = NULL;
+	gint64 _tmp17_ = 0LL;
+	yrcdyrcd_server* _tmp18_ = NULL;
+	gint _tmp19_ = 0;
+	gchar* _tmp20_ = NULL;
+	gchar* _tmp21_ = NULL;
 	g_return_val_if_fail (conn != NULL, NULL);
 	g_return_val_if_fail (_server != NULL, NULL);
 	self = (yrcdyrcd_user*) g_object_new (object_type, NULL);
@@ -162,12 +167,17 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	_tmp13_ = self->priv->_server;
 	_tmp14_ = yrcd_yrcd_server_new_userid (_tmp13_);
 	yrcd_yrcd_user_set_id (self, _tmp14_);
-	_tmp15_ = self->priv->_server;
-	_tmp16_ = self->priv->_id;
-	_tmp17_ = g_strdup_printf ("User registered with ID %d", _tmp16_);
-	_tmp18_ = _tmp17_;
-	yrcd_yrcd_server_log (_tmp15_, _tmp18_);
-	_g_free0 (_tmp18_);
+	_tmp15_ = g_date_time_new_now_utc ();
+	_tmp16_ = _tmp15_;
+	_tmp17_ = g_date_time_to_unix (_tmp16_);
+	self->epoch = _tmp17_;
+	_g_date_time_unref0 (_tmp16_);
+	_tmp18_ = self->priv->_server;
+	_tmp19_ = self->priv->_id;
+	_tmp20_ = g_strdup_printf ("User registered with ID %d", _tmp19_);
+	_tmp21_ = _tmp20_;
+	yrcd_yrcd_server_log (_tmp18_, _tmp21_);
+	_g_free0 (_tmp21_);
 	return self;
 }
 
@@ -304,6 +314,78 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 }
 
 
+static gchar* string_replace (const gchar* self, const gchar* old, const gchar* replacement) {
+	gchar* result = NULL;
+	GError * _inner_error_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	g_return_val_if_fail (old != NULL, NULL);
+	g_return_val_if_fail (replacement != NULL, NULL);
+	{
+		GRegex* regex = NULL;
+		const gchar* _tmp0_ = NULL;
+		gchar* _tmp1_ = NULL;
+		gchar* _tmp2_ = NULL;
+		GRegex* _tmp3_ = NULL;
+		GRegex* _tmp4_ = NULL;
+		gchar* _tmp5_ = NULL;
+		GRegex* _tmp6_ = NULL;
+		const gchar* _tmp7_ = NULL;
+		gchar* _tmp8_ = NULL;
+		gchar* _tmp9_ = NULL;
+		_tmp0_ = old;
+		_tmp1_ = g_regex_escape_string (_tmp0_, -1);
+		_tmp2_ = _tmp1_;
+		_tmp3_ = g_regex_new (_tmp2_, 0, 0, &_inner_error_);
+		_tmp4_ = _tmp3_;
+		_g_free0 (_tmp2_);
+		regex = _tmp4_;
+		if (_inner_error_ != NULL) {
+			if (_inner_error_->domain == G_REGEX_ERROR) {
+				goto __catch3_g_regex_error;
+			}
+			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+			g_clear_error (&_inner_error_);
+			return NULL;
+		}
+		_tmp6_ = regex;
+		_tmp7_ = replacement;
+		_tmp8_ = g_regex_replace_literal (_tmp6_, self, (gssize) (-1), 0, _tmp7_, 0, &_inner_error_);
+		_tmp5_ = _tmp8_;
+		if (_inner_error_ != NULL) {
+			_g_regex_unref0 (regex);
+			if (_inner_error_->domain == G_REGEX_ERROR) {
+				goto __catch3_g_regex_error;
+			}
+			_g_regex_unref0 (regex);
+			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+			g_clear_error (&_inner_error_);
+			return NULL;
+		}
+		_tmp9_ = _tmp5_;
+		_tmp5_ = NULL;
+		result = _tmp9_;
+		_g_free0 (_tmp5_);
+		_g_regex_unref0 (regex);
+		return result;
+	}
+	goto __finally3;
+	__catch3_g_regex_error:
+	{
+		GError* e = NULL;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		g_assert_not_reached ();
+		_g_error_free0 (e);
+	}
+	__finally3:
+	if (_inner_error_ != NULL) {
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return NULL;
+	}
+}
+
+
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1) {
 	gboolean _tmp0_ = FALSE;
 	g_return_if_fail (self != NULL);
@@ -316,29 +398,55 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 		gint _tmp3__length1 = 0;
 		const gchar* _tmp4_ = NULL;
 		gboolean _tmp5_ = FALSE;
+		gchar** _tmp11_ = NULL;
+		gint _tmp11__length1 = 0;
+		const gchar* _tmp12_ = NULL;
+		gboolean _tmp13_ = FALSE;
 		_tmp1_ = args;
 		_tmp1__length1 = args_length1;
 		_tmp2_ = _tmp1_[1];
 		yrcd_yrcd_user_set_ident (self, _tmp2_);
 		_tmp3_ = args;
 		_tmp3__length1 = args_length1;
-		_tmp4_ = _tmp3_[2];
-		yrcd_yrcd_user_set_realname (self, _tmp4_);
-		_tmp5_ = self->priv->_nick_set;
+		_tmp4_ = _tmp3_[4];
+		_tmp5_ = g_str_has_prefix (_tmp4_, ":");
 		if (_tmp5_) {
+			gchar** _tmp6_ = NULL;
+			gint _tmp6__length1 = 0;
+			gchar** _tmp7_ = NULL;
+			gint _tmp7__length1 = 0;
+			const gchar* _tmp8_ = NULL;
+			gchar* _tmp9_ = NULL;
+			gchar* _tmp10_ = NULL;
+			_tmp6_ = args;
+			_tmp6__length1 = args_length1;
+			_tmp7_ = args;
+			_tmp7__length1 = args_length1;
+			_tmp8_ = _tmp7_[4];
+			_tmp9_ = string_replace (_tmp8_, ":", "");
+			_g_free0 (_tmp6_[4]);
+			_tmp6_[4] = _tmp9_;
+			_tmp10_ = _tmp6_[4];
+		}
+		_tmp11_ = args;
+		_tmp11__length1 = args_length1;
+		_tmp12_ = _tmp11_[4];
+		yrcd_yrcd_user_set_realname (self, _tmp12_);
+		_tmp13_ = self->priv->_nick_set;
+		if (_tmp13_) {
 			yrcd_yrcd_user_reg_finished (self);
 		}
 	} else {
-		yrcdyrcd_server* _tmp6_ = NULL;
-		gint _tmp7_ = 0;
-		gchar* _tmp8_ = NULL;
-		gchar* _tmp9_ = NULL;
-		_tmp6_ = self->priv->_server;
-		_tmp7_ = self->priv->_id;
-		_tmp8_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp7_);
-		_tmp9_ = _tmp8_;
-		yrcd_yrcd_server_log (_tmp6_, _tmp9_);
-		_g_free0 (_tmp9_);
+		yrcdyrcd_server* _tmp14_ = NULL;
+		gint _tmp15_ = 0;
+		gchar* _tmp16_ = NULL;
+		gchar* _tmp17_ = NULL;
+		_tmp14_ = self->priv->_server;
+		_tmp15_ = self->priv->_id;
+		_tmp16_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp15_);
+		_tmp17_ = _tmp16_;
+		yrcd_yrcd_server_log (_tmp14_, _tmp17_);
+		_g_free0 (_tmp17_);
 	}
 }
 
@@ -347,17 +455,21 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	yrcdyrcd_server* _tmp0_ = NULL;
 	gint _tmp1_ = 0;
 	const gchar* _tmp2_ = NULL;
-	gchar* _tmp3_ = NULL;
-	gchar* _tmp4_ = NULL;
+	const gchar* _tmp3_ = NULL;
+	const gchar* _tmp4_ = NULL;
+	gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
 	g_return_if_fail (self != NULL);
 	yrcd_yrcd_user_set_reg_complete (self, TRUE);
 	_tmp0_ = self->priv->_server;
 	_tmp1_ = self->priv->_id;
 	_tmp2_ = self->priv->_nick;
-	_tmp3_ = g_strdup_printf ("User %d finished registration with nick %s", _tmp1_, _tmp2_);
-	_tmp4_ = _tmp3_;
-	yrcd_yrcd_server_log (_tmp0_, _tmp4_);
-	_g_free0 (_tmp4_);
+	_tmp3_ = self->priv->_ident;
+	_tmp4_ = self->priv->_realname;
+	_tmp5_ = g_strdup_printf ("User %d finished registration with nick %s, ident %s, realname %s", _tmp1_, _tmp2_, _tmp3_, _tmp4_);
+	_tmp6_ = _tmp5_;
+	yrcd_yrcd_server_log (_tmp0_, _tmp6_);
+	_g_free0 (_tmp6_);
 }
 
 
