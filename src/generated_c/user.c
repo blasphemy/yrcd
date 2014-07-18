@@ -35,6 +35,7 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
+#define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 
 struct _yrcdyrcd_user {
 	GObject parent_instance;
@@ -115,6 +116,8 @@ gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+static void _g_object_unref0_ (gpointer var);
+static void _g_list_free__g_object_unref0_ (GList* self);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
@@ -596,6 +599,22 @@ gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self) {
 }
 
 
+static gpointer _g_object_ref0 (gpointer self) {
+	return self ? g_object_ref (self) : NULL;
+}
+
+
+static void _g_object_unref0_ (gpointer var) {
+	(var == NULL) ? NULL : (var = (g_object_unref (var), NULL));
+}
+
+
+static void _g_list_free__g_object_unref0_ (GList* self) {
+	g_list_foreach (self, (GFunc) _g_object_unref0_, NULL);
+	g_list_free (self);
+}
+
+
 gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self) {
 	gchar* result = NULL;
 	GError * _inner_error_ = NULL;
@@ -607,20 +626,81 @@ gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self) {
 		GResolver* resolver = NULL;
 		GResolver* _tmp2_ = NULL;
 		gchar* hostname = NULL;
-		gchar* _tmp3_ = NULL;
+		GResolver* _tmp3_ = NULL;
+		GInetAddress* _tmp4_ = NULL;
+		gchar* _tmp5_ = NULL;
+		GList* addresses = NULL;
+		GResolver* _tmp6_ = NULL;
+		const gchar* _tmp7_ = NULL;
+		GList* _tmp8_ = NULL;
+		gboolean match = FALSE;
+		GList* _tmp9_ = NULL;
+		gboolean _tmp16_ = FALSE;
 		_tmp0_ = self->ip;
 		_tmp1_ = g_inet_address_new_from_string (_tmp0_);
 		address = _tmp1_;
 		_tmp2_ = g_resolver_get_default ();
 		resolver = _tmp2_;
-		_tmp3_ = g_resolver_lookup_by_address (resolver, address, NULL, &_inner_error_);
-		hostname = _tmp3_;
+		_tmp3_ = resolver;
+		_tmp4_ = address;
+		_tmp5_ = g_resolver_lookup_by_address (_tmp3_, _tmp4_, NULL, &_inner_error_);
+		hostname = _tmp5_;
 		if (_inner_error_ != NULL) {
 			_g_object_unref0 (resolver);
 			_g_object_unref0 (address);
 			goto __catch5_g_error;
 		}
+		_tmp6_ = resolver;
+		_tmp7_ = hostname;
+		_tmp8_ = g_resolver_lookup_by_name (_tmp6_, _tmp7_, NULL, &_inner_error_);
+		addresses = _tmp8_;
+		if (_inner_error_ != NULL) {
+			_g_free0 (hostname);
+			_g_object_unref0 (resolver);
+			_g_object_unref0 (address);
+			goto __catch5_g_error;
+		}
+		match = FALSE;
+		_tmp9_ = addresses;
+		{
+			GList* k_collection = NULL;
+			GList* k_it = NULL;
+			k_collection = _tmp9_;
+			for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
+				GInetAddress* _tmp10_ = NULL;
+				GInetAddress* k = NULL;
+				_tmp10_ = _g_object_ref0 ((GInetAddress*) k_it->data);
+				k = _tmp10_;
+				{
+					GInetAddress* _tmp11_ = NULL;
+					gchar* _tmp12_ = NULL;
+					gchar* _tmp13_ = NULL;
+					const gchar* _tmp14_ = NULL;
+					gboolean _tmp15_ = FALSE;
+					_tmp11_ = k;
+					_tmp12_ = g_inet_address_to_string (_tmp11_);
+					_tmp13_ = _tmp12_;
+					_tmp14_ = self->ip;
+					_tmp15_ = g_strcmp0 (_tmp13_, _tmp14_) == 0;
+					_g_free0 (_tmp13_);
+					if (_tmp15_) {
+						match = TRUE;
+					}
+					_g_object_unref0 (k);
+				}
+			}
+		}
+		_tmp16_ = match;
+		if (!_tmp16_) {
+			const gchar* _tmp17_ = NULL;
+			gchar* _tmp18_ = NULL;
+			_tmp17_ = self->ip;
+			_tmp18_ = g_strdup (_tmp17_);
+			_g_free0 (hostname);
+			hostname = _tmp18_;
+		}
 		result = hostname;
+		__g_list_free__g_object_unref0_0 (addresses);
 		_g_object_unref0 (resolver);
 		_g_object_unref0 (address);
 		return result;
@@ -629,25 +709,25 @@ gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self) {
 	__catch5_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp4_ = NULL;
-		gint _tmp5_ = 0;
-		const gchar* _tmp6_ = NULL;
-		gchar* _tmp7_ = NULL;
-		gchar* _tmp8_ = NULL;
-		const gchar* _tmp9_ = NULL;
-		gchar* _tmp10_ = NULL;
+		yrcdyrcd_server* _tmp19_ = NULL;
+		gint _tmp20_ = 0;
+		const gchar* _tmp21_ = NULL;
+		gchar* _tmp22_ = NULL;
+		gchar* _tmp23_ = NULL;
+		const gchar* _tmp24_ = NULL;
+		gchar* _tmp25_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp4_ = self->priv->_server;
-		_tmp5_ = self->priv->_id;
-		_tmp6_ = self->ip;
-		_tmp7_ = g_strdup_printf ("Error resolving user %d IP %s", _tmp5_, _tmp6_);
-		_tmp8_ = _tmp7_;
-		yrcd_yrcd_server_log (_tmp4_, _tmp8_);
-		_g_free0 (_tmp8_);
-		_tmp9_ = self->ip;
-		_tmp10_ = g_strdup (_tmp9_);
-		result = _tmp10_;
+		_tmp19_ = self->priv->_server;
+		_tmp20_ = self->priv->_id;
+		_tmp21_ = self->ip;
+		_tmp22_ = g_strdup_printf ("Error resolving user %d IP %s", _tmp20_, _tmp21_);
+		_tmp23_ = _tmp22_;
+		yrcd_yrcd_server_log (_tmp19_, _tmp23_);
+		_g_free0 (_tmp23_);
+		_tmp24_ = self->ip;
+		_tmp25_ = g_strdup (_tmp24_);
+		result = _tmp25_;
 		_g_error_free0 (e);
 		return result;
 	}
@@ -665,11 +745,6 @@ GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self) {
 	_tmp0_ = self->priv->_sock;
 	result = _tmp0_;
 	return result;
-}
-
-
-static gpointer _g_object_ref0 (gpointer self) {
-	return self ? g_object_ref (self) : NULL;
 }
 
 
