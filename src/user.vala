@@ -92,6 +92,7 @@ namespace yrcd {
     }
     public string get_host() {
       try {
+        //note check for liars
         InetAddress address = new InetAddress.from_string(ip);
         Resolver resolver = Resolver.get_default();
         string hostname = resolver.lookup_by_address(address,null);
