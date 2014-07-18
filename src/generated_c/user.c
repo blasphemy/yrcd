@@ -118,8 +118,9 @@ void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
 static void _g_object_unref0_ (gpointer var);
 static void _g_list_free__g_object_unref0_ (GList* self);
-GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
+void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
+GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
 static void yrcd_yrcd_user_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
@@ -735,6 +736,49 @@ gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self) {
 	g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 	g_clear_error (&_inner_error_);
 	return NULL;
+}
+
+
+void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg) {
+	GError * _inner_error_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (msg != NULL);
+	{
+		GDataOutputStream* _tmp0_ = NULL;
+		_tmp0_ = self->priv->_dos;
+		g_data_output_stream_put_string (_tmp0_, "%s\n", NULL, &_inner_error_);
+		if (_inner_error_ != NULL) {
+			goto __catch6_g_error;
+		}
+	}
+	goto __finally6;
+	__catch6_g_error:
+	{
+		GError* e = NULL;
+		yrcdyrcd_server* _tmp1_ = NULL;
+		gint _tmp2_ = 0;
+		GError* _tmp3_ = NULL;
+		const gchar* _tmp4_ = NULL;
+		gchar* _tmp5_ = NULL;
+		gchar* _tmp6_ = NULL;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		_tmp1_ = self->priv->_server;
+		_tmp2_ = self->priv->_id;
+		_tmp3_ = e;
+		_tmp4_ = _tmp3_->message;
+		_tmp5_ = g_strdup_printf ("Error sending message to UID %d : %s", _tmp2_, _tmp4_);
+		_tmp6_ = _tmp5_;
+		yrcd_yrcd_server_log (_tmp1_, _tmp6_);
+		_g_free0 (_tmp6_);
+		_g_error_free0 (e);
+	}
+	__finally6:
+	if (_inner_error_ != NULL) {
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return;
+	}
 }
 
 
