@@ -66,7 +66,14 @@ namespace yrcd {
         if (args[4].has_prefix(":")) {
           args[4] = args[4].replace(":","");
         }
-        realname = args[4];
+        int i;
+        string rn;
+        var builder = new StringBuilder();
+        for (i = 4; i < args.length; i++) {
+          builder.append(args[i]);
+          builder.append(" ");
+        }
+        realname = builder.str.strip();
         if (nick_set) {
           reg_finished();
         }
