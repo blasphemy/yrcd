@@ -34,7 +34,6 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
-#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 
 struct _yrcdyrcd_user {
@@ -574,28 +573,35 @@ void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self) {
 
 gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self) {
 	gchar* result = NULL;
-	GString* builder = NULL;
-	GString* _tmp0_ = NULL;
-	const gchar* _tmp1_ = NULL;
-	const gchar* _tmp2_ = NULL;
+	gchar* hm = NULL;
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
 	const gchar* _tmp3_ = NULL;
-	const gchar* _tmp4_ = NULL;
+	gchar* _tmp4_ = NULL;
 	gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
+	gchar* _tmp7_ = NULL;
+	const gchar* _tmp8_ = NULL;
+	gchar* _tmp9_ = NULL;
+	gchar* _tmp10_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
-	_tmp0_ = g_string_new ("");
-	builder = _tmp0_;
-	_tmp1_ = self->priv->_nick;
-	g_string_append (builder, _tmp1_);
-	g_string_append (builder, "!");
-	_tmp2_ = self->priv->_ident;
-	g_string_append (builder, _tmp2_);
-	g_string_append (builder, "@");
-	_tmp3_ = self->host;
-	g_string_append (builder, _tmp3_);
-	_tmp4_ = builder->str;
-	_tmp5_ = g_strdup (_tmp4_);
-	result = _tmp5_;
-	_g_string_free0 (builder);
+	_tmp0_ = self->priv->_nick;
+	_tmp1_ = g_strconcat (_tmp0_, "!", NULL);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = self->priv->_ident;
+	_tmp4_ = g_strconcat (_tmp2_, _tmp3_, NULL);
+	_tmp5_ = _tmp4_;
+	_tmp6_ = g_strconcat (_tmp5_, "@", NULL);
+	_tmp7_ = _tmp6_;
+	_tmp8_ = self->host;
+	_tmp9_ = g_strconcat (_tmp7_, _tmp8_, NULL);
+	_tmp10_ = _tmp9_;
+	_g_free0 (_tmp7_);
+	_g_free0 (_tmp5_);
+	_g_free0 (_tmp2_);
+	hm = _tmp10_;
+	result = hm;
 	return result;
 }
 
