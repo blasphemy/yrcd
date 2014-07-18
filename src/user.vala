@@ -5,6 +5,7 @@ namespace yrcd {
     public DataOutputStream dos { get; set; }
     public yrcd_server server { get; set; }
     public int id { get; set; }
+    private int64 time_last_rcv;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
@@ -58,6 +59,9 @@ namespace yrcd {
     public void reg_finished () {
       reg_complete = true;
       server.log("User %d finished registration with nick %s".printf(id,nick));
+    }
+    public void update_timestamp() {
+      time_last_rcv = new DateTime.now_utc().to_unix();
     }
   }
 }

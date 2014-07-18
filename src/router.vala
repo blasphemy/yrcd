@@ -11,6 +11,7 @@ namespace yrcd {
       string stripped = strip_end(msg);
       string[] args = tokenize(stripped);
       user.server.log("USER %d: received line %s".printf(user.id,stripped));
+      user.update_timestamp();
       switch (args[0].down()) {
         case "quit" :
           user.server.log("Received QUIT");
