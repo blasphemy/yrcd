@@ -9,6 +9,7 @@ namespace yrcd {
     private int user_counter = 0;
     public int64 epoch;
     public int max_users = 0;
+    public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
     public int new_userid() {
       user_counter++;
       return user_counter;

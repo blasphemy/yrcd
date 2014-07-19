@@ -84,6 +84,7 @@ namespace yrcd {
     public void reg_finished () {
       reg_complete = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
+      fire_numeric(001, nick, ident, host);
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc().to_unix();
@@ -119,6 +120,13 @@ namespace yrcd {
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
       }
+    }
+    public void fire_numeric(int numeric, ...) {
+      var args = va_list();
+      string msg = yrcd_constants.sname + " " + "%.3d".printf(numeric) + " " + nick + " :";
+      string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
+      msg += msg2;
+      send_line(msg);
     }
   }
 }
