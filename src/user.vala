@@ -66,7 +66,14 @@ namespace yrcd {
         if (args[4].has_prefix(":")) {
           args[4] = args[4].replace(":","");
         }
-        realname = args[4];
+        int i;
+        string rn;
+        var builder = new StringBuilder();
+        for (i = 4; i < args.length; i++) {
+          builder.append(args[i]);
+          builder.append(" ");
+        }
+        realname = builder.str.strip();
         if (nick_set) {
           reg_finished();
         }
@@ -82,24 +89,35 @@ namespace yrcd {
       time_last_rcv = new DateTime.now_utc().to_unix();
     }
     public string get_hostmask() {
-      var builder = new StringBuilder();
-      builder.append(nick);
-      builder.append("!");
-      builder.append(ident);
-      builder.append("@");
-      builder.append(host);
-      return builder.str;
+      string hm = nick + "!" + ident + "@" + host;
+      return hm;
     }
     public string get_host() {
       try {
-        //note check for liars
         InetAddress address = new InetAddress.from_string(ip);
         Resolver resolver = Resolver.get_default();
         string hostname = resolver.lookup_by_address(address,null);
+        List<InetAddress> addresses = resolver.lookup_by_name(hostname);
+        bool match = false;
+        foreach (var k in addresses) {
+          if (k.to_string() == ip) {
+            match = true;
+          }
+        }
+        if (!match) {
+          hostname = ip;
+        }
         return hostname;
       } catch (Error e) {
         server.log("Error resolving user %d IP %s".printf(id,ip));
         return ip;
+      }
+    }
+    public void send_line(string msg) {
+      try {
+        dos.put_string("%s\n");
+      } catch (Error e) {
+        server.log("Error sending message to UID %d : %s".printf(id,e.message));
       }
     }
   }
