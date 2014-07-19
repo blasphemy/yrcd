@@ -30,7 +30,7 @@ struct _yrcdyrcd_numericClass {
 };
 
 struct _yrcdyrcd_numericPrivate {
-	gint _numeric;
+	gchar* _numeric;
 	gchar* _code;
 	gchar* _msg;
 };
@@ -46,12 +46,12 @@ enum  {
 	YRCD_YRCD_NUMERIC_CODE,
 	YRCD_YRCD_NUMERIC_MSG
 };
-yrcdyrcd_numeric* yrcd_yrcd_numeric_new (gint _numeric, const gchar* _code, const gchar* _msg);
-yrcdyrcd_numeric* yrcd_yrcd_numeric_construct (GType object_type, gint _numeric, const gchar* _code, const gchar* _msg);
-void yrcd_yrcd_numeric_set_numeric (yrcdyrcd_numeric* self, gint value);
+yrcdyrcd_numeric* yrcd_yrcd_numeric_new (const gchar* _numeric, const gchar* _code, const gchar* _msg);
+yrcdyrcd_numeric* yrcd_yrcd_numeric_construct (GType object_type, const gchar* _numeric, const gchar* _code, const gchar* _msg);
+void yrcd_yrcd_numeric_set_numeric (yrcdyrcd_numeric* self, const gchar* value);
 void yrcd_yrcd_numeric_set_code (yrcdyrcd_numeric* self, const gchar* value);
 void yrcd_yrcd_numeric_set_msg (yrcdyrcd_numeric* self, const gchar* value);
-gint yrcd_yrcd_numeric_get_numeric (yrcdyrcd_numeric* self);
+const gchar* yrcd_yrcd_numeric_get_numeric (yrcdyrcd_numeric* self);
 const gchar* yrcd_yrcd_numeric_get_code (yrcdyrcd_numeric* self);
 const gchar* yrcd_yrcd_numeric_get_msg (yrcdyrcd_numeric* self);
 static void yrcd_yrcd_numeric_finalize (GObject* obj);
@@ -59,11 +59,12 @@ static void _vala_yrcd_yrcd_numeric_get_property (GObject * object, guint proper
 static void _vala_yrcd_yrcd_numeric_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
 
 
-yrcdyrcd_numeric* yrcd_yrcd_numeric_construct (GType object_type, gint _numeric, const gchar* _code, const gchar* _msg) {
+yrcdyrcd_numeric* yrcd_yrcd_numeric_construct (GType object_type, const gchar* _numeric, const gchar* _code, const gchar* _msg) {
 	yrcdyrcd_numeric * self = NULL;
-	gint _tmp0_ = 0;
+	const gchar* _tmp0_ = NULL;
 	const gchar* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
+	g_return_val_if_fail (_numeric != NULL, NULL);
 	g_return_val_if_fail (_code != NULL, NULL);
 	g_return_val_if_fail (_msg != NULL, NULL);
 	self = (yrcdyrcd_numeric*) g_object_new (object_type, NULL);
@@ -77,26 +78,29 @@ yrcdyrcd_numeric* yrcd_yrcd_numeric_construct (GType object_type, gint _numeric,
 }
 
 
-yrcdyrcd_numeric* yrcd_yrcd_numeric_new (gint _numeric, const gchar* _code, const gchar* _msg) {
+yrcdyrcd_numeric* yrcd_yrcd_numeric_new (const gchar* _numeric, const gchar* _code, const gchar* _msg) {
 	return yrcd_yrcd_numeric_construct (YRCD_TYPE_YRCD_NUMERIC, _numeric, _code, _msg);
 }
 
 
-gint yrcd_yrcd_numeric_get_numeric (yrcdyrcd_numeric* self) {
-	gint result;
-	gint _tmp0_ = 0;
-	g_return_val_if_fail (self != NULL, 0);
+const gchar* yrcd_yrcd_numeric_get_numeric (yrcdyrcd_numeric* self) {
+	const gchar* result;
+	const gchar* _tmp0_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
 	_tmp0_ = self->priv->_numeric;
 	result = _tmp0_;
 	return result;
 }
 
 
-void yrcd_yrcd_numeric_set_numeric (yrcdyrcd_numeric* self, gint value) {
-	gint _tmp0_ = 0;
+void yrcd_yrcd_numeric_set_numeric (yrcdyrcd_numeric* self, const gchar* value) {
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = value;
-	self->priv->_numeric = _tmp0_;
+	_tmp1_ = g_strdup (_tmp0_);
+	_g_free0 (self->priv->_numeric);
+	self->priv->_numeric = _tmp1_;
 	g_object_notify ((GObject *) self, "numeric");
 }
 
@@ -151,7 +155,7 @@ static void yrcd_yrcd_numeric_class_init (yrcdyrcd_numericClass * klass) {
 	G_OBJECT_CLASS (klass)->get_property = _vala_yrcd_yrcd_numeric_get_property;
 	G_OBJECT_CLASS (klass)->set_property = _vala_yrcd_yrcd_numeric_set_property;
 	G_OBJECT_CLASS (klass)->finalize = yrcd_yrcd_numeric_finalize;
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_NUMERIC_NUMERIC, g_param_spec_int ("numeric", "numeric", "numeric", G_MININT, G_MAXINT, 0, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_NUMERIC_NUMERIC, g_param_spec_string ("numeric", "numeric", "numeric", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_NUMERIC_CODE, g_param_spec_string ("code", "code", "code", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_NUMERIC_MSG, g_param_spec_string ("msg", "msg", "msg", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 }
@@ -165,6 +169,7 @@ static void yrcd_yrcd_numeric_instance_init (yrcdyrcd_numeric * self) {
 static void yrcd_yrcd_numeric_finalize (GObject* obj) {
 	yrcdyrcd_numeric * self;
 	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_NUMERIC, yrcdyrcd_numeric);
+	_g_free0 (self->priv->_numeric);
 	_g_free0 (self->priv->_code);
 	_g_free0 (self->priv->_msg);
 	G_OBJECT_CLASS (yrcd_yrcd_numeric_parent_class)->finalize (obj);
@@ -188,7 +193,7 @@ static void _vala_yrcd_yrcd_numeric_get_property (GObject * object, guint proper
 	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_YRCD_NUMERIC, yrcdyrcd_numeric);
 	switch (property_id) {
 		case YRCD_YRCD_NUMERIC_NUMERIC:
-		g_value_set_int (value, yrcd_yrcd_numeric_get_numeric (self));
+		g_value_set_string (value, yrcd_yrcd_numeric_get_numeric (self));
 		break;
 		case YRCD_YRCD_NUMERIC_CODE:
 		g_value_set_string (value, yrcd_yrcd_numeric_get_code (self));
@@ -208,7 +213,7 @@ static void _vala_yrcd_yrcd_numeric_set_property (GObject * object, guint proper
 	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_YRCD_NUMERIC, yrcdyrcd_numeric);
 	switch (property_id) {
 		case YRCD_YRCD_NUMERIC_NUMERIC:
-		yrcd_yrcd_numeric_set_numeric (self, g_value_get_int (value));
+		yrcd_yrcd_numeric_set_numeric (self, g_value_get_string (value));
 		break;
 		case YRCD_YRCD_NUMERIC_CODE:
 		yrcd_yrcd_numeric_set_code (self, g_value_get_string (value));

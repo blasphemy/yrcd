@@ -34,6 +34,7 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
+#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 
 struct _yrcdyrcd_user {
@@ -470,6 +471,21 @@ static gchar* string_replace (const gchar* self, const gchar* old, const gchar* 
 }
 
 
+static gchar* string_strip (const gchar* self) {
+	gchar* result = NULL;
+	gchar* _result_ = NULL;
+	gchar* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = g_strdup (self);
+	_result_ = _tmp0_;
+	_tmp1_ = _result_;
+	g_strstrip (_tmp1_);
+	result = _result_;
+	return result;
+}
+
+
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1) {
 	gboolean _tmp0_ = FALSE;
 	g_return_if_fail (self != NULL);
@@ -482,10 +498,15 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 		gint _tmp3__length1 = 0;
 		const gchar* _tmp4_ = NULL;
 		gboolean _tmp5_ = FALSE;
-		gchar** _tmp11_ = NULL;
-		gint _tmp11__length1 = 0;
-		const gchar* _tmp12_ = NULL;
-		gboolean _tmp13_ = FALSE;
+		gint i = 0;
+		gchar* rn = NULL;
+		GString* builder = NULL;
+		GString* _tmp11_ = NULL;
+		GString* _tmp21_ = NULL;
+		const gchar* _tmp22_ = NULL;
+		gchar* _tmp23_ = NULL;
+		gchar* _tmp24_ = NULL;
+		gboolean _tmp25_ = FALSE;
 		_tmp1_ = args;
 		_tmp1__length1 = args_length1;
 		_tmp2_ = _tmp1_[1];
@@ -512,25 +533,67 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 			_tmp6_[4] = _tmp9_;
 			_tmp10_ = _tmp6_[4];
 		}
-		_tmp11_ = args;
-		_tmp11__length1 = args_length1;
-		_tmp12_ = _tmp11_[4];
-		yrcd_yrcd_user_set_realname (self, _tmp12_);
-		_tmp13_ = self->priv->_nick_set;
-		if (_tmp13_) {
+		_tmp11_ = g_string_new ("");
+		builder = _tmp11_;
+		{
+			gboolean _tmp12_ = FALSE;
+			i = 4;
+			_tmp12_ = TRUE;
+			while (TRUE) {
+				gint _tmp14_ = 0;
+				gchar** _tmp15_ = NULL;
+				gint _tmp15__length1 = 0;
+				GString* _tmp16_ = NULL;
+				gchar** _tmp17_ = NULL;
+				gint _tmp17__length1 = 0;
+				gint _tmp18_ = 0;
+				const gchar* _tmp19_ = NULL;
+				GString* _tmp20_ = NULL;
+				if (!_tmp12_) {
+					gint _tmp13_ = 0;
+					_tmp13_ = i;
+					i = _tmp13_ + 1;
+				}
+				_tmp12_ = FALSE;
+				_tmp14_ = i;
+				_tmp15_ = args;
+				_tmp15__length1 = args_length1;
+				if (!(_tmp14_ < _tmp15__length1)) {
+					break;
+				}
+				_tmp16_ = builder;
+				_tmp17_ = args;
+				_tmp17__length1 = args_length1;
+				_tmp18_ = i;
+				_tmp19_ = _tmp17_[_tmp18_];
+				g_string_append (_tmp16_, _tmp19_);
+				_tmp20_ = builder;
+				g_string_append (_tmp20_, " ");
+			}
+		}
+		_tmp21_ = builder;
+		_tmp22_ = _tmp21_->str;
+		_tmp23_ = string_strip (_tmp22_);
+		_tmp24_ = _tmp23_;
+		yrcd_yrcd_user_set_realname (self, _tmp24_);
+		_g_free0 (_tmp24_);
+		_tmp25_ = self->priv->_nick_set;
+		if (_tmp25_) {
 			yrcd_yrcd_user_reg_finished (self);
 		}
+		_g_string_free0 (builder);
+		_g_free0 (rn);
 	} else {
-		yrcdyrcd_server* _tmp14_ = NULL;
-		gint _tmp15_ = 0;
-		gchar* _tmp16_ = NULL;
-		gchar* _tmp17_ = NULL;
-		_tmp14_ = self->priv->_server;
-		_tmp15_ = self->priv->_id;
-		_tmp16_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp15_);
-		_tmp17_ = _tmp16_;
-		yrcd_yrcd_server_log (_tmp14_, _tmp17_);
-		_g_free0 (_tmp17_);
+		yrcdyrcd_server* _tmp26_ = NULL;
+		gint _tmp27_ = 0;
+		gchar* _tmp28_ = NULL;
+		gchar* _tmp29_ = NULL;
+		_tmp26_ = self->priv->_server;
+		_tmp27_ = self->priv->_id;
+		_tmp28_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp27_);
+		_tmp29_ = _tmp28_;
+		yrcd_yrcd_server_log (_tmp26_, _tmp29_);
+		_g_free0 (_tmp29_);
 	}
 }
 
