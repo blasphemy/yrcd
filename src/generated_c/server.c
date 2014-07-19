@@ -22,6 +22,16 @@ typedef struct _yrcdyrcd_server yrcdyrcd_server;
 typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
+#define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
+#define YRCD_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapper))
+#define YRCD_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+#define YRCD_IS_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
+#define YRCD_IS_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
+#define YRCD_YRCD_NUMERIC_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+
+typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
+typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
+
 #define YRCD_TYPE_YRCD_ROUTER (yrcd_yrcd_router_get_type ())
 #define YRCD_YRCD_ROUTER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_router))
 #define YRCD_YRCD_ROUTER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_routerClass))
@@ -53,6 +63,7 @@ struct _yrcdyrcd_server {
 	yrcdyrcd_serverPrivate * priv;
 	gint64 epoch;
 	gint max_users;
+	yrcdyrcd_numeric_wrapper* numeric_wrapper;
 };
 
 struct _yrcdyrcd_serverClass {
@@ -98,6 +109,7 @@ struct _YrcdYrcdServerProcessRequestData {
 static gpointer yrcd_yrcd_server_parent_class = NULL;
 
 GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
+GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_router_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 #define YRCD_YRCD_SERVER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_serverPrivate))
@@ -106,6 +118,8 @@ enum  {
 };
 yrcdyrcd_router* yrcd_yrcd_router_new (void);
 yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type);
+yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_new (void);
+yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 yrcdyrcd_server* yrcd_yrcd_server_new (void);
@@ -513,6 +527,7 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	GMainLoop* _tmp1_ = NULL;
 	yrcdyrcd_router* _tmp2_ = NULL;
 	GeeHashMap* _tmp3_ = NULL;
+	yrcdyrcd_numeric_wrapper* _tmp4_ = NULL;
 	self->priv = YRCD_YRCD_SERVER_GET_PRIVATE (self);
 	_tmp0_ = g_socket_service_new ();
 	self->priv->ss = _tmp0_;
@@ -524,6 +539,8 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	self->priv->userlist = _tmp3_;
 	self->priv->user_counter = 0;
 	self->max_users = 0;
+	_tmp4_ = yrcd_yrcd_numeric_wrapper_new ();
+	self->numeric_wrapper = _tmp4_;
 }
 
 
@@ -534,6 +551,7 @@ static void yrcd_yrcd_server_finalize (GObject* obj) {
 	_g_main_loop_unref0 (self->priv->loop);
 	_g_object_unref0 (self->priv->router);
 	_g_object_unref0 (self->priv->userlist);
+	_g_object_unref0 (self->numeric_wrapper);
 	G_OBJECT_CLASS (yrcd_yrcd_server_parent_class)->finalize (obj);
 }
 

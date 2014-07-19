@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gio/gio.h>
+#include <stdarg.h>
+#include <gee.h>
 
 
 #define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
@@ -36,6 +38,18 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
+typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
+
+#define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
+#define YRCD_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapper))
+#define YRCD_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+#define YRCD_IS_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
+#define YRCD_IS_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
+#define YRCD_YRCD_NUMERIC_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+
+typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
+typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
+typedef struct _yrcdyrcd_numeric_wrapperPrivate yrcdyrcd_numeric_wrapperPrivate;
 
 struct _yrcdyrcd_user {
 	GObject parent_instance;
@@ -62,6 +76,28 @@ struct _yrcdyrcd_userPrivate {
 	gboolean _nick_set;
 	gboolean _user_set;
 	gboolean _reg_complete;
+};
+
+struct _yrcdyrcd_server {
+	GObject parent_instance;
+	yrcdyrcd_serverPrivate * priv;
+	gint64 epoch;
+	gint max_users;
+	yrcdyrcd_numeric_wrapper* numeric_wrapper;
+};
+
+struct _yrcdyrcd_serverClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdyrcd_numeric_wrapper {
+	GObject parent_instance;
+	yrcdyrcd_numeric_wrapperPrivate * priv;
+	GeeHashMap* numerics;
+};
+
+struct _yrcdyrcd_numeric_wrapperClass {
+	GObjectClass parent_class;
 };
 
 
@@ -114,12 +150,15 @@ void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
 gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
-void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
+void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 static void _g_object_unref0_ (gpointer var);
 static void _g_list_free__g_object_unref0_ (GList* self);
 void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
+#define YRCD_YRCD_CONSTANTS_sname "test.net.local"
+GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
 static void yrcd_yrcd_user_finalize (GObject* obj);
@@ -606,6 +645,9 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	const gchar* _tmp4_ = NULL;
 	gchar* _tmp5_ = NULL;
 	gchar* _tmp6_ = NULL;
+	const gchar* _tmp7_ = NULL;
+	const gchar* _tmp8_ = NULL;
+	const gchar* _tmp9_ = NULL;
 	g_return_if_fail (self != NULL);
 	yrcd_yrcd_user_set_reg_complete (self, TRUE);
 	_tmp0_ = self->priv->_server;
@@ -618,6 +660,10 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	yrcd_yrcd_server_log (_tmp0_, _tmp6_);
 	_g_free0 (_tmp6_);
 	_g_free0 (_tmp3_);
+	_tmp7_ = self->priv->_nick;
+	_tmp8_ = self->priv->_ident;
+	_tmp9_ = self->host;
+	yrcd_yrcd_user_fire_numeric (self, 001, _tmp7_, _tmp8_, _tmp9_, NULL);
 }
 
 
@@ -848,6 +894,74 @@ void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg) {
 		g_clear_error (&_inner_error_);
 		return;
 	}
+}
+
+
+void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...) {
+	va_list args = {0};
+	gchar* msg = NULL;
+	gint _tmp0_ = 0;
+	gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	gchar* _tmp4_ = NULL;
+	gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
+	const gchar* _tmp7_ = NULL;
+	gchar* _tmp8_ = NULL;
+	gchar* _tmp9_ = NULL;
+	gchar* _tmp10_ = NULL;
+	gchar* _tmp11_ = NULL;
+	gchar* msg2 = NULL;
+	yrcdyrcd_server* _tmp12_ = NULL;
+	yrcdyrcd_numeric_wrapper* _tmp13_ = NULL;
+	GeeHashMap* _tmp14_ = NULL;
+	gint _tmp15_ = 0;
+	gpointer _tmp16_ = NULL;
+	gchar* _tmp17_ = NULL;
+	gchar* _tmp18_ = NULL;
+	gchar* _tmp19_ = NULL;
+	const gchar* _tmp20_ = NULL;
+	gchar* _tmp21_ = NULL;
+	const gchar* _tmp22_ = NULL;
+	g_return_if_fail (self != NULL);
+	va_start (args, numeric);
+	_tmp0_ = numeric;
+	_tmp1_ = g_strdup_printf ("%.3d", _tmp0_);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = g_strconcat (YRCD_YRCD_CONSTANTS_sname " ", _tmp2_, NULL);
+	_tmp4_ = _tmp3_;
+	_tmp5_ = g_strconcat (_tmp4_, " ", NULL);
+	_tmp6_ = _tmp5_;
+	_tmp7_ = self->priv->_nick;
+	_tmp8_ = g_strconcat (_tmp6_, _tmp7_, NULL);
+	_tmp9_ = _tmp8_;
+	_tmp10_ = g_strconcat (_tmp9_, " :", NULL);
+	_tmp11_ = _tmp10_;
+	_g_free0 (_tmp9_);
+	_g_free0 (_tmp6_);
+	_g_free0 (_tmp4_);
+	_g_free0 (_tmp2_);
+	msg = _tmp11_;
+	_tmp12_ = self->priv->_server;
+	_tmp13_ = _tmp12_->numeric_wrapper;
+	_tmp14_ = _tmp13_->numerics;
+	_tmp15_ = numeric;
+	_tmp16_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp14_, (gpointer) ((gintptr) _tmp15_));
+	_tmp17_ = (gchar*) _tmp16_;
+	_tmp18_ = g_strdup_vprintf (_tmp17_, args);
+	_tmp19_ = _tmp18_;
+	_g_free0 (_tmp17_);
+	msg2 = _tmp19_;
+	_tmp20_ = msg;
+	_tmp21_ = g_strconcat (_tmp20_, msg2, NULL);
+	_g_free0 (msg);
+	msg = _tmp21_;
+	_tmp22_ = msg;
+	yrcd_yrcd_user_send_line (self, _tmp22_);
+	_g_free0 (msg2);
+	_g_free0 (msg);
+	va_end (args);
 }
 
 
