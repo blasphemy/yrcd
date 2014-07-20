@@ -116,14 +116,14 @@ namespace yrcd {
     }
     public void send_line(string msg) {
       try {
-        dos.put_string("%s\n");
+        dos.put_string("%s\n".printf(msg));
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
       }
     }
     public void fire_numeric(int numeric, ...) {
       var args = va_list();
-      string msg = yrcd_constants.sname + " " + "%.3d".printf(numeric) + " " + nick + " :";
+      string msg = ":" + yrcd_constants.sname + " " + "%.3d".printf(numeric) + " " + nick + " :";
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
       send_line(msg);
