@@ -123,7 +123,7 @@ namespace yrcd {
     }
     public void fire_numeric(int numeric, ...) {
       var args = va_list();
-      string msg = ":" + yrcd_constants.sname + " " + "%.3d".printf(numeric) + " " + nick + " :";
+      string msg = ":%s %.3d %s :".printf(yrcd_constants.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
       send_line(msg);
