@@ -70,5 +70,9 @@ namespace yrcd {
         }
       }
     }
+    public string ut_to_utc(int64 ut) {
+    var time = new DateTime.from_unix_utc(ut);
+    return time.to_string();
+    }
   }
 }

@@ -86,6 +86,7 @@ namespace yrcd {
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(001, nick, ident, host);
       fire_numeric(002, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
+      fire_numeric(003, "%s".printf(server.ut_to_utc(server.epoch)));
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc().to_unix();
