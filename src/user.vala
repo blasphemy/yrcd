@@ -85,6 +85,7 @@ namespace yrcd {
       reg_complete = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(001, nick, ident, host);
+      fire_numeric(002, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc().to_unix();
