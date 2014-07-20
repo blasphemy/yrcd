@@ -860,8 +860,15 @@ void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg) {
 	g_return_if_fail (msg != NULL);
 	{
 		GDataOutputStream* _tmp0_ = NULL;
+		const gchar* _tmp1_ = NULL;
+		gchar* _tmp2_ = NULL;
+		gchar* _tmp3_ = NULL;
 		_tmp0_ = self->priv->_dos;
-		g_data_output_stream_put_string (_tmp0_, "%s\n", NULL, &_inner_error_);
+		_tmp1_ = msg;
+		_tmp2_ = g_strdup_printf ("%s\n", _tmp1_);
+		_tmp3_ = _tmp2_;
+		g_data_output_stream_put_string (_tmp0_, _tmp3_, NULL, &_inner_error_);
+		_g_free0 (_tmp3_);
 		if (_inner_error_ != NULL) {
 			goto __catch6_g_error;
 		}
@@ -870,22 +877,22 @@ void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg) {
 	__catch6_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp1_ = NULL;
-		gint _tmp2_ = 0;
-		GError* _tmp3_ = NULL;
-		const gchar* _tmp4_ = NULL;
-		gchar* _tmp5_ = NULL;
-		gchar* _tmp6_ = NULL;
+		yrcdyrcd_server* _tmp4_ = NULL;
+		gint _tmp5_ = 0;
+		GError* _tmp6_ = NULL;
+		const gchar* _tmp7_ = NULL;
+		gchar* _tmp8_ = NULL;
+		gchar* _tmp9_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp1_ = self->priv->_server;
-		_tmp2_ = self->priv->_id;
-		_tmp3_ = e;
-		_tmp4_ = _tmp3_->message;
-		_tmp5_ = g_strdup_printf ("Error sending message to UID %d : %s", _tmp2_, _tmp4_);
-		_tmp6_ = _tmp5_;
-		yrcd_yrcd_server_log (_tmp1_, _tmp6_);
-		_g_free0 (_tmp6_);
+		_tmp4_ = self->priv->_server;
+		_tmp5_ = self->priv->_id;
+		_tmp6_ = e;
+		_tmp7_ = _tmp6_->message;
+		_tmp8_ = g_strdup_printf ("Error sending message to UID %d : %s", _tmp5_, _tmp7_);
+		_tmp9_ = _tmp8_;
+		yrcd_yrcd_server_log (_tmp4_, _tmp9_);
+		_g_free0 (_tmp9_);
 		_g_error_free0 (e);
 	}
 	__finally6:
@@ -929,7 +936,7 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...) {
 	_tmp0_ = numeric;
 	_tmp1_ = g_strdup_printf ("%.3d", _tmp0_);
 	_tmp2_ = _tmp1_;
-	_tmp3_ = g_strconcat (YRCD_YRCD_CONSTANTS_sname " ", _tmp2_, NULL);
+	_tmp3_ = g_strconcat (":" YRCD_YRCD_CONSTANTS_sname " ", _tmp2_, NULL);
 	_tmp4_ = _tmp3_;
 	_tmp5_ = g_strconcat (_tmp4_, " ", NULL);
 	_tmp6_ = _tmp5_;
