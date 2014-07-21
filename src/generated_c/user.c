@@ -138,7 +138,9 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
+#define YRCD_ERR_NONICKNAMEGIVEN 431
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
+#define YRCD_ERR_NICKNAMEINUSE 433
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
 gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
@@ -152,12 +154,16 @@ void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
 void yrcd_yrcd_user_set_reg_complete (yrcdyrcd_user* self, gboolean value);
 gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
+#define YRCD_RPL_WELCOME 001
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+#define YRCD_RPL_YOURHOST 002
 #define YRCD_YRCD_CONSTANTS_sname "test.net.local"
 #define YRCD_YRCD_CONSTANTS_software "yrcd"
 #define YRCD_YRCD_CONSTANTS_version "0.1"
+#define YRCD_RPL_CREATED 003
 gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
 GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
+#define YRCD_RPL_MYINFO 004
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 static void _g_object_unref0_ (gpointer var);
 static void _g_list_free__g_object_unref0_ (GList* self);
@@ -407,7 +413,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		_tmp4_ = _tmp3_;
 		yrcd_yrcd_server_log (_tmp1_, _tmp4_);
 		_g_free0 (_tmp4_);
-		yrcd_yrcd_user_fire_numeric (self, 431, NULL);
+		yrcd_yrcd_user_fire_numeric (self, YRCD_ERR_NONICKNAMEGIVEN, NULL);
 		return;
 	}
 	_tmp5_ = self->priv->_server;
@@ -425,7 +431,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		_tmp11_ = args;
 		_tmp11__length1 = args_length1;
 		_tmp12_ = _tmp11_[1];
-		yrcd_yrcd_user_fire_numeric (self, 433, _tmp12_, NULL);
+		yrcd_yrcd_user_fire_numeric (self, YRCD_ERR_NICKNAMEINUSE, _tmp12_, NULL);
 		return;
 	}
 	{
@@ -751,8 +757,8 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	_tmp7_ = self->priv->_nick;
 	_tmp8_ = self->priv->_ident;
 	_tmp9_ = self->host;
-	yrcd_yrcd_user_fire_numeric (self, 001, _tmp7_, _tmp8_, _tmp9_, NULL);
-	yrcd_yrcd_user_fire_numeric (self, 002, YRCD_YRCD_CONSTANTS_sname, YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version, NULL);
+	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_WELCOME, _tmp7_, _tmp8_, _tmp9_, NULL);
+	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_YOURHOST, YRCD_YRCD_CONSTANTS_sname, YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version, NULL);
 	_tmp10_ = self->priv->_server;
 	_tmp11_ = self->priv->_server;
 	_tmp12_ = _tmp11_->epoch;
@@ -760,10 +766,10 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	_tmp14_ = _tmp13_;
 	_tmp15_ = g_strdup_printf ("%s", _tmp14_);
 	_tmp16_ = _tmp15_;
-	yrcd_yrcd_user_fire_numeric (self, 003, _tmp16_, NULL);
+	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_CREATED, _tmp16_, NULL);
 	_g_free0 (_tmp16_);
 	_g_free0 (_tmp14_);
-	yrcd_yrcd_user_fire_numeric (self, 004, YRCD_YRCD_CONSTANTS_sname, YRCD_YRCD_CONSTANTS_version, "", "", NULL);
+	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_MYINFO, YRCD_YRCD_CONSTANTS_sname, YRCD_YRCD_CONSTANTS_version, "", "", NULL);
 }
 
 

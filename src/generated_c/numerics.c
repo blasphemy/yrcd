@@ -19,8 +19,6 @@
 typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
 typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
 typedef struct _yrcdyrcd_numeric_wrapperPrivate yrcdyrcd_numeric_wrapperPrivate;
-
-#define YRCD_YRCD_NUMERIC_WRAPPER_TYPE_NUM (yrcd_yrcd_numeric_wrapper_num_get_type ())
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
 struct _yrcdyrcd_numeric_wrapper {
@@ -33,16 +31,6 @@ struct _yrcdyrcd_numeric_wrapperClass {
 	GObjectClass parent_class;
 };
 
-typedef enum  {
-	YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_WELCOME = 001,
-	YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_YOURHOST = 002,
-	YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_CREATED = 003,
-	YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_MYINFO = 004,
-	YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NONICKNAMEGIVEN = 431,
-	YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_ERRONEOUSNICKNAME = 432,
-	YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NICKNAMEINUSE = 433
-} yrcdyrcd_numeric_wrapperNum;
-
 
 static gpointer yrcd_yrcd_numeric_wrapper_parent_class = NULL;
 
@@ -50,22 +38,16 @@ GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 enum  {
 	YRCD_YRCD_NUMERIC_WRAPPER_DUMMY_PROPERTY
 };
-GType yrcd_yrcd_numeric_wrapper_num_get_type (void) G_GNUC_CONST;
 yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_new (void);
 yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type);
+#define YRCD_RPL_WELCOME 001
+#define YRCD_RPL_YOURHOST 002
+#define YRCD_RPL_CREATED 003
+#define YRCD_RPL_MYINFO 004
+#define YRCD_ERR_NONICKNAMEGIVEN 431
+#define YRCD_ERR_NICKNAMEINUSE 433
+#define YRCD_ERR_ERRONEOUSNICKNAME 432
 static void yrcd_yrcd_numeric_wrapper_finalize (GObject* obj);
-
-
-GType yrcd_yrcd_numeric_wrapper_num_get_type (void) {
-	static volatile gsize yrcd_yrcd_numeric_wrapper_num_type_id__volatile = 0;
-	if (g_once_init_enter (&yrcd_yrcd_numeric_wrapper_num_type_id__volatile)) {
-		static const GEnumValue values[] = {{YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_WELCOME, "YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_WELCOME", "rpl-welcome"}, {YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_YOURHOST, "YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_YOURHOST", "rpl-yourhost"}, {YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_CREATED, "YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_CREATED", "rpl-created"}, {YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_MYINFO, "YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_MYINFO", "rpl-myinfo"}, {YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NONICKNAMEGIVEN, "YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NONICKNAMEGIVEN", "err-nonicknamegiven"}, {YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_ERRONEOUSNICKNAME, "YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_ERRONEOUSNICKNAME", "err-erroneousnickname"}, {YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NICKNAMEINUSE, "YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NICKNAMEINUSE", "err-nicknameinuse"}, {0, NULL, NULL}};
-		GType yrcd_yrcd_numeric_wrapper_num_type_id;
-		yrcd_yrcd_numeric_wrapper_num_type_id = g_enum_register_static ("yrcdyrcd_numeric_wrapperNum", values);
-		g_once_init_leave (&yrcd_yrcd_numeric_wrapper_num_type_id__volatile, yrcd_yrcd_numeric_wrapper_num_type_id);
-	}
-	return yrcd_yrcd_numeric_wrapper_num_type_id__volatile;
-}
 
 
 yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type) {
@@ -79,19 +61,19 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	GeeHashMap* _tmp6_ = NULL;
 	self = (yrcdyrcd_numeric_wrapper*) g_object_new (object_type, NULL);
 	_tmp0_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_WELCOME)), "Welcome to the Internet Relay Network %s!%s@%s");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) YRCD_RPL_WELCOME), "Welcome to the Internet Relay Network %s!%s@%s");
 	_tmp1_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp1_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_YOURHOST)), "Your host is %s, running %s version %s");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp1_, (gpointer) ((gintptr) YRCD_RPL_YOURHOST), "Your host is %s, running %s version %s");
 	_tmp2_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp2_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_CREATED)), "This server was created %s");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp2_, (gpointer) ((gintptr) YRCD_RPL_CREATED), "This server was created %s");
 	_tmp3_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp3_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_MYINFO)), "%s %s %s %s");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp3_, (gpointer) ((gintptr) YRCD_RPL_MYINFO), "%s %s %s %s");
 	_tmp4_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp4_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NONICKNAMEGIVEN)), "No nickname given");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp4_, (gpointer) ((gintptr) YRCD_ERR_NONICKNAMEGIVEN), "No nickname given");
 	_tmp5_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp5_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_NICKNAMEINUSE)), "%s :Nickname is already in use");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp5_, (gpointer) ((gintptr) YRCD_ERR_NICKNAMEINUSE), "%s :Nickname is already in use");
 	_tmp6_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp6_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_ERR_ERRONEOUSNICKNAME)), "%s :Erroneous nickname");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp6_, (gpointer) ((gintptr) YRCD_ERR_ERRONEOUSNICKNAME), "%s :Erroneous nickname");
 	return self;
 }
 
