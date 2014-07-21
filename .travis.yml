@@ -7,3 +7,5 @@ before_install:
 script:
   - cmake .
   - make
+notifications:
+  - irc: "irc.notroll.net#yrcd"
