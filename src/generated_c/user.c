@@ -138,7 +138,7 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
-gboolean yrcd_yrcd_server_check_nick_collision (yrcdyrcd_server* self, const gchar* nicktocheck);
+yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
 gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
@@ -383,14 +383,16 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 	gchar** _tmp6_ = NULL;
 	gint _tmp6__length1 = 0;
 	const gchar* _tmp7_ = NULL;
-	gboolean _tmp8_ = FALSE;
+	yrcdyrcd_user* _tmp8_ = NULL;
+	yrcdyrcd_user* _tmp9_ = NULL;
+	gboolean _tmp10_ = FALSE;
 	gchar* oldnick = NULL;
-	const gchar* _tmp18_ = NULL;
-	gchar* _tmp19_ = NULL;
-	gchar** _tmp20_ = NULL;
-	gint _tmp20__length1 = 0;
-	const gchar* _tmp21_ = NULL;
-	gboolean _tmp22_ = FALSE;
+	const gchar* _tmp20_ = NULL;
+	gchar* _tmp21_ = NULL;
+	gchar** _tmp22_ = NULL;
+	gint _tmp22__length1 = 0;
+	const gchar* _tmp23_ = NULL;
+	gboolean _tmp24_ = FALSE;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = args;
 	_tmp0__length1 = args_length1;
@@ -412,15 +414,18 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 	_tmp6_ = args;
 	_tmp6__length1 = args_length1;
 	_tmp7_ = _tmp6_[1];
-	_tmp8_ = yrcd_yrcd_server_check_nick_collision (_tmp5_, _tmp7_);
-	if (_tmp8_) {
-		gchar** _tmp9_ = NULL;
-		gint _tmp9__length1 = 0;
-		const gchar* _tmp10_ = NULL;
-		_tmp9_ = args;
-		_tmp9__length1 = args_length1;
-		_tmp10_ = _tmp9_[1];
-		yrcd_yrcd_user_fire_numeric (self, 433, _tmp10_, NULL);
+	_tmp8_ = yrcd_yrcd_server_get_user_by_nick (_tmp5_, _tmp7_);
+	_tmp9_ = _tmp8_;
+	_tmp10_ = _tmp9_ != NULL;
+	_g_object_unref0 (_tmp9_);
+	if (_tmp10_) {
+		gchar** _tmp11_ = NULL;
+		gint _tmp11__length1 = 0;
+		const gchar* _tmp12_ = NULL;
+		_tmp11_ = args;
+		_tmp11__length1 = args_length1;
+		_tmp12_ = _tmp11_[1];
+		yrcd_yrcd_user_fire_numeric (self, 433, _tmp12_, NULL);
 		return;
 	}
 	{
@@ -431,29 +436,29 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		k_collection = YRCD_YRCD_CONSTANTS_forbidden_nick_chars;
 		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_forbidden_nick_chars);
 		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_forbidden_nick_chars); k_it = k_it + 1) {
-			gchar* _tmp11_ = NULL;
+			gchar* _tmp13_ = NULL;
 			gchar* k = NULL;
-			_tmp11_ = g_strdup (k_collection[k_it]);
-			k = _tmp11_;
+			_tmp13_ = g_strdup (k_collection[k_it]);
+			k = _tmp13_;
 			{
-				gchar** _tmp12_ = NULL;
-				gint _tmp12__length1 = 0;
-				const gchar* _tmp13_ = NULL;
-				const gchar* _tmp14_ = NULL;
-				gboolean _tmp15_ = FALSE;
-				_tmp12_ = args;
-				_tmp12__length1 = args_length1;
-				_tmp13_ = _tmp12_[1];
-				_tmp14_ = k;
-				_tmp15_ = string_contains (_tmp13_, _tmp14_);
-				if (_tmp15_) {
-					gchar** _tmp16_ = NULL;
-					gint _tmp16__length1 = 0;
-					const gchar* _tmp17_ = NULL;
-					_tmp16_ = args;
-					_tmp16__length1 = args_length1;
-					_tmp17_ = _tmp16_[1];
-					yrcd_yrcd_user_fire_numeric (self, 432, _tmp17_, NULL);
+				gchar** _tmp14_ = NULL;
+				gint _tmp14__length1 = 0;
+				const gchar* _tmp15_ = NULL;
+				const gchar* _tmp16_ = NULL;
+				gboolean _tmp17_ = FALSE;
+				_tmp14_ = args;
+				_tmp14__length1 = args_length1;
+				_tmp15_ = _tmp14_[1];
+				_tmp16_ = k;
+				_tmp17_ = string_contains (_tmp15_, _tmp16_);
+				if (_tmp17_) {
+					gchar** _tmp18_ = NULL;
+					gint _tmp18__length1 = 0;
+					const gchar* _tmp19_ = NULL;
+					_tmp18_ = args;
+					_tmp18__length1 = args_length1;
+					_tmp19_ = _tmp18_[1];
+					yrcd_yrcd_user_fire_numeric (self, 432, _tmp19_, NULL);
 					_g_free0 (k);
 					return;
 				}
@@ -461,56 +466,56 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 			}
 		}
 	}
-	_tmp18_ = self->priv->_nick;
-	_tmp19_ = g_strdup (_tmp18_);
-	oldnick = _tmp19_;
-	_tmp20_ = args;
-	_tmp20__length1 = args_length1;
-	_tmp21_ = _tmp20_[1];
-	yrcd_yrcd_user_set_nick (self, _tmp21_);
-	_tmp22_ = self->priv->_nick_set;
-	if (!_tmp22_) {
-		yrcdyrcd_server* _tmp23_ = NULL;
-		gint _tmp24_ = 0;
-		const gchar* _tmp25_ = NULL;
-		gchar* _tmp26_ = NULL;
-		gchar* _tmp27_ = NULL;
-		gboolean _tmp28_ = FALSE;
-		gboolean _tmp29_ = FALSE;
-		_tmp23_ = self->priv->_server;
-		_tmp24_ = self->priv->_id;
-		_tmp25_ = self->priv->_nick;
-		_tmp26_ = g_strdup_printf ("User %d set nick to %s", _tmp24_, _tmp25_);
-		_tmp27_ = _tmp26_;
-		yrcd_yrcd_server_log (_tmp23_, _tmp27_);
-		_g_free0 (_tmp27_);
+	_tmp20_ = self->priv->_nick;
+	_tmp21_ = g_strdup (_tmp20_);
+	oldnick = _tmp21_;
+	_tmp22_ = args;
+	_tmp22__length1 = args_length1;
+	_tmp23_ = _tmp22_[1];
+	yrcd_yrcd_user_set_nick (self, _tmp23_);
+	_tmp24_ = self->priv->_nick_set;
+	if (!_tmp24_) {
+		yrcdyrcd_server* _tmp25_ = NULL;
+		gint _tmp26_ = 0;
+		const gchar* _tmp27_ = NULL;
+		gchar* _tmp28_ = NULL;
+		gchar* _tmp29_ = NULL;
+		gboolean _tmp30_ = FALSE;
+		gboolean _tmp31_ = FALSE;
+		_tmp25_ = self->priv->_server;
+		_tmp26_ = self->priv->_id;
+		_tmp27_ = self->priv->_nick;
+		_tmp28_ = g_strdup_printf ("User %d set nick to %s", _tmp26_, _tmp27_);
+		_tmp29_ = _tmp28_;
+		yrcd_yrcd_server_log (_tmp25_, _tmp29_);
+		_g_free0 (_tmp29_);
 		yrcd_yrcd_user_set_nick_set (self, TRUE);
-		_tmp29_ = self->priv->_reg_complete;
-		if (!_tmp29_) {
-			gboolean _tmp30_ = FALSE;
-			_tmp30_ = self->priv->_user_set;
-			_tmp28_ = _tmp30_;
+		_tmp31_ = self->priv->_reg_complete;
+		if (!_tmp31_) {
+			gboolean _tmp32_ = FALSE;
+			_tmp32_ = self->priv->_user_set;
+			_tmp30_ = _tmp32_;
 		} else {
-			_tmp28_ = FALSE;
+			_tmp30_ = FALSE;
 		}
-		if (_tmp28_) {
+		if (_tmp30_) {
 			yrcd_yrcd_user_reg_finished (self);
 		}
 	} else {
-		yrcdyrcd_server* _tmp31_ = NULL;
-		gint _tmp32_ = 0;
-		const gchar* _tmp33_ = NULL;
-		const gchar* _tmp34_ = NULL;
-		gchar* _tmp35_ = NULL;
-		gchar* _tmp36_ = NULL;
-		_tmp31_ = self->priv->_server;
-		_tmp32_ = self->priv->_id;
-		_tmp33_ = oldnick;
-		_tmp34_ = self->priv->_nick;
-		_tmp35_ = g_strdup_printf ("User %d changed nick from %s to %s", _tmp32_, _tmp33_, _tmp34_);
-		_tmp36_ = _tmp35_;
-		yrcd_yrcd_server_log (_tmp31_, _tmp36_);
-		_g_free0 (_tmp36_);
+		yrcdyrcd_server* _tmp33_ = NULL;
+		gint _tmp34_ = 0;
+		const gchar* _tmp35_ = NULL;
+		const gchar* _tmp36_ = NULL;
+		gchar* _tmp37_ = NULL;
+		gchar* _tmp38_ = NULL;
+		_tmp33_ = self->priv->_server;
+		_tmp34_ = self->priv->_id;
+		_tmp35_ = oldnick;
+		_tmp36_ = self->priv->_nick;
+		_tmp37_ = g_strdup_printf ("User %d changed nick from %s to %s", _tmp34_, _tmp35_, _tmp36_);
+		_tmp38_ = _tmp37_;
+		yrcd_yrcd_server_log (_tmp33_, _tmp38_);
+		_g_free0 (_tmp38_);
 	}
 	_g_free0 (oldnick);
 }
