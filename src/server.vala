@@ -84,5 +84,15 @@ namespace yrcd {
       }
       return false;
     }
+    public string? get_user_by_nick (string nicktocheck) {
+      foreach (yrcd_user k in userlist) {
+        if (k.nick_set) {
+          if (k.nick == nicktocheck) {
+            return k.nick;
+          }
+        }
+      }
+      return null;
+    }
   }
 }
