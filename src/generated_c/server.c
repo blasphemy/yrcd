@@ -274,8 +274,10 @@ void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 		k_collection = YRCD_YRCD_CONSTANTS_listen_ips;
 		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ips);
 		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ips); k_it = k_it + 1) {
-			const gchar* k = NULL;
-			k = k_collection[k_it];
+			gchar* _tmp0_ = NULL;
+			gchar* k = NULL;
+			_tmp0_ = g_strdup (k_collection[k_it]);
+			k = _tmp0_;
 			{
 				{
 					guint16* j_collection = NULL;
@@ -288,43 +290,43 @@ void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 						guint16 j = 0U;
 						j = j_collection[j_it];
 						{
-							const gchar* _tmp0_ = NULL;
-							guint16 _tmp1_ = 0U;
-							gchar* _tmp2_ = NULL;
+							const gchar* _tmp1_ = NULL;
+							guint16 _tmp2_ = 0U;
 							gchar* _tmp3_ = NULL;
+							gchar* _tmp4_ = NULL;
 							GSocketAddress* serversock = NULL;
 							GInetAddress* inetaddr = NULL;
-							const gchar* _tmp4_ = NULL;
-							GInetAddress* _tmp5_ = NULL;
-							GSocketAddress* sockaddr = NULL;
+							const gchar* _tmp5_ = NULL;
 							GInetAddress* _tmp6_ = NULL;
-							guint16 _tmp7_ = 0U;
-							GInetSocketAddress* _tmp8_ = NULL;
-							_tmp0_ = k;
-							_tmp1_ = j;
-							_tmp2_ = g_strdup_printf ("Adding listener on IP: %s port %d", _tmp0_, (gint) _tmp1_);
-							_tmp3_ = _tmp2_;
-							yrcd_yrcd_server_log (self, _tmp3_);
-							_g_free0 (_tmp3_);
+							GSocketAddress* sockaddr = NULL;
+							GInetAddress* _tmp7_ = NULL;
+							guint16 _tmp8_ = 0U;
+							GInetSocketAddress* _tmp9_ = NULL;
+							_tmp1_ = k;
+							_tmp2_ = j;
+							_tmp3_ = g_strdup_printf ("Adding listener on IP: %s port %d", _tmp1_, (gint) _tmp2_);
+							_tmp4_ = _tmp3_;
+							yrcd_yrcd_server_log (self, _tmp4_);
+							_g_free0 (_tmp4_);
 							serversock = NULL;
-							_tmp4_ = k;
-							_tmp5_ = g_inet_address_new_from_string (_tmp4_);
-							inetaddr = _tmp5_;
-							_tmp6_ = inetaddr;
-							_tmp7_ = j;
-							_tmp8_ = (GInetSocketAddress*) g_inet_socket_address_new (_tmp6_, _tmp7_);
-							sockaddr = (GSocketAddress*) _tmp8_;
+							_tmp5_ = k;
+							_tmp6_ = g_inet_address_new_from_string (_tmp5_);
+							inetaddr = _tmp6_;
+							_tmp7_ = inetaddr;
+							_tmp8_ = j;
+							_tmp9_ = (GInetSocketAddress*) g_inet_socket_address_new (_tmp7_, _tmp8_);
+							sockaddr = (GSocketAddress*) _tmp9_;
 							{
-								GSocketService* _tmp9_ = NULL;
-								GSocketAddress* _tmp10_ = NULL;
-								GSocketService* _tmp11_ = NULL;
-								GSocketAddress* _tmp12_ = NULL;
-								_tmp9_ = self->priv->ss;
-								_tmp10_ = sockaddr;
-								_tmp11_ = self->priv->ss;
-								g_socket_listener_add_address ((GSocketListener*) _tmp9_, _tmp10_, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, (GObject*) _tmp11_, &_tmp12_, &_inner_error_);
+								GSocketService* _tmp10_ = NULL;
+								GSocketAddress* _tmp11_ = NULL;
+								GSocketService* _tmp12_ = NULL;
+								GSocketAddress* _tmp13_ = NULL;
+								_tmp10_ = self->priv->ss;
+								_tmp11_ = sockaddr;
+								_tmp12_ = self->priv->ss;
+								g_socket_listener_add_address ((GSocketListener*) _tmp10_, _tmp11_, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, (GObject*) _tmp12_, &_tmp13_, &_inner_error_);
 								_g_object_unref0 (serversock);
-								serversock = _tmp12_;
+								serversock = _tmp13_;
 								if (_inner_error_ != NULL) {
 									goto __catch0_g_error;
 								}
@@ -333,18 +335,18 @@ void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 							__catch0_g_error:
 							{
 								GError* e = NULL;
-								GError* _tmp13_ = NULL;
-								const gchar* _tmp14_ = NULL;
-								gchar* _tmp15_ = NULL;
+								GError* _tmp14_ = NULL;
+								const gchar* _tmp15_ = NULL;
 								gchar* _tmp16_ = NULL;
+								gchar* _tmp17_ = NULL;
 								e = _inner_error_;
 								_inner_error_ = NULL;
-								_tmp13_ = e;
-								_tmp14_ = _tmp13_->message;
-								_tmp15_ = g_strdup_printf ("Error opening socket: %s", _tmp14_);
-								_tmp16_ = _tmp15_;
-								yrcd_yrcd_server_log (self, _tmp16_);
-								_g_free0 (_tmp16_);
+								_tmp14_ = e;
+								_tmp15_ = _tmp14_->message;
+								_tmp16_ = g_strdup_printf ("Error opening socket: %s", _tmp15_);
+								_tmp17_ = _tmp16_;
+								yrcd_yrcd_server_log (self, _tmp17_);
+								_g_free0 (_tmp17_);
 								_g_error_free0 (e);
 							}
 							__finally0:
@@ -352,6 +354,7 @@ void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 								_g_object_unref0 (sockaddr);
 								_g_object_unref0 (inetaddr);
 								_g_object_unref0 (serversock);
+								_g_free0 (k);
 								g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 								g_clear_error (&_inner_error_);
 								return;
@@ -362,6 +365,7 @@ void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
 						}
 					}
 				}
+				_g_free0 (k);
 			}
 		}
 	}

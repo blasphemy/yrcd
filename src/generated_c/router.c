@@ -108,7 +108,7 @@ gchar** yrcd_yrcd_router_tokenize (yrcdyrcd_router* self, const gchar* msg, int*
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
-void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, gchar** args, int args_length1);
+void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
 void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
 GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
@@ -293,11 +293,13 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 			switch (0) {
 				default:
 				{
-					gchar** _tmp41_ = NULL;
-					gint _tmp41__length1 = 0;
-					_tmp41_ = args;
-					_tmp41__length1 = args_length1;
-					yrcd_yrcd_router_privmsg_handler (self, _tmp41_, _tmp41__length1);
+					yrcdyrcd_user* _tmp41_ = NULL;
+					gchar** _tmp42_ = NULL;
+					gint _tmp42__length1 = 0;
+					_tmp41_ = user;
+					_tmp42_ = args;
+					_tmp42__length1 = args_length1;
+					yrcd_yrcd_router_privmsg_handler (self, _tmp41_, _tmp42_, _tmp42__length1);
 					break;
 				}
 			}
@@ -305,13 +307,13 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 			switch (0) {
 				default:
 				{
-					yrcdyrcd_user* _tmp42_ = NULL;
-					gchar** _tmp43_ = NULL;
-					gint _tmp43__length1 = 0;
-					_tmp42_ = user;
-					_tmp43_ = args;
-					_tmp43__length1 = args_length1;
-					yrcd_yrcd_router_join_handler (self, _tmp42_, _tmp43_, _tmp43__length1);
+					yrcdyrcd_user* _tmp43_ = NULL;
+					gchar** _tmp44_ = NULL;
+					gint _tmp44__length1 = 0;
+					_tmp43_ = user;
+					_tmp44_ = args;
+					_tmp44__length1 = args_length1;
+					yrcd_yrcd_router_join_handler (self, _tmp43_, _tmp44_, _tmp44__length1);
 					break;
 				}
 			}
@@ -388,10 +390,11 @@ static gboolean string_contains (const gchar* self, const gchar* needle) {
 }
 
 
-void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, gchar** args, int args_length1) {
+void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
 	gchar** _tmp0_ = NULL;
 	gint _tmp0__length1 = 0;
 	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
 	_tmp0_ = args;
 	_tmp0__length1 = args_length1;
 	if (_tmp0__length1 < 2) {
