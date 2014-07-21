@@ -161,10 +161,13 @@ gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
+gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* chan);
 static void yrcd_yrcd_server_finalize (GObject* obj);
 
 extern const gchar* YRCD_YRCD_CONSTANTS_listen_ips[1];
 extern const guint16 YRCD_YRCD_CONSTANTS_listen_ports[2];
+extern const gchar* YRCD_YRCD_CONSTANTS_chan_prefixes[2];
+extern const gchar* YRCD_YRCD_CONSTANTS_chan_forbidden[5];
 
 gint yrcd_yrcd_server_new_cid (yrcdyrcd_server* self) {
 	gint result = 0;
@@ -707,6 +710,103 @@ yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, c
 		_g_object_unref0 (_k_list);
 	}
 	result = NULL;
+	return result;
+}
+
+
+static gboolean string_contains (const gchar* self, const gchar* needle) {
+	gboolean result = FALSE;
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	g_return_val_if_fail (self != NULL, FALSE);
+	g_return_val_if_fail (needle != NULL, FALSE);
+	_tmp0_ = needle;
+	_tmp1_ = strstr ((gchar*) self, (gchar*) _tmp0_);
+	result = _tmp1_ != NULL;
+	return result;
+}
+
+
+gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* chan) {
+	gboolean result = FALSE;
+	gboolean valid = FALSE;
+	gboolean has_prefix = FALSE;
+	gboolean _tmp8_ = FALSE;
+	gboolean _tmp9_ = FALSE;
+	g_return_val_if_fail (self != NULL, FALSE);
+	g_return_val_if_fail (chan != NULL, FALSE);
+	valid = TRUE;
+	has_prefix = FALSE;
+	{
+		const gchar** k_collection = NULL;
+		gint k_collection_length1 = 0;
+		gint _k_collection_size_ = 0;
+		gint k_it = 0;
+		k_collection = YRCD_YRCD_CONSTANTS_chan_prefixes;
+		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes);
+		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes); k_it = k_it + 1) {
+			gchar* _tmp0_ = NULL;
+			gchar* k = NULL;
+			_tmp0_ = g_strdup (k_collection[k_it]);
+			k = _tmp0_;
+			{
+				const gchar* _tmp1_ = NULL;
+				const gchar* _tmp2_ = NULL;
+				gboolean _tmp3_ = FALSE;
+				_tmp1_ = chan;
+				_tmp2_ = k;
+				_tmp3_ = g_str_has_prefix (_tmp1_, _tmp2_);
+				if (_tmp3_) {
+					has_prefix = TRUE;
+					_g_free0 (k);
+					break;
+				}
+				_g_free0 (k);
+			}
+		}
+	}
+	{
+		const gchar** k_collection = NULL;
+		gint k_collection_length1 = 0;
+		gint _k_collection_size_ = 0;
+		gint k_it = 0;
+		k_collection = YRCD_YRCD_CONSTANTS_chan_forbidden;
+		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_forbidden);
+		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_forbidden); k_it = k_it + 1) {
+			gchar* _tmp4_ = NULL;
+			gchar* k = NULL;
+			_tmp4_ = g_strdup (k_collection[k_it]);
+			k = _tmp4_;
+			{
+				const gchar* _tmp5_ = NULL;
+				const gchar* _tmp6_ = NULL;
+				gboolean _tmp7_ = FALSE;
+				_tmp5_ = chan;
+				_tmp6_ = k;
+				_tmp7_ = string_contains (_tmp5_, _tmp6_);
+				if (_tmp7_) {
+					valid = FALSE;
+					_g_free0 (k);
+					break;
+				}
+				_g_free0 (k);
+			}
+		}
+	}
+	_tmp9_ = has_prefix;
+	if (_tmp9_) {
+		gboolean _tmp10_ = FALSE;
+		_tmp10_ = valid;
+		_tmp8_ = _tmp10_;
+	} else {
+		_tmp8_ = FALSE;
+	}
+	if (_tmp8_) {
+		valid = TRUE;
+	} else {
+		valid = FALSE;
+	}
+	result = TRUE;
 	return result;
 }
 
