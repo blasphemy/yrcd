@@ -19,16 +19,6 @@ typedef struct _yrcdyrcd_router yrcdyrcd_router;
 typedef struct _yrcdyrcd_routerClass yrcdyrcd_routerClass;
 typedef struct _yrcdyrcd_routerPrivate yrcdyrcd_routerPrivate;
 
-#define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
-#define YRCD_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_user))
-#define YRCD_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
-#define YRCD_IS_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_USER))
-#define YRCD_IS_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_USER))
-#define YRCD_YRCD_USER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
-
-typedef struct _yrcdyrcd_user yrcdyrcd_user;
-typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
-
 #define YRCD_TYPE_YRCD_SERVER (yrcd_yrcd_server_get_type ())
 #define YRCD_YRCD_SERVER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_server))
 #define YRCD_YRCD_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_serverClass))
@@ -38,12 +28,24 @@ typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 
 typedef struct _yrcdyrcd_server yrcdyrcd_server;
 typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
+#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
+
+#define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
+#define YRCD_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_user))
+#define YRCD_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
+#define YRCD_IS_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_USER))
+#define YRCD_IS_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_USER))
+#define YRCD_YRCD_USER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
+
+typedef struct _yrcdyrcd_user yrcdyrcd_user;
+typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
 struct _yrcdyrcd_router {
 	GObject parent_instance;
 	yrcdyrcd_routerPrivate * priv;
+	yrcdyrcd_server* server;
 };
 
 struct _yrcdyrcd_routerClass {
@@ -54,12 +56,14 @@ struct _yrcdyrcd_routerClass {
 static gpointer yrcd_yrcd_router_parent_class = NULL;
 
 GType yrcd_yrcd_router_get_type (void) G_GNUC_CONST;
+GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
 enum  {
 	YRCD_YRCD_ROUTER_DUMMY_PROPERTY
 };
+yrcdyrcd_router* yrcd_yrcd_router_new (yrcdyrcd_server* k);
+yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type, yrcdyrcd_server* k);
 GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
-GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
 yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
@@ -69,11 +73,37 @@ gchar** yrcd_yrcd_router_tokenize (yrcdyrcd_router* self, const gchar* msg, int*
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
-yrcdyrcd_router* yrcd_yrcd_router_new (void);
-yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type);
+void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, gchar** args, int args_length1);
+gchar* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
+static void yrcd_yrcd_router_finalize (GObject* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static gint _vala_array_length (gpointer array);
+
+extern const gchar* YRCD_YRCD_CONSTANTS_chan_prefixes[2];
+
+static gpointer _g_object_ref0 (gpointer self) {
+	return self ? g_object_ref (self) : NULL;
+}
+
+
+yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type, yrcdyrcd_server* k) {
+	yrcdyrcd_router * self = NULL;
+	yrcdyrcd_server* _tmp0_ = NULL;
+	yrcdyrcd_server* _tmp1_ = NULL;
+	g_return_val_if_fail (k != NULL, NULL);
+	self = (yrcdyrcd_router*) g_object_new (object_type, NULL);
+	_tmp0_ = k;
+	_tmp1_ = _g_object_ref0 (_tmp0_);
+	_g_object_unref0 (self->server);
+	self->server = _tmp1_;
+	return self;
+}
+
+
+yrcdyrcd_router* yrcd_yrcd_router_new (yrcdyrcd_server* k) {
+	return yrcd_yrcd_router_construct (YRCD_TYPE_YRCD_ROUTER, k);
+}
 
 
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg) {
@@ -148,6 +178,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 		static GQuark _tmp31_label0 = 0;
 		static GQuark _tmp31_label1 = 0;
 		static GQuark _tmp31_label2 = 0;
+		static GQuark _tmp31_label3 = 0;
 		_tmp17_ = user;
 		_tmp18_ = yrcd_yrcd_user_get_server (_tmp17_);
 		_tmp19_ = _tmp18_;
@@ -213,10 +244,90 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					break;
 				}
 			}
+		} else if (_tmp32_ == ((0 != _tmp31_label3) ? _tmp31_label3 : (_tmp31_label3 = g_quark_from_static_string ("privmsg")))) {
+			switch (0) {
+				default:
+				{
+					gchar** _tmp41_ = NULL;
+					gint _tmp41__length1 = 0;
+					_tmp41_ = args;
+					_tmp41__length1 = args_length1;
+					yrcd_yrcd_router_privmsg_handler (self, _tmp41_, _tmp41__length1);
+					break;
+				}
+			}
 		}
 	}
 	args = (_vala_array_free (args, args_length1, (GDestroyNotify) g_free), NULL);
 	_g_free0 (stripped);
+}
+
+
+static gboolean string_contains (const gchar* self, const gchar* needle) {
+	gboolean result = FALSE;
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	g_return_val_if_fail (self != NULL, FALSE);
+	g_return_val_if_fail (needle != NULL, FALSE);
+	_tmp0_ = needle;
+	_tmp1_ = strstr ((gchar*) self, (gchar*) _tmp0_);
+	result = _tmp1_ != NULL;
+	return result;
+}
+
+
+void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, gchar** args, int args_length1) {
+	gchar** _tmp0_ = NULL;
+	gint _tmp0__length1 = 0;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = args;
+	_tmp0__length1 = args_length1;
+	if (_tmp0__length1 < 2) {
+	} else {
+		gchar** _tmp1_ = NULL;
+		gint _tmp1__length1 = 0;
+		_tmp1_ = args;
+		_tmp1__length1 = args_length1;
+		if (_tmp1__length1 < 3) {
+		} else {
+			yrcdyrcd_server* _tmp7_ = NULL;
+			{
+				const gchar** k_collection = NULL;
+				gint k_collection_length1 = 0;
+				gint _k_collection_size_ = 0;
+				gint k_it = 0;
+				k_collection = YRCD_YRCD_CONSTANTS_chan_prefixes;
+				k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes);
+				for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes); k_it = k_it + 1) {
+					gchar* _tmp2_ = NULL;
+					gchar* k = NULL;
+					_tmp2_ = g_strdup (k_collection[k_it]);
+					k = _tmp2_;
+					{
+						gchar** _tmp3_ = NULL;
+						gint _tmp3__length1 = 0;
+						const gchar* _tmp4_ = NULL;
+						const gchar* _tmp5_ = NULL;
+						gboolean _tmp6_ = FALSE;
+						_tmp3_ = args;
+						_tmp3__length1 = args_length1;
+						_tmp4_ = _tmp3_[1];
+						_tmp5_ = k;
+						_tmp6_ = string_contains (_tmp4_, _tmp5_);
+						if (_tmp6_) {
+							_g_free0 (k);
+							return;
+						}
+						_g_free0 (k);
+					}
+				}
+			}
+			_tmp7_ = self->server;
+			if (yrcd_yrcd_server_get_user_by_nick == NULL) {
+			}
+			return;
+		}
+	}
 }
 
 
@@ -265,24 +376,21 @@ gchar** yrcd_yrcd_router_tokenize (yrcdyrcd_router* self, const gchar* msg, int*
 }
 
 
-yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type) {
-	yrcdyrcd_router * self = NULL;
-	self = (yrcdyrcd_router*) g_object_new (object_type, NULL);
-	return self;
-}
-
-
-yrcdyrcd_router* yrcd_yrcd_router_new (void) {
-	return yrcd_yrcd_router_construct (YRCD_TYPE_YRCD_ROUTER);
-}
-
-
 static void yrcd_yrcd_router_class_init (yrcdyrcd_routerClass * klass) {
 	yrcd_yrcd_router_parent_class = g_type_class_peek_parent (klass);
+	G_OBJECT_CLASS (klass)->finalize = yrcd_yrcd_router_finalize;
 }
 
 
 static void yrcd_yrcd_router_instance_init (yrcdyrcd_router * self) {
+}
+
+
+static void yrcd_yrcd_router_finalize (GObject* obj) {
+	yrcdyrcd_router * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_router);
+	_g_object_unref0 (self->server);
+	G_OBJECT_CLASS (yrcd_yrcd_router_parent_class)->finalize (obj);
 }
 
 
