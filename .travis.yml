@@ -11,6 +11,7 @@ env:
   - VALAV="0.20"
   - VALAV="0.18"
   - VALAV="0.16"
+  - VALAV="0.14"
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y
   - sudo apt-get update -qq
