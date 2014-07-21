@@ -6,11 +6,16 @@ namespace yrcd {
     private MainLoop loop = new MainLoop();
     private yrcd_router router;
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
-    private HashMap<int, yrcd_channel> channellist = new HashMap<int, yrcd_channel>();
+    public HashMap<int, yrcd_channel> channellist = new HashMap<int, yrcd_channel>();
     private int user_counter = 0;
+    private int cid_counter = 0;
     public int64 epoch;
     public int max_users = 0;
     public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
+    public int new_cid() {
+      cid_counter++;
+      return cid_counter;
+    }
     public int new_userid() {
       user_counter++;
       return user_counter;
