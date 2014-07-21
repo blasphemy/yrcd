@@ -1,11 +1,11 @@
 using Gee;
 
 namespace yrcd {
-	class yrcd_channel : Object {
-		public string name { get; set; } 
-		public string[] modes;
+  class yrcd_channel : Object {
+    public string name { get; set; } 
+    public string[] modes;
     public int cid { get; set; }
-		public HashMap<int,yrcd_user> users = new HashMap<int,yrcd_user>();
+    public HashMap<int,yrcd_user> users = new HashMap<int,yrcd_user>();
     public yrcd_channel(int id) {
       cid = id;
     }
@@ -16,6 +16,6 @@ namespace yrcd {
         k.send_line(msg);
       }
       return true;
-		}
-	}
+    }
+  }
 }
