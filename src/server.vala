@@ -100,5 +100,27 @@ namespace yrcd {
       //Nothing found, so return null
       return null;
     }
+    public bool valid_chan_name (string chan) {
+      bool valid = true;
+      bool has_prefix = false;
+      foreach (string k in yrcd_constants.chan_prefixes) {
+        if (chan.has_prefix(k)) {
+          has_prefix = true;
+          break;
+        }
+      }
+      foreach (string k in yrcd_constants.chan_forbidden) {
+        if (k in chan) {
+          valid = false;
+          break;
+        } 
+      }
+      if (has_prefix && valid) {
+        valid = true;
+      } else {
+        valid = false;
+      }
+      return true;
+    }
   }
 }
