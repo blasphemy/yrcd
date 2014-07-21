@@ -47,6 +47,7 @@ struct _yrcdyrcd_channelClass {
 
 struct _yrcdyrcd_channelPrivate {
 	gchar* _name;
+	gint _cid;
 };
 
 
@@ -57,16 +58,19 @@ GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 #define YRCD_YRCD_CHANNEL_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channelPrivate))
 enum  {
 	YRCD_YRCD_CHANNEL_DUMMY_PROPERTY,
-	YRCD_YRCD_CHANNEL_NAME
+	YRCD_YRCD_CHANNEL_NAME,
+	YRCD_YRCD_CHANNEL_CID
 };
-void yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
+yrcdyrcd_channel* yrcd_yrcd_channel_new (gint id);
+yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, gint id);
+void yrcd_yrcd_channel_set_cid (yrcdyrcd_channel* self, gint value);
+gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
 void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
-yrcdyrcd_channel* yrcd_yrcd_channel_new (void);
-yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type);
 void yrcd_yrcd_channel_set_name (yrcdyrcd_channel* self, const gchar* value);
+gint yrcd_yrcd_channel_get_cid (yrcdyrcd_channel* self);
 static void yrcd_yrcd_channel_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_channel_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
 static void _vala_yrcd_yrcd_channel_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
@@ -74,19 +78,35 @@ static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNoti
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 
 
+yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, gint id) {
+	yrcdyrcd_channel * self = NULL;
+	gint _tmp0_ = 0;
+	self = (yrcdyrcd_channel*) g_object_new (object_type, NULL);
+	_tmp0_ = id;
+	yrcd_yrcd_channel_set_cid (self, _tmp0_);
+	return self;
+}
+
+
+yrcdyrcd_channel* yrcd_yrcd_channel_new (gint id) {
+	return yrcd_yrcd_channel_construct (YRCD_TYPE_YRCD_CHANNEL, id);
+}
+
+
 static gpointer _g_object_ref0 (gpointer self) {
 	return self ? g_object_ref (self) : NULL;
 }
 
 
-void yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user) {
+gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user) {
+	gboolean result = FALSE;
 	GeeHashMap* _tmp0_ = NULL;
 	yrcdyrcd_user* _tmp1_ = NULL;
 	gint _tmp2_ = 0;
 	gint _tmp3_ = 0;
 	yrcdyrcd_user* _tmp4_ = NULL;
-	g_return_if_fail (self != NULL);
-	g_return_if_fail (user != NULL);
+	g_return_val_if_fail (self != NULL, FALSE);
+	g_return_val_if_fail (user != NULL, FALSE);
 	_tmp0_ = self->users;
 	_tmp1_ = user;
 	_tmp2_ = yrcd_yrcd_user_get_id (_tmp1_);
@@ -154,18 +174,8 @@ void yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user) {
 		}
 		_g_object_unref0 (_k_list);
 	}
-}
-
-
-yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type) {
-	yrcdyrcd_channel * self = NULL;
-	self = (yrcdyrcd_channel*) g_object_new (object_type, NULL);
-	return self;
-}
-
-
-yrcdyrcd_channel* yrcd_yrcd_channel_new (void) {
-	return yrcd_yrcd_channel_construct (YRCD_TYPE_YRCD_CHANNEL);
+	result = TRUE;
+	return result;
 }
 
 
@@ -191,6 +201,25 @@ void yrcd_yrcd_channel_set_name (yrcdyrcd_channel* self, const gchar* value) {
 }
 
 
+gint yrcd_yrcd_channel_get_cid (yrcdyrcd_channel* self) {
+	gint result;
+	gint _tmp0_ = 0;
+	g_return_val_if_fail (self != NULL, 0);
+	_tmp0_ = self->priv->_cid;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_channel_set_cid (yrcdyrcd_channel* self, gint value) {
+	gint _tmp0_ = 0;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	self->priv->_cid = _tmp0_;
+	g_object_notify ((GObject *) self, "cid");
+}
+
+
 static void yrcd_yrcd_channel_class_init (yrcdyrcd_channelClass * klass) {
 	yrcd_yrcd_channel_parent_class = g_type_class_peek_parent (klass);
 	g_type_class_add_private (klass, sizeof (yrcdyrcd_channelPrivate));
@@ -198,6 +227,7 @@ static void yrcd_yrcd_channel_class_init (yrcdyrcd_channelClass * klass) {
 	G_OBJECT_CLASS (klass)->set_property = _vala_yrcd_yrcd_channel_set_property;
 	G_OBJECT_CLASS (klass)->finalize = yrcd_yrcd_channel_finalize;
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_CHANNEL_NAME, g_param_spec_string ("name", "name", "name", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_CHANNEL_CID, g_param_spec_int ("cid", "cid", "cid", G_MININT, G_MAXINT, 0, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 }
 
 
@@ -238,6 +268,9 @@ static void _vala_yrcd_yrcd_channel_get_property (GObject * object, guint proper
 		case YRCD_YRCD_CHANNEL_NAME:
 		g_value_set_string (value, yrcd_yrcd_channel_get_name (self));
 		break;
+		case YRCD_YRCD_CHANNEL_CID:
+		g_value_set_int (value, yrcd_yrcd_channel_get_cid (self));
+		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 		break;
@@ -251,6 +284,9 @@ static void _vala_yrcd_yrcd_channel_set_property (GObject * object, guint proper
 	switch (property_id) {
 		case YRCD_YRCD_CHANNEL_NAME:
 		yrcd_yrcd_channel_set_name (self, g_value_get_string (value));
+		break;
+		case YRCD_YRCD_CHANNEL_CID:
+		yrcd_yrcd_channel_set_cid (self, g_value_get_int (value));
 		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
