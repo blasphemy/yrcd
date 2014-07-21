@@ -49,9 +49,16 @@ namespace yrcd {
         server.log("User %d attempted NICK with invalid arguments".printf(id));
         fire_numeric(431); //ERR_NONICKGIVEN
         return;
-      } else if (server.check_nick_collision(args[1])) {
-        fire_numeric(432, args[1]); //ERR_NICKNAMEINUSE
+      }
+      if (server.check_nick_collision(args[1])) {
+        fire_numeric(433, args[1]); //ERR_NICKNAMEINUSE
         return;
+      }
+      foreach (string k in yrcd_constants.forbidden_nick_chars) {
+        if (k in args[1]) {
+          fire_numeric(432, args[1]);
+          return;
+        }
       }
       string oldnick = nick;
       nick = args[1];

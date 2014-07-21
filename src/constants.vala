@@ -8,5 +8,6 @@ namespace yrcd {
     public const string sname = "test.net.local";
     public const string[] cmodes = {};
     public const string[] umodes = {};
+    public const string[] forbidden_nick_chars = {":", "#", "&", "%", "@", "+"};
   }
 }
