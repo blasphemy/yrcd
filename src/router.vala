@@ -2,6 +2,10 @@ using Gee;
 
 namespace yrcd {
   class yrcd_router : Object {
+    public yrcd_server server;
+    public yrcd_router(yrcd_server k) {
+      server = k;
+    }
     public void route (yrcd_user user, string? msg) {
       if (msg == null) {
         user.server.log("Received null message, disconnecting user %d".printf(user.id));
@@ -45,8 +49,14 @@ namespace yrcd {
             return;
           }
         }
+        //if we've reached this point, it's possible it could be a user
+        if (server.get_user_by_nick == null) {
+          //todo NOT A USER
+        }
+        //we got this far, not a channel, not a user, call it quits and return
+        //fire ERR_NOSUCHNICK?
+        return; 
       }
-      return;
     }
     public string strip_end (string msg) {
       var builder = new StringBuilder ();

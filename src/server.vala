@@ -4,7 +4,7 @@ namespace yrcd {
   class yrcd_server : Object {
     private SocketService ss = new SocketService();
     private MainLoop loop = new MainLoop();
-    private yrcd_router router = new yrcd_router();
+    private yrcd_router router;
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     private int user_counter = 0;
     public int64 epoch;
@@ -21,6 +21,7 @@ namespace yrcd {
       log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
       epoch = new DateTime.now_utc().to_unix();
       add_listeners();
+      router = new yrcd_router(this);
       ss.incoming.connect(on_connection);
       ss.start();
       loop.run();
