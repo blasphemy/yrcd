@@ -31,27 +31,34 @@ namespace yrcd {
         InetSocketAddress inetsockaddr = sock.get_remote_address() as InetSocketAddress;
         string ip = inetsockaddr.get_address().to_string();
         return ip;
-      } catch (Error e) {
-        server.log("Error getting user ip: %s".printf(e.message));
-        return "unknown";
+        } catch (Error e) {
+          server.log("Error getting user ip: %s".printf(e.message));
+          return "unknown";
+        }
       }
-    }
-    public void quit (string? msg) {
-      try {
-        sock.get_socket().close();
-        server.remove_user(id);
-      } catch (Error e) {
-        server.log("Error closing socket: %s".printf(e.message));
-      }
-    }
-    public void change_nick (string[] args) {
-      if (args.length < 2) {
-        server.log("User %d attempted NICK with invalid arguments".printf(id));
+      public void quit (string? msg) {
+        try {
+          sock.get_socket().close();
+          server.remove_user(id);
+          } catch (Error e) {
+            server.log("Error closing socket: %s".printf(e.message));
+          }
+        }
+        public void change_nick (string[] args) {
+          if (args.length < 2) {
+            server.log("User %d attempted NICK with invalid arguments".printf(id));
         fire_numeric(431); //ERR_NONICKGIVEN
         return;
-      } else if (server.check_nick_collision(args[1])) {
-        fire_numeric(432, args[1]); //ERR_NICKNAMEINUSE
+      }
+      if (server.check_nick_collision(args[1])) {
+        fire_numeric(433, args[1]); //ERR_NICKNAMEINUSE
         return;
+      }
+      foreach (string k in yrcd_constants.forbidden_nick_chars) {
+        if (k in args[1]) {
+          fire_numeric(432, args[1]);
+          return;
+        }
       }
       string oldnick = nick;
       nick = args[1];
@@ -61,36 +68,36 @@ namespace yrcd {
         if (!reg_complete && user_set) {
           reg_finished();
         }
-      } else {
-        server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
+        } else {
+          server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
+        }
       }
-    }
-    public void user_reg (string[] args) {
-      if (!user_set) {
-        ident = args[1];
-        if (args[4].has_prefix(":")) {
-          args[4] = args[4].replace(":","");
+      public void user_reg (string[] args) {
+        if (!user_set) {
+          ident = args[1];
+          if (args[4].has_prefix(":")) {
+            args[4] = args[4].replace(":","");
+          }
+          int i;
+          var builder = new StringBuilder();
+          for (i = 4; i < args.length; i++) {
+            builder.append(args[i]);
+            builder.append(" ");
+          }
+          realname = builder.str.strip();
+          if (nick_set) {
+            reg_finished();
+          }
+          } else {
+            server.log("User %d attempted user registration while already registered".printf(id));
+          }
         }
-        int i;
-        var builder = new StringBuilder();
-        for (i = 4; i < args.length; i++) {
-          builder.append(args[i]);
-          builder.append(" ");
-        }
-        realname = builder.str.strip();
-        if (nick_set) {
-          reg_finished();
-        }
-      } else {
-        server.log("User %d attempted user registration while already registered".printf(id));
-      }
-    }
-    public void reg_finished () {
-      reg_complete = true;
-      server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
-      fire_numeric(001, nick, ident, host);
-      fire_numeric(002, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
-      fire_numeric(003, "%s".printf(server.ut_to_utc(server.epoch)));
+        public void reg_finished () {
+          reg_complete = true;
+          server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
+          fire_numeric(001, nick, ident, host);
+          fire_numeric(002, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
+          fire_numeric(003, "%s".printf(server.ut_to_utc(server.epoch)));
       fire_numeric(004, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
     }
     public void update_timestamp() {
@@ -116,24 +123,24 @@ namespace yrcd {
           hostname = ip;
         }
         return hostname;
-      } catch (Error e) {
-        server.log("Error resolving user %d IP %s".printf(id,ip));
-        return ip;
+        } catch (Error e) {
+          server.log("Error resolving user %d IP %s".printf(id,ip));
+          return ip;
+        }
+      }
+      public void send_line(string msg) {
+        try {
+          dos.put_string("%s\n".printf(msg));
+          } catch (Error e) {
+            server.log("Error sending message to UID %d : %s".printf(id,e.message));
+          }
+        }
+        public void fire_numeric(int numeric, ...) {
+          var args = va_list();
+          string msg = ":%s %.3d %s :".printf(yrcd_constants.sname,numeric,nick);
+          string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
+          msg += msg2;
+          send_line(msg);
+        }
       }
     }
-    public void send_line(string msg) {
-      try {
-        dos.put_string("%s\n".printf(msg));
-      } catch (Error e) {
-        server.log("Error sending message to UID %d : %s".printf(id,e.message));
-      }
-    }
-    public void fire_numeric(int numeric, ...) {
-      var args = va_list();
-      string msg = ":%s %.3d %s :".printf(yrcd_constants.sname,numeric,nick);
-      string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
-      msg += msg2;
-      send_line(msg);
-    }
-  }
-}

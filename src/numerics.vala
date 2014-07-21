@@ -9,7 +9,8 @@ namespace yrcd {
       RPL_CREATED = 003,
       RPL_MYINFO = 004,
       ERR_NONICKNAMEGIVEN = 431,
-      ERR_NICKNAMEINUSE = 432;
+      ERR_ERRONEOUSNICKNAME = 432,
+      ERR_NICKNAMEINUSE = 433;
     }
     public yrcd_numeric_wrapper()   {
       numerics[Num.RPL_WELCOME] = "Welcome to the Internet Relay Network %s!%s@%s";
@@ -18,6 +19,7 @@ namespace yrcd {
       numerics[Num.RPL_MYINFO] = "%s %s %s %s";
       numerics[Num.ERR_NONICKNAMEGIVEN] = "No nickname given";
       numerics[Num.ERR_NICKNAMEINUSE] = "%s :Nickname is already in use";
+      numerics[Num.ERR_ERRONEOUSNICKNAME] = "%s :Erroneous nickname";
     }
   }
 }
