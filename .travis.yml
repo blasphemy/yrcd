@@ -5,10 +5,16 @@ compiler:
 branches:
   except:
     - c
+env:
+  - VALAV="0.24"
+  - VALAV="0.22"
+  - VALAV="0.20"
+  - VALAV="0.18"
+  - VALAV="0.16"
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq gnome-common libglib2.0-dev libvala-0.24-dev valac-0.24 gobject-introspection libgee-dev
+  - sudo apt-get install -qq gnome-common libglib2.0-dev libvala-$VALAV-dev valac-$VALAV gobject-introspection libgee-dev
 script:
   - cmake .
   - make
