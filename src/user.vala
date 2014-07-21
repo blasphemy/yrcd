@@ -50,7 +50,7 @@ namespace yrcd {
         fire_numeric(431); //ERR_NONICKGIVEN
         return;
       }
-      if (server.check_nick_collision(args[1])) {
+      if (server.get_user_by_nick(args[1]) != null) {
         fire_numeric(433, args[1]); //ERR_NICKNAMEINUSE
         return;
       }
