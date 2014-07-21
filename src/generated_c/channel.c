@@ -6,6 +6,7 @@
 #include <glib-object.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gee.h>
 
 
 #define YRCD_TYPE_YRCD_CHANNEL (yrcd_yrcd_channel_get_type ())
@@ -18,7 +19,18 @@
 typedef struct _yrcdyrcd_channel yrcdyrcd_channel;
 typedef struct _yrcdyrcd_channelClass yrcdyrcd_channelClass;
 typedef struct _yrcdyrcd_channelPrivate yrcdyrcd_channelPrivate;
+
+#define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
+#define YRCD_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_user))
+#define YRCD_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
+#define YRCD_IS_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_USER))
+#define YRCD_IS_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_USER))
+#define YRCD_YRCD_USER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
+
+typedef struct _yrcdyrcd_user yrcdyrcd_user;
+typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 #define _g_free0(var) (var = (g_free (var), NULL))
+#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
 struct _yrcdyrcd_channel {
 	GObject parent_instance;
@@ -27,6 +39,7 @@ struct _yrcdyrcd_channel {
 	gchar** modes;
 	gint modes_length1;
 	gint _modes_size_;
+	GeeHashMap* users;
 };
 
 struct _yrcdyrcd_channelClass {
@@ -37,14 +50,96 @@ struct _yrcdyrcd_channelClass {
 static gpointer yrcd_yrcd_channel_parent_class = NULL;
 
 GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
+GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 enum  {
 	YRCD_YRCD_CHANNEL_DUMMY_PROPERTY
 };
+void yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
+gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
+gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
 yrcdyrcd_channel* yrcd_yrcd_channel_new (void);
 yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type);
 static void yrcd_yrcd_channel_finalize (GObject* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
+
+
+static gpointer _g_object_ref0 (gpointer self) {
+	return self ? g_object_ref (self) : NULL;
+}
+
+
+void yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user) {
+	GeeHashMap* _tmp0_ = NULL;
+	yrcdyrcd_user* _tmp1_ = NULL;
+	gint _tmp2_ = 0;
+	gint _tmp3_ = 0;
+	yrcdyrcd_user* _tmp4_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	_tmp0_ = self->users;
+	_tmp1_ = user;
+	_tmp2_ = yrcd_yrcd_user_get_id (_tmp1_);
+	_tmp3_ = _tmp2_;
+	_tmp4_ = user;
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) _tmp3_), _tmp4_);
+	{
+		GeeHashMap* _k_list = NULL;
+		GeeHashMap* _tmp5_ = NULL;
+		GeeHashMap* _tmp6_ = NULL;
+		gint _k_size = 0;
+		GeeHashMap* _tmp7_ = NULL;
+		gint _tmp8_ = 0;
+		gint _tmp9_ = 0;
+		gint _k_index = 0;
+		_tmp5_ = self->users;
+		_tmp6_ = _g_object_ref0 (_tmp5_);
+		_k_list = _tmp6_;
+		_tmp7_ = _k_list;
+		_tmp8_ = gee_abstract_map_get_size ((GeeMap*) _tmp7_);
+		_tmp9_ = _tmp8_;
+		_k_size = _tmp9_;
+		_k_index = -1;
+		while (TRUE) {
+			gint _tmp10_ = 0;
+			gint _tmp11_ = 0;
+			gint _tmp12_ = 0;
+			yrcdyrcd_user* k = NULL;
+			GeeHashMap* _tmp13_ = NULL;
+			gint _tmp14_ = 0;
+			gpointer _tmp15_ = NULL;
+			gchar* msg = NULL;
+			yrcdyrcd_user* _tmp16_ = NULL;
+			gchar* _tmp17_ = NULL;
+			gchar* _tmp18_ = NULL;
+			const gchar* _tmp19_ = NULL;
+			gchar* _tmp20_ = NULL;
+			gchar* _tmp21_ = NULL;
+			_tmp10_ = _k_index;
+			_k_index = _tmp10_ + 1;
+			_tmp11_ = _k_index;
+			_tmp12_ = _k_size;
+			if (!(_tmp11_ < _tmp12_)) {
+				break;
+			}
+			_tmp13_ = _k_list;
+			_tmp14_ = _k_index;
+			_tmp15_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp13_, (gpointer) ((gintptr) _tmp14_));
+			k = (yrcdyrcd_user*) _tmp15_;
+			_tmp16_ = user;
+			_tmp17_ = yrcd_yrcd_user_get_hostmask (_tmp16_);
+			_tmp18_ = _tmp17_;
+			_tmp19_ = self->name;
+			_tmp20_ = g_strdup_printf (":%s JOIN %s", _tmp18_, _tmp19_);
+			_tmp21_ = _tmp20_;
+			_g_free0 (_tmp18_);
+			msg = _tmp21_;
+			_g_free0 (msg);
+			_g_object_unref0 (k);
+		}
+		_g_object_unref0 (_k_list);
+	}
+}
 
 
 yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type) {
@@ -66,6 +161,9 @@ static void yrcd_yrcd_channel_class_init (yrcdyrcd_channelClass * klass) {
 
 
 static void yrcd_yrcd_channel_instance_init (yrcdyrcd_channel * self) {
+	GeeHashMap* _tmp0_ = NULL;
+	_tmp0_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
+	self->users = _tmp0_;
 }
 
 
@@ -74,6 +172,7 @@ static void yrcd_yrcd_channel_finalize (GObject* obj) {
 	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channel);
 	_g_free0 (self->name);
 	self->modes = (_vala_array_free (self->modes, self->modes_length1, (GDestroyNotify) g_free), NULL);
+	_g_object_unref0 (self->users);
 	G_OBJECT_CLASS (yrcd_yrcd_channel_parent_class)->finalize (obj);
 }
 

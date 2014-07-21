@@ -46,6 +46,7 @@ const gchar* YRCD_YRCD_CONSTANTS_listen_ips[1] = {"127.0.0.1"};
 const guint16 YRCD_YRCD_CONSTANTS_listen_ports[2] = {(guint16) 6667, (guint16) 6668};
 const gchar* YRCD_YRCD_CONSTANTS_cmodes[0] = {};
 const gchar* YRCD_YRCD_CONSTANTS_umodes[0] = {};
+const gchar* YRCD_YRCD_CONSTANTS_forbidden_nick_chars[6] = {":", "#", "&", "%", "@", "+"};
 
 yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type) {
 	yrcdyrcd_constants * self = NULL;
