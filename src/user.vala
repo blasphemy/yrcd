@@ -67,7 +67,6 @@ namespace yrcd {
           args[4] = args[4].replace(":","");
         }
         int i;
-        string rn;
         var builder = new StringBuilder();
         for (i = 4; i < args.length; i++) {
           builder.append(args[i]);
