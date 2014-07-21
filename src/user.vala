@@ -47,11 +47,11 @@ namespace yrcd {
     public void change_nick (string[] args) {
       if (args.length < 2) {
         server.log("User %d attempted NICK with invalid arguments".printf(id));
-        fire_numeric(431); //ERR_NONICKGIVEN
+        fire_numeric(ERR_NONICKNAMEGIVEN);
         return;
       }
       if (server.get_user_by_nick(args[1]) != null) {
-        fire_numeric(433, args[1]); //ERR_NICKNAMEINUSE
+        fire_numeric(ERR_NICKNAMEINUSE, args[1]);
         return;
       }
       foreach (string k in yrcd_constants.forbidden_nick_chars) {
@@ -95,10 +95,10 @@ namespace yrcd {
     public void reg_finished () {
       reg_complete = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
-      fire_numeric(001, nick, ident, host);
-      fire_numeric(002, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
-      fire_numeric(003, "%s".printf(server.ut_to_utc(server.epoch)));
-      fire_numeric(004, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
+      fire_numeric(RPL_WELCOME, nick, ident, host);
+      fire_numeric(RPL_YOURHOST, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
+      fire_numeric(RPL_CREATED, "%s".printf(server.ut_to_utc(server.epoch)));
+      fire_numeric(RPL_MYINFO, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc().to_unix();
