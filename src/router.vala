@@ -70,7 +70,7 @@ namespace yrcd {
       }
     }
     public string strip_end (string msg) {
-      var builder = new StringBuilder ();
+      StringBuilder builder = new StringBuilder ();
       builder.append(msg);
       builder.truncate(builder.len - 1);
       return builder.str;

@@ -36,8 +36,8 @@ namespace yrcd {
       userlist.unset(id);
     }
     public void add_listeners () {
-      foreach (var k in yrcd_constants.listen_ips) {
-        foreach (var j in yrcd_constants.listen_ports) {
+      foreach (string k in yrcd_constants.listen_ips) {
+        foreach (uint16 j in yrcd_constants.listen_ports) {
           log("Adding listener on IP: %s port %d".printf(k,j));
           SocketAddress serversock = null;
           InetAddress inetaddr = new InetAddress.from_string(k);
@@ -78,7 +78,7 @@ namespace yrcd {
       }
     }
     public string ut_to_utc(int64 ut) {
-    var time = new DateTime.from_unix_utc(ut);
+    DateTime time = new DateTime.from_unix_utc(ut);
     return time.to_string();
     }
     public yrcd_user? get_user_by_nick (string nicktocheck) {

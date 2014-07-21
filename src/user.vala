@@ -79,7 +79,7 @@ namespace yrcd {
           args[4] = args[4].replace(":","");
         }
         int i;
-        var builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         for (i = 4; i < args.length; i++) {
           builder.append(args[i]);
           builder.append(" ");
@@ -114,7 +114,7 @@ namespace yrcd {
         string hostname = resolver.lookup_by_address(address,null);
         List<InetAddress> addresses = resolver.lookup_by_name(hostname);
         bool match = false;
-        foreach (var k in addresses) {
+        foreach (InetAddress k in addresses) {
           if (k.to_string() == ip) {
             match = true;
           }
@@ -136,7 +136,7 @@ namespace yrcd {
       }
     }
     public void fire_numeric(int numeric, ...) {
-      var args = va_list();
+      va_list args = va_list();
       string msg = ":%s %.3d %s :".printf(yrcd_constants.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
