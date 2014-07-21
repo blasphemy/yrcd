@@ -31,7 +31,18 @@ namespace yrcd {
           case "privmsg" :
             privmsg_handler(args);
             break;
+          case "join" :
+            join_handler(user,args);
+            break;
         }
+      }
+    }
+    public void join_handler(yrcd_user user, string[] args) {
+      if (server.get_channel_by_name(args[1]) == null) {
+        yrcd_channel newchan = new yrcd_channel();
+        newchan.name = args[1];
+        server.channellist[server.new_cid()] = newchan;
+        newchan.add_user(user);
       }
     }
     public void privmsg_handler(string[] args) {
