@@ -12,6 +12,14 @@ env:
   - VALAV="0.18"
   - VALAV="0.16"
   - VALAV="0.14"
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: VALAV="0.14"
+    - env: VALAV="0.16"
+    - compiler: clang
+
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y
   - sudo apt-get update -qq
