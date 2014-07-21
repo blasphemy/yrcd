@@ -10,5 +10,6 @@ namespace yrcd {
 		public const string[] umodes = {};
 		public const string[] forbidden_nick_chars = {":", "#", "&", "%", "@", "+"};
 		public const string[] chan_prefixes = {"#", "&"};
-	}
+	  public const string[] chan_forbidden = {":", "&", "@", "%", "+"};
+  }
 }
