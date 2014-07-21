@@ -141,6 +141,7 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_ERR_NONICKNAMEGIVEN 431
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
 #define YRCD_ERR_NICKNAMEINUSE 433
+#define YRCD_ERR_ERRONEOUSNICKNAME 432
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
 gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
@@ -464,7 +465,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 					_tmp18_ = args;
 					_tmp18__length1 = args_length1;
 					_tmp19_ = _tmp18_[1];
-					yrcd_yrcd_user_fire_numeric (self, 432, _tmp19_, NULL);
+					yrcd_yrcd_user_fire_numeric (self, YRCD_ERR_ERRONEOUSNICKNAME, _tmp19_, NULL);
 					_g_free0 (k);
 					return;
 				}
