@@ -1,3 +1,5 @@
+using Gee;
+
 namespace yrcd {
   class yrcd_user : Object {
     public SocketConnection sock { get; set; }
@@ -15,6 +17,7 @@ namespace yrcd {
     public bool reg_complete { get; set; }
     public string ip;
     public string host;
+    public HashMap<int,yrcd_channel> user_chanels = new HashMap<int,yrcd_channel>();
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
       sock = conn;
       server = _server;
@@ -42,6 +45,11 @@ namespace yrcd {
         server.remove_user(id);
       } catch (Error e) {
         server.log("Error closing socket: %s".printf(e.message));
+      }
+    }
+    public void join (yrcd_channel chan) {
+      if (chan.add_user(this)) {
+        user_chanels[chan.cid] = chan;
       }
     }
     public void change_nick (string[] args) {
@@ -112,7 +120,7 @@ namespace yrcd {
         InetAddress address = new InetAddress.from_string(ip);
         Resolver resolver = Resolver.get_default();
         string hostname = resolver.lookup_by_address(address,null);
-        List<InetAddress> addresses = resolver.lookup_by_name(hostname);
+        GLib.List<InetAddress> addresses = resolver.lookup_by_name(hostname);
         bool match = false;
         foreach (InetAddress k in addresses) {
           if (k.to_string() == ip) {
