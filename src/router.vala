@@ -29,7 +29,7 @@ namespace yrcd {
             user.user_reg(args);
             break;
           case "privmsg" :
-            privmsg_handler(args);
+            privmsg_handler(user,args);
             break;
           case "join" :
             join_handler(user,args);
@@ -45,7 +45,7 @@ namespace yrcd {
         newchan.add_user(user);
       }
     }
-    public void privmsg_handler(string[] args) {
+    public void privmsg_handler(yrcd_user user, string[] args) {
      /*
       * No plans to support sending to hostmasks for now.
       */
