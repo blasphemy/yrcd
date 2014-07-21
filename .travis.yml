@@ -18,6 +18,8 @@ matrix:
   allow_failures:
     - env: VALAV="0.14"
     - env: VALAV="0.16"
+    - env: VALAV="0.18"
+    - env: VALAV="0.20"
     - compiler: clang
 
 before_install:
