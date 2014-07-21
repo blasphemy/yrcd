@@ -6,6 +6,7 @@ namespace yrcd {
     private MainLoop loop = new MainLoop();
     private yrcd_router router;
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
+    private HashMap<int, yrcd_channel> channellist = new HashMap<int, yrcd_channel>();
     private int user_counter = 0;
     public int64 epoch;
     public int max_users = 0;
@@ -85,14 +86,23 @@ namespace yrcd {
       }
       return false;
     }
-    public string? get_user_by_nick (string nicktocheck) {
+    public yrcd_user? get_user_by_nick (string nicktocheck) {
       foreach (yrcd_user k in userlist) {
         if (k.nick_set) {
           if (k.nick == nicktocheck) {
-            return k.nick;
+            return k;
           }
         }
       }
+      return null;
+    }
+    public yrcd_channel? get_channel_by_name(string nametocheck) {
+      foreach (yrcd_channel k in channellist) {
+        if (k.name == nametocheck) {
+          return k;
+        }
+      }
+      //Nothing found, so return null
       return null;
     }
   }
