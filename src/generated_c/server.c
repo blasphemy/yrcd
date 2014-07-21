@@ -142,6 +142,9 @@ GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 static void yrcd_yrcd_server_process_request_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
 gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
+gboolean yrcd_yrcd_server_check_nick_collision (yrcdyrcd_server* self, const gchar* nicktocheck);
+gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
+const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 static void yrcd_yrcd_server_finalize (GObject* obj);
 
 extern const gchar* YRCD_YRCD_CONSTANTS_listen_ips[1];
@@ -539,6 +542,77 @@ gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut) {
 	_tmp2_ = g_date_time_to_string (time);
 	result = _tmp2_;
 	_g_date_time_unref0 (time);
+	return result;
+}
+
+
+gboolean yrcd_yrcd_server_check_nick_collision (yrcdyrcd_server* self, const gchar* nicktocheck) {
+	gboolean result = FALSE;
+	g_return_val_if_fail (self != NULL, FALSE);
+	g_return_val_if_fail (nicktocheck != NULL, FALSE);
+	{
+		GeeHashMap* _user_list = NULL;
+		GeeHashMap* _tmp0_ = NULL;
+		GeeHashMap* _tmp1_ = NULL;
+		gint _user_size = 0;
+		GeeHashMap* _tmp2_ = NULL;
+		gint _tmp3_ = 0;
+		gint _tmp4_ = 0;
+		gint _user_index = 0;
+		_tmp0_ = self->priv->userlist;
+		_tmp1_ = _g_object_ref0 (_tmp0_);
+		_user_list = _tmp1_;
+		_tmp2_ = _user_list;
+		_tmp3_ = gee_abstract_map_get_size ((GeeMap*) _tmp2_);
+		_tmp4_ = _tmp3_;
+		_user_size = _tmp4_;
+		_user_index = -1;
+		while (TRUE) {
+			gint _tmp5_ = 0;
+			gint _tmp6_ = 0;
+			gint _tmp7_ = 0;
+			yrcdyrcd_user* user = NULL;
+			GeeHashMap* _tmp8_ = NULL;
+			gint _tmp9_ = 0;
+			gpointer _tmp10_ = NULL;
+			yrcdyrcd_user* _tmp11_ = NULL;
+			gboolean _tmp12_ = FALSE;
+			gboolean _tmp13_ = FALSE;
+			_tmp5_ = _user_index;
+			_user_index = _tmp5_ + 1;
+			_tmp6_ = _user_index;
+			_tmp7_ = _user_size;
+			if (!(_tmp6_ < _tmp7_)) {
+				break;
+			}
+			_tmp8_ = _user_list;
+			_tmp9_ = _user_index;
+			_tmp10_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp8_, (gpointer) ((gintptr) _tmp9_));
+			user = (yrcdyrcd_user*) _tmp10_;
+			_tmp11_ = user;
+			_tmp12_ = yrcd_yrcd_user_get_nick_set (_tmp11_);
+			_tmp13_ = _tmp12_;
+			if (_tmp13_) {
+				yrcdyrcd_user* _tmp14_ = NULL;
+				const gchar* _tmp15_ = NULL;
+				const gchar* _tmp16_ = NULL;
+				const gchar* _tmp17_ = NULL;
+				_tmp14_ = user;
+				_tmp15_ = yrcd_yrcd_user_get_nick (_tmp14_);
+				_tmp16_ = _tmp15_;
+				_tmp17_ = nicktocheck;
+				if (g_strcmp0 (_tmp16_, _tmp17_) == 0) {
+					result = TRUE;
+					_g_object_unref0 (user);
+					_g_object_unref0 (_user_list);
+					return result;
+				}
+			}
+			_g_object_unref0 (user);
+		}
+		_g_object_unref0 (_user_list);
+	}
+	result = FALSE;
 	return result;
 }
 
