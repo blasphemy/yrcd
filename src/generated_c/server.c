@@ -141,6 +141,7 @@ GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 static void yrcd_yrcd_server_process_request_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
+gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
 static void yrcd_yrcd_server_finalize (GObject* obj);
 
 extern const gchar* YRCD_YRCD_CONSTANTS_listen_ips[1];
@@ -512,6 +513,33 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 	}
 	g_object_unref (_data_->_async_result);
 	return FALSE;
+}
+
+
+static gchar* g_date_time_to_string (GDateTime* self) {
+	gchar* result = NULL;
+	gchar* _tmp0_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = g_date_time_format (self, "%FT%H:%M:%S%z");
+	result = _tmp0_;
+	return result;
+}
+
+
+gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut) {
+	gchar* result = NULL;
+	GDateTime* time = NULL;
+	gint64 _tmp0_ = 0LL;
+	GDateTime* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = ut;
+	_tmp1_ = g_date_time_new_from_unix_utc (_tmp0_);
+	time = _tmp1_;
+	_tmp2_ = g_date_time_to_string (time);
+	result = _tmp2_;
+	_g_date_time_unref0 (time);
+	return result;
 }
 
 

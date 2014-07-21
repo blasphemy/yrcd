@@ -37,7 +37,6 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
-#define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
 #define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
@@ -49,6 +48,7 @@ typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
 typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
 typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
+#define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 typedef struct _yrcdyrcd_numeric_wrapperPrivate yrcdyrcd_numeric_wrapperPrivate;
 
 struct _yrcdyrcd_user {
@@ -152,13 +152,16 @@ gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+#define YRCD_YRCD_CONSTANTS_sname "test.net.local"
+#define YRCD_YRCD_CONSTANTS_software "yrcd"
+#define YRCD_YRCD_CONSTANTS_version "0.1"
+gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
+GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 static void _g_object_unref0_ (gpointer var);
 static void _g_list_free__g_object_unref0_ (GList* self);
 void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
-#define YRCD_YRCD_CONSTANTS_sname "test.net.local"
-GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
 static void yrcd_yrcd_user_finalize (GObject* obj);
@@ -648,6 +651,13 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	const gchar* _tmp7_ = NULL;
 	const gchar* _tmp8_ = NULL;
 	const gchar* _tmp9_ = NULL;
+	yrcdyrcd_server* _tmp10_ = NULL;
+	yrcdyrcd_server* _tmp11_ = NULL;
+	gint64 _tmp12_ = 0LL;
+	gchar* _tmp13_ = NULL;
+	gchar* _tmp14_ = NULL;
+	gchar* _tmp15_ = NULL;
+	gchar* _tmp16_ = NULL;
 	g_return_if_fail (self != NULL);
 	yrcd_yrcd_user_set_reg_complete (self, TRUE);
 	_tmp0_ = self->priv->_server;
@@ -664,6 +674,17 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	_tmp8_ = self->priv->_ident;
 	_tmp9_ = self->host;
 	yrcd_yrcd_user_fire_numeric (self, 001, _tmp7_, _tmp8_, _tmp9_, NULL);
+	yrcd_yrcd_user_fire_numeric (self, 002, YRCD_YRCD_CONSTANTS_sname, YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version, NULL);
+	_tmp10_ = self->priv->_server;
+	_tmp11_ = self->priv->_server;
+	_tmp12_ = _tmp11_->epoch;
+	_tmp13_ = yrcd_yrcd_server_ut_to_utc (_tmp10_, _tmp12_);
+	_tmp14_ = _tmp13_;
+	_tmp15_ = g_strdup_printf ("%s", _tmp14_);
+	_tmp16_ = _tmp15_;
+	yrcd_yrcd_user_fire_numeric (self, 003, _tmp16_, NULL);
+	_g_free0 (_tmp16_);
+	_g_free0 (_tmp14_);
 }
 
 

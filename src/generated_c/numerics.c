@@ -75,7 +75,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	_tmp0_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_WELCOME)), "Welcome to the Internet Relay Network %s!%s@%s");
 	_tmp1_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp1_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_YOURHOST)), "Your host is %s, running version %s");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp1_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_YOURHOST)), "Your host is %s, running %s version %s");
 	_tmp2_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp2_, (gpointer) ((gintptr) ((gint) YRCD_YRCD_NUMERIC_WRAPPER_NUM_RPL_CREATED)), "This server was created %s");
 	_tmp3_ = self->numerics;
