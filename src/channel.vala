@@ -9,6 +9,7 @@ namespace yrcd {
       users[user.id] = user;
       foreach (yrcd_user k in users) {
         string msg = ":%s JOIN %s".printf(user.get_hostmask(), this.name);
+        k.send_line(msg);
       }
 		}
 	}
