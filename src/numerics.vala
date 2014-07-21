@@ -11,7 +11,7 @@ namespace yrcd {
     }
     public yrcd_numeric_wrapper() {
       numerics[Num.RPL_WELCOME] = "Welcome to the Internet Relay Network %s!%s@%s";
-      numerics[Num.RPL_YOURHOST] = "Your host is %s, running version %s";
+      numerics[Num.RPL_YOURHOST] = "Your host is %s, running %s version %s";
       numerics[Num.RPL_CREATED] = "This server was created %s";
       numerics[Num.RPL_MYINFO] = "%s %s %s %s";
     }
