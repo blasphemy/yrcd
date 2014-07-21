@@ -1,4 +1,4 @@
-language: vala
+language: c
 compiler: gcc
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y
