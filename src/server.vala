@@ -74,5 +74,15 @@ namespace yrcd {
     var time = new DateTime.from_unix_utc(ut);
     return time.to_string();
     }
+    public bool check_nick_collision (string nicktocheck) {
+      foreach (yrcd_user user in userlist) {
+        if (user.nick_set) {
+          if (user.nick == nicktocheck) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
   }
 }

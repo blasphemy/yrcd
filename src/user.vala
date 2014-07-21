@@ -47,7 +47,10 @@ namespace yrcd {
     public void change_nick (string[] args) {
       if (args.length < 2) {
         server.log("User %d attempted NICK with invalid arguments".printf(id));
-        fire_numeric(431);
+        fire_numeric(431); //ERR_NONICKGIVEN
+        return;
+      } else if (check_nick_collision(args[1])) {
+        fire_numeric(432, args[1]); //ERR_NICKNAMEINUSE
         return;
       }
       string oldnick = nick;
