@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gio/gio.h>
-#include <stdarg.h>
 #include <gee.h>
+#include <stdarg.h>
 
 
 #define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
@@ -38,6 +38,16 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
+
+#define YRCD_TYPE_YRCD_CHANNEL (yrcd_yrcd_channel_get_type ())
+#define YRCD_YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channel))
+#define YRCD_YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channelClass))
+#define YRCD_IS_YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CHANNEL))
+#define YRCD_IS_YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CHANNEL))
+#define YRCD_YRCD_CHANNEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channelClass))
+
+typedef struct _yrcdyrcd_channel yrcdyrcd_channel;
+typedef struct _yrcdyrcd_channelClass yrcdyrcd_channelClass;
 
 #define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
 #define YRCD_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapper))
@@ -81,6 +91,7 @@ struct _yrcdyrcd_userPrivate {
 struct _yrcdyrcd_server {
 	GObject parent_instance;
 	yrcdyrcd_serverPrivate * priv;
+	GeeHashMap* channellist;
 	gint64 epoch;
 	gint max_users;
 	yrcdyrcd_numeric_wrapper* numeric_wrapper;
@@ -163,6 +174,7 @@ const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
 #define YRCD_YRCD_CONSTANTS_version "0.1"
 #define YRCD_RPL_CREATED 003
 gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
+GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 #define YRCD_RPL_MYINFO 004
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
