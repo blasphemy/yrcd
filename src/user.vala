@@ -56,7 +56,7 @@ namespace yrcd {
       }
       foreach (string k in yrcd_constants.forbidden_nick_chars) {
         if (k in args[1]) {
-          fire_numeric(432, args[1]);
+          fire_numeric(ERR_ERRONEOUSNICKNAME, args[1]);
           return;
         }
       }
