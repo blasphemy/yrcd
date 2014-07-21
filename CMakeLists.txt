@@ -36,6 +36,7 @@ vala_precompile(YRCD_C ${YRCD_NAME}
     src/router.vala    
     src/constants.vala
     src/numerics.vala
+    src/channel.vala
 PACKAGES
     gio-2.0
     gee-1.0
