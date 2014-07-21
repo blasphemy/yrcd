@@ -47,6 +47,11 @@ namespace yrcd {
     public void change_nick (string[] args) {
       if (args.length < 2) {
         server.log("User %d attempted NICK with invalid arguments".printf(id));
+        fire_numeric(431); //ERR_NONICKGIVEN
+        return;
+      } else if (server.check_nick_collision(args[1])) {
+        fire_numeric(432, args[1]); //ERR_NICKNAMEINUSE
+        return;
       }
       string oldnick = nick;
       nick = args[1];
@@ -67,7 +72,6 @@ namespace yrcd {
           args[4] = args[4].replace(":","");
         }
         int i;
-        string rn;
         var builder = new StringBuilder();
         for (i = 4; i < args.length; i++) {
           builder.append(args[i]);
@@ -87,6 +91,7 @@ namespace yrcd {
       fire_numeric(001, nick, ident, host);
       fire_numeric(002, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
       fire_numeric(003, "%s".printf(server.ut_to_utc(server.epoch)));
+      fire_numeric(004, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc().to_unix();
