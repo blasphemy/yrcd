@@ -12,6 +12,7 @@ namespace yrcd {
       numerics[ERR_NONICKNAMEGIVEN] = "No nickname given";
       numerics[ERR_NICKNAMEINUSE] = "%s :Nickname is already in use";
       numerics[ERR_ERRONEOUSNICKNAME] = "%s :Erroneous nickname";
+      numerics[ERR_ALREADYREGISTRED] = "You may not reregister";
     }
   }
   //define these in the global namespace
@@ -23,4 +24,6 @@ namespace yrcd {
   public const int ERR_NONICKNAMEGIVEN = 431;
   public const int ERR_ERRONEOUSNICKNAME = 432;
   public const int ERR_NICKNAMEINUSE = 433;
+  public const int ERR_ALREADYREGISTRED = 462;
+
 }

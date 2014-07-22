@@ -13,7 +13,6 @@ namespace yrcd {
     public string ident { get; set; }
     public string realname { get; set; }
     public bool user_set { get; set; }
-    public bool reg_complete { get; set; }
     public string ip;
     public string host;
     public HashMap<int,yrcd_channel> user_chanels = new HashMap<int,yrcd_channel>();
@@ -82,7 +81,7 @@ namespace yrcd {
       nick = args[1];
       if (!isnickset()) {
         server.log("User %d set nick to %s".printf(id,nick));
-        if (!reg_complete && user_set) {
+        if (user_set) {
           reg_finished();
         }
       } else {
@@ -102,15 +101,16 @@ namespace yrcd {
           builder.append(" ");
         }
         realname = builder.str.strip();
+        user_set = true;
         if (isnickset()) {
           reg_finished();
         }
       } else {
         server.log("User %d attempted user registration while already registered".printf(id));
+        fire_numeric(462);
       }
     }
     public void reg_finished () {
-      reg_complete = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(RPL_WELCOME, nick, ident, host);
       fire_numeric(RPL_YOURHOST, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
