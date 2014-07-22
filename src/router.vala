@@ -17,7 +17,6 @@ namespace yrcd {
       if (args[0] != null) {
         user.server.log("USER %d: received line %s".printf(user.id,stripped));
         user.update_timestamp();
-        user.awaiting_response = false;
         switch (args[0].down()) {
           case "quit" :
             user.server.log("Received QUIT");

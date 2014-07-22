@@ -7,8 +7,7 @@ namespace yrcd {
     public DataOutputStream dos { get; set; }
     public yrcd_server server { get; set; }
     public int id { get; set; }
-    public int64 time_last_rcv;
-    public int64 check_ping_at;
+    private int64 time_last_rcv;
     public int64 epoch;
     public string nick { get; set; }
     public string ident { get; set; }
@@ -25,9 +24,7 @@ namespace yrcd {
       dos = new DataOutputStream(sock.output_stream);
       id = server.new_userid();
       epoch = new DateTime.now_utc().to_unix();
-      check_ping_at = epoch + yrcd_constants.ping_invertal;
       host = get_host();
-      awaiting_response = false;
       server.log("User connected from %s with ID %d".printf(host,id));
     }
     public bool isnickset() {
