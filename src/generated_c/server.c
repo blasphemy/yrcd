@@ -157,7 +157,7 @@ static void yrcd_yrcd_server_process_request_ready (GObject* source_object, GAsy
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg);
 gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
-gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
+gboolean yrcd_yrcd_user_isnickset (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
@@ -617,7 +617,6 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 			gpointer _tmp10_ = NULL;
 			yrcdyrcd_user* _tmp11_ = NULL;
 			gboolean _tmp12_ = FALSE;
-			gboolean _tmp13_ = FALSE;
 			_tmp5_ = _k_index;
 			_k_index = _tmp5_ + 1;
 			_tmp6_ = _k_index;
@@ -630,18 +629,17 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 			_tmp10_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp8_, (gpointer) ((gintptr) _tmp9_));
 			k = (yrcdyrcd_user*) _tmp10_;
 			_tmp11_ = k;
-			_tmp12_ = yrcd_yrcd_user_get_nick_set (_tmp11_);
-			_tmp13_ = _tmp12_;
-			if (_tmp13_) {
-				yrcdyrcd_user* _tmp14_ = NULL;
+			_tmp12_ = yrcd_yrcd_user_isnickset (_tmp11_);
+			if (_tmp12_) {
+				yrcdyrcd_user* _tmp13_ = NULL;
+				const gchar* _tmp14_ = NULL;
 				const gchar* _tmp15_ = NULL;
 				const gchar* _tmp16_ = NULL;
-				const gchar* _tmp17_ = NULL;
-				_tmp14_ = k;
-				_tmp15_ = yrcd_yrcd_user_get_nick (_tmp14_);
-				_tmp16_ = _tmp15_;
-				_tmp17_ = nicktocheck;
-				if (g_strcmp0 (_tmp16_, _tmp17_) == 0) {
+				_tmp13_ = k;
+				_tmp14_ = yrcd_yrcd_user_get_nick (_tmp13_);
+				_tmp15_ = _tmp14_;
+				_tmp16_ = nicktocheck;
+				if (g_strcmp0 (_tmp15_, _tmp16_) == 0) {
 					result = k;
 					_g_object_unref0 (_k_list);
 					return result;

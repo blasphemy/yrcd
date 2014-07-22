@@ -39,6 +39,7 @@ enum  {
 #define YRCD_YRCD_CONSTANTS_software "yrcd"
 #define YRCD_YRCD_CONSTANTS_motd "Welcome!"
 #define YRCD_YRCD_CONSTANTS_sname "test.net.local"
+#define YRCD_YRCD_CONSTANTS_ping_invertal ((gint64) 45)
 yrcdyrcd_constants* yrcd_yrcd_constants_new (void);
 yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type);
 
