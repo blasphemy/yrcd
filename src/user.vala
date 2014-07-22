@@ -11,6 +11,7 @@ namespace yrcd {
     private DateTime epoch;
     private int64 check_ping_at;
     private bool awaiting_response;
+    private uint ping_timer;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
@@ -30,15 +31,16 @@ namespace yrcd {
       host = get_host();
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
-      setup_ping_timer();
+      ping_timer = setup_ping_timer();
       server.log("User connected from %s with ID %d".printf(host,id));
     }
-    private void setup_ping_timer() {
-      Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
+    private uint setup_ping_timer() {
+      uint t = Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
           if (!sock.is_connected()) { return false; }
           check_ping();
           return true;
           });
+      return t;
     }
     public bool isnickset() {
       if (nick == null) {
@@ -79,6 +81,7 @@ namespace yrcd {
     }
     public void quit (string? msg) {
       try {
+        Source.remove(ping_timer);
         sock.get_socket().close();
         server.remove_user(id);
       } catch (Error e) {
