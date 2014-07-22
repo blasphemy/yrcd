@@ -53,9 +53,9 @@ namespace yrcd {
       }
     }
     public void privmsg_handler(yrcd_user user, string[] args) {
-     /*
-      * No plans to support sending to hostmasks for now.
-      */
+      /*
+       * No plans to support sending to hostmasks for now.
+       */
       if (args.length < 2) {
         //todo ERR_NORECIPIENT
       } else if (args.length < 3) {

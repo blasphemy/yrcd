@@ -7,8 +7,10 @@ namespace yrcd {
     public DataOutputStream dos { get; set; }
     public yrcd_server server { get; set; }
     public int id { get; set; }
-    private int64 time_last_rcv;
-    public int64 epoch;
+    private DateTime time_last_rcv;
+    private DateTime epoch;
+    private int64 check_ping_at;
+    private bool awaiting_response;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
@@ -23,8 +25,12 @@ namespace yrcd {
       dis = new DataInputStream(sock.input_stream);
       dos = new DataOutputStream(sock.output_stream);
       id = server.new_userid();
-      epoch = new DateTime.now_utc().to_unix();
+      epoch = new DateTime.now_utc();
+      time_last_rcv = new DateTime.now_utc();
       host = get_host();
+      awaiting_response = false;
+      check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
+      check_ping.begin();
       server.log("User connected from %s with ID %d".printf(host,id));
     }
     public bool isnickset() {
@@ -36,6 +42,26 @@ namespace yrcd {
         } else {
           return false;
         }
+      }
+    }
+    private async void check_ping() {
+      while (true) {
+        SourceFunc callback = check_ping.callback;
+        int64 now = new DateTime.now_utc().to_unix();
+        int64 last = time_last_rcv.to_unix();
+        if (now > check_ping_at) {
+          if (check_ping_at > last) {
+            if (awaiting_response) {
+              quit(null);
+            } else {
+              send_line("PING :" + yrcd_constants.sname);
+              awaiting_response = true;
+            }
+          }
+          check_ping_at = now + yrcd_constants.ping_invertal;
+        }
+        Timeout.add(10000, callback);
+        yield;
       }
     }
     public string get_ip () {
@@ -118,7 +144,8 @@ namespace yrcd {
       fire_numeric(RPL_MYINFO, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
     }
     public void update_timestamp() {
-      time_last_rcv = new DateTime.now_utc().to_unix();
+      time_last_rcv = new DateTime.now_utc();
+      awaiting_response = false;
     }
     public string get_hostmask() {
       string hm = nick + "!" + ident + "@" + host;
@@ -148,6 +175,7 @@ namespace yrcd {
     public void send_line(string msg) {
       try {
         dos.put_string("%s\n".printf(msg));
+        server.log("sending to %s: %s".printf(nick,msg));
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
       }

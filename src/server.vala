@@ -30,19 +30,8 @@ namespace yrcd {
       router = new yrcd_router(this);
       ss.incoming.connect(on_connection);
       ss.start();
-      //test.begin();
       loop.run();
     }
-    /*
-    async void test() {
-      while (true) {
-        SourceFunc callback = test.callback;
-        stdout.printf("Test LoL!!\n");
-        Idle.add(callback);
-        yield;
-      }
-    }
-    */
     public void remove_user (int id) {
       userlist.unset(id);
     }
