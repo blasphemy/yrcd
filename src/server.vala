@@ -30,8 +30,29 @@ namespace yrcd {
       router = new yrcd_router(this);
       ss.incoming.connect(on_connection);
       ss.start();
-      //test.begin();
+      check_pings.begin();
       loop.run();
+    }
+    async void check_pings() {
+      while (true) {
+        SourceFunc callback = check_pings.callback;
+        int64 current = new DateTime.now_utc().to_unix();
+        foreach (yrcd_user user in userlist) {
+          if (current > user.check_ping_at) {
+            if (current > user.time_last_rcv + yrcd_constants.ping_invertal) {
+              if (user.awaiting_response) {
+                user.quit(null);
+              } else {
+                user.awaiting_response = true;
+                user.send_line("PING :" + yrcd_constants.sname);
+                user.check_ping_at = current + yrcd_constants.ping_invertal;
+              }
+            }
+          }
+        }
+        Idle.add(callback);
+        yield;
+      }
     }
     /*
     async void test() {
