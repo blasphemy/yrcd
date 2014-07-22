@@ -7,8 +7,8 @@ namespace yrcd {
     public DataOutputStream dos { get; set; }
     public yrcd_server server { get; set; }
     public int id { get; set; }
-    private int64 time_last_rcv;
-    public int64 epoch;
+    private DateTime time_last_rcv;
+    private DateTime epoch;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
@@ -23,7 +23,8 @@ namespace yrcd {
       dis = new DataInputStream(sock.input_stream);
       dos = new DataOutputStream(sock.output_stream);
       id = server.new_userid();
-      epoch = new DateTime.now_utc().to_unix();
+      epoch = new DateTime.now_utc();
+      time_last_rcv = new DateTime.now_utc();
       host = get_host();
       server.log("User connected from %s with ID %d".printf(host,id));
     }
@@ -118,7 +119,7 @@ namespace yrcd {
       fire_numeric(RPL_MYINFO, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
     }
     public void update_timestamp() {
-      time_last_rcv = new DateTime.now_utc().to_unix();
+      time_last_rcv = new DateTime.now_utc();
     }
     public string get_hostmask() {
       string hm = nick + "!" + ident + "@" + host;
