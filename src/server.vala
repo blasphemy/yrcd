@@ -30,8 +30,19 @@ namespace yrcd {
       router = new yrcd_router(this);
       ss.incoming.connect(on_connection);
       ss.start();
+      //test.begin();
       loop.run();
     }
+    /*
+    async void test() {
+      while (true) {
+        SourceFunc callback = test.callback;
+        stdout.printf("Test LoL!!\n");
+        Idle.add(callback);
+        yield;
+      }
+    }
+    */
     public void remove_user (int id) {
       userlist.unset(id);
     }
@@ -78,8 +89,8 @@ namespace yrcd {
       }
     }
     public string ut_to_utc(int64 ut) {
-    DateTime time = new DateTime.from_unix_utc(ut);
-    return time.to_string();
+      DateTime time = new DateTime.from_unix_utc(ut);
+      return time.to_string();
     }
     public yrcd_user? get_user_by_nick (string nicktocheck) {
       foreach (yrcd_user k in userlist) {
