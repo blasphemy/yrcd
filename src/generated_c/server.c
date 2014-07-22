@@ -100,20 +100,21 @@ struct _YrcdYrcdServerProcessRequestData {
 	yrcdyrcd_user* _tmp0_;
 	GSocketConnection* _tmp1_;
 	GSocketConnection* _tmp2_;
-	gboolean _tmp3_;
+	GSocket* _tmp3_;
+	gboolean _tmp4_;
 	gchar* msg;
-	yrcdyrcd_user* _tmp4_;
-	GDataInputStream* _tmp5_;
+	yrcdyrcd_user* _tmp5_;
 	GDataInputStream* _tmp6_;
-	gchar* _tmp7_;
-	yrcdyrcd_router* _tmp8_;
-	yrcdyrcd_user* _tmp9_;
-	const gchar* _tmp10_;
+	GDataInputStream* _tmp7_;
+	gchar* _tmp8_;
+	yrcdyrcd_router* _tmp9_;
+	yrcdyrcd_user* _tmp10_;
+	const gchar* _tmp11_;
 	GError* e;
-	GError* _tmp11_;
-	const gchar* _tmp12_;
-	gchar* _tmp13_;
+	GError* _tmp12_;
+	const gchar* _tmp13_;
 	gchar* _tmp14_;
+	gchar* _tmp15_;
 	GError * _inner_error_;
 };
 
@@ -493,36 +494,38 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 		_data_->_tmp1_ = yrcd_yrcd_user_get_sock (_data_->_tmp0_);
 		_data_->_tmp2_ = NULL;
 		_data_->_tmp2_ = _data_->_tmp1_;
-		_data_->_tmp3_ = FALSE;
-		_data_->_tmp3_ = g_socket_connection_is_connected (_data_->_tmp2_);
-		if (!_data_->_tmp3_) {
+		_data_->_tmp3_ = NULL;
+		_data_->_tmp3_ = g_socket_connection_get_socket (_data_->_tmp2_);
+		_data_->_tmp4_ = FALSE;
+		_data_->_tmp4_ = g_socket_is_connected (_data_->_tmp3_);
+		if (!_data_->_tmp4_) {
 			yrcd_yrcd_server_log (_data_->self, "Socket not connected...breaking");
 			break;
 		}
 		{
-			_data_->_tmp4_ = NULL;
-			_data_->_tmp4_ = _data_->user;
 			_data_->_tmp5_ = NULL;
-			_data_->_tmp5_ = yrcd_yrcd_user_get_dis (_data_->_tmp4_);
+			_data_->_tmp5_ = _data_->user;
 			_data_->_tmp6_ = NULL;
-			_data_->_tmp6_ = _data_->_tmp5_;
+			_data_->_tmp6_ = yrcd_yrcd_user_get_dis (_data_->_tmp5_);
+			_data_->_tmp7_ = NULL;
+			_data_->_tmp7_ = _data_->_tmp6_;
 			_data_->_state_ = 1;
-			g_data_input_stream_read_line_async (_data_->_tmp6_, G_PRIORITY_DEFAULT, NULL, yrcd_yrcd_server_process_request_ready, _data_);
+			g_data_input_stream_read_line_async (_data_->_tmp7_, G_PRIORITY_DEFAULT, NULL, yrcd_yrcd_server_process_request_ready, _data_);
 			return FALSE;
 			_state_1:
-			_data_->_tmp7_ = NULL;
-			_data_->_tmp7_ = g_data_input_stream_read_line_finish (_data_->_tmp6_, _data_->_res_, NULL, &_data_->_inner_error_);
-			_data_->msg = _data_->_tmp7_;
+			_data_->_tmp8_ = NULL;
+			_data_->_tmp8_ = g_data_input_stream_read_line_finish (_data_->_tmp7_, _data_->_res_, NULL, &_data_->_inner_error_);
+			_data_->msg = _data_->_tmp8_;
 			if (_data_->_inner_error_ != NULL) {
 				goto __catch1_g_error;
 			}
-			_data_->_tmp8_ = NULL;
-			_data_->_tmp8_ = _data_->self->priv->router;
 			_data_->_tmp9_ = NULL;
-			_data_->_tmp9_ = _data_->user;
+			_data_->_tmp9_ = _data_->self->priv->router;
 			_data_->_tmp10_ = NULL;
-			_data_->_tmp10_ = _data_->msg;
-			yrcd_yrcd_router_route (_data_->_tmp8_, _data_->_tmp9_, _data_->_tmp10_);
+			_data_->_tmp10_ = _data_->user;
+			_data_->_tmp11_ = NULL;
+			_data_->_tmp11_ = _data_->msg;
+			yrcd_yrcd_router_route (_data_->_tmp9_, _data_->_tmp10_, _data_->_tmp11_);
 			_g_free0 (_data_->msg);
 		}
 		goto __finally1;
@@ -530,16 +533,16 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 		{
 			_data_->e = _data_->_inner_error_;
 			_data_->_inner_error_ = NULL;
-			_data_->_tmp11_ = NULL;
-			_data_->_tmp11_ = _data_->e;
 			_data_->_tmp12_ = NULL;
-			_data_->_tmp12_ = _data_->_tmp11_->message;
+			_data_->_tmp12_ = _data_->e;
 			_data_->_tmp13_ = NULL;
-			_data_->_tmp13_ = g_strdup_printf ("Error encountered in socket loop: %s", _data_->_tmp12_);
+			_data_->_tmp13_ = _data_->_tmp12_->message;
 			_data_->_tmp14_ = NULL;
-			_data_->_tmp14_ = _data_->_tmp13_;
-			yrcd_yrcd_server_log (_data_->self, _data_->_tmp14_);
-			_g_free0 (_data_->_tmp14_);
+			_data_->_tmp14_ = g_strdup_printf ("Error encountered in socket loop: %s", _data_->_tmp13_);
+			_data_->_tmp15_ = NULL;
+			_data_->_tmp15_ = _data_->_tmp14_;
+			yrcd_yrcd_server_log (_data_->self, _data_->_tmp15_);
+			_g_free0 (_data_->_tmp15_);
 			_g_error_free0 (_data_->e);
 		}
 		__finally1:

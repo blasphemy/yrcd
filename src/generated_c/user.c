@@ -284,10 +284,12 @@ yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _se
 static gboolean __lambda3_ (yrcdyrcd_user* self) {
 	gboolean result = FALSE;
 	GSocketConnection* _tmp0_ = NULL;
-	gboolean _tmp1_ = FALSE;
+	GSocket* _tmp1_ = NULL;
+	gboolean _tmp2_ = FALSE;
 	_tmp0_ = self->priv->_sock;
-	_tmp1_ = g_socket_connection_is_connected (_tmp0_);
-	if (!_tmp1_) {
+	_tmp1_ = g_socket_connection_get_socket (_tmp0_);
+	_tmp2_ = g_socket_is_connected (_tmp1_);
+	if (!_tmp2_) {
 		result = FALSE;
 		return result;
 	}
