@@ -30,8 +30,18 @@ namespace yrcd {
       host = get_host();
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
-      check_ping.begin();
+      setup_ping_timer();
       server.log("User connected from %s with ID %d".printf(host,id));
+    }
+    private void setup_ping_timer() {
+      Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
+          if (sock.is_connected()) {
+          check_ping();
+          return true;
+          } else {
+          return false;
+          }
+          });
     }
     public bool isnickset() {
       if (nick == null) {
@@ -44,24 +54,20 @@ namespace yrcd {
         }
       }
     }
-    private async void check_ping() {
-      while (true) {
-        SourceFunc callback = check_ping.callback;
-        int64 now = new DateTime.now_utc().to_unix();
-        int64 last = time_last_rcv.to_unix();
-        if (now > check_ping_at) {
-          if (check_ping_at > last) {
-            if (awaiting_response) {
-              quit(null);
-            } else {
-              send_line("PING :" + yrcd_constants.sname);
-              awaiting_response = true;
-            }
+    private void check_ping() {
+      server.log("check ping called on user %d".printf(id));
+      int64 now = new DateTime.now_utc().to_unix();
+      int64 last = time_last_rcv.to_unix();
+      if (now > check_ping_at) {
+        if (check_ping_at > last) {
+          if (awaiting_response) {
+            quit(null);
+          } else {
+            send_line("PING :" + yrcd_constants.sname);
+            awaiting_response = true;
           }
-          check_ping_at = now + yrcd_constants.ping_invertal;
         }
-        Timeout.add(10000, callback);
-        yield;
+        check_ping_at = now + yrcd_constants.ping_invertal;
       }
     }
     public string get_ip () {
