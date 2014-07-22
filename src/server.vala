@@ -131,7 +131,7 @@ namespace yrcd {
       } else {
         valid = false;
       }
-      return true;
+      return valid;
     }
   }
 }
