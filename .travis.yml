@@ -13,13 +13,13 @@ env:
   - TRAVIS_VALA_VERSION="0.16"
   - TRAVIS_VALA_VERSION="0.14"
 
-matrix:
-  allow_failures:
-    - env: TRAVIS_VALA_VERSION="0.14"
-    - env: TRAVIS_VALA_VERSION="0.16"
-    - env: TRAVIS_VALA_VERSION="0.18"
-    - env: TRAVIS_VALA_VERSION="0.20"
-    - compiler: clang
+#matrix:
+#  allow_failures:
+#    - env: TRAVIS_VALA_VERSION="0.14"
+#    - env: TRAVIS_VALA_VERSION="0.16"
+#    - env: TRAVIS_VALA_VERSION="0.18"
+#    - env: TRAVIS_VALA_VERSION="0.20"
+#    - compiler: clang
 
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y

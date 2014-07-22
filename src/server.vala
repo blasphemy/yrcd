@@ -84,7 +84,7 @@ namespace yrcd {
     public yrcd_user? get_user_by_nick (string nicktocheck) {
       foreach (yrcd_user k in userlist) {
         if (k.isnickset()) {
-          if (k.nick == nicktocheck) {
+          if (k.nick.down() == nicktocheck.down()) {
             return k;
           }
         }
@@ -93,7 +93,7 @@ namespace yrcd {
     }
     public yrcd_channel? get_channel_by_name(string nametocheck) {
       foreach (yrcd_channel k in channellist) {
-        if (k.name == nametocheck) {
+        if (k.name.down() == nametocheck.down()) {
           return k;
         }
       }
@@ -115,7 +115,7 @@ namespace yrcd {
           break;
         } 
       }
-      if (has_prefix && valid) {
+      if (has_prefix && valid && get_channel_by_name(chan) == null) {
         valid = true;
       } else {
         valid = false;
