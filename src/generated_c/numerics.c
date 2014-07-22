@@ -44,6 +44,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 #define YRCD_RPL_YOURHOST 002
 #define YRCD_RPL_CREATED 003
 #define YRCD_RPL_MYINFO 004
+#define YRCD_ERR_UNKNOWNCOMMAND 421
 #define YRCD_ERR_NONICKNAMEGIVEN 431
 #define YRCD_ERR_NICKNAMEINUSE 433
 #define YRCD_ERR_ERRONEOUSNICKNAME 432
@@ -59,6 +60,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	GeeHashMap* _tmp4_ = NULL;
 	GeeHashMap* _tmp5_ = NULL;
 	GeeHashMap* _tmp6_ = NULL;
+	GeeHashMap* _tmp7_ = NULL;
 	self = (yrcdyrcd_numeric_wrapper*) g_object_new (object_type, NULL);
 	_tmp0_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) YRCD_RPL_WELCOME), "Welcome to the Internet Relay Network %s!%s@%s");
@@ -69,11 +71,13 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	_tmp3_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp3_, (gpointer) ((gintptr) YRCD_RPL_MYINFO), "%s %s %s %s");
 	_tmp4_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp4_, (gpointer) ((gintptr) YRCD_ERR_NONICKNAMEGIVEN), "No nickname given");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp4_, (gpointer) ((gintptr) YRCD_ERR_UNKNOWNCOMMAND), "%s :Unkown command");
 	_tmp5_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp5_, (gpointer) ((gintptr) YRCD_ERR_NICKNAMEINUSE), "%s :Nickname is already in use");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp5_, (gpointer) ((gintptr) YRCD_ERR_NONICKNAMEGIVEN), "No nickname given");
 	_tmp6_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp6_, (gpointer) ((gintptr) YRCD_ERR_ERRONEOUSNICKNAME), "%s :Erroneous nickname");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp6_, (gpointer) ((gintptr) YRCD_ERR_NICKNAMEINUSE), "%s :Nickname is already in use");
+	_tmp7_ = self->numerics;
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp7_, (gpointer) ((gintptr) YRCD_ERR_ERRONEOUSNICKNAME), "%s :Erroneous nickname");
 	return self;
 }
 
