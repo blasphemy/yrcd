@@ -12,7 +12,6 @@ namespace yrcd {
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
-    public bool nick_set { get; set; }
     public bool user_set { get; set; }
     public bool reg_complete { get; set; }
     public string ip;
@@ -28,6 +27,17 @@ namespace yrcd {
       epoch = new DateTime.now_utc().to_unix();
       host = get_host();
       server.log("User connected from %s with ID %d".printf(host,id));
+    }
+    public bool isnickset() {
+      if (nick == null) {
+        return false;
+      } else {
+        if (nick.length > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
     public string get_ip () {
       try { 
@@ -70,9 +80,8 @@ namespace yrcd {
       }
       string oldnick = nick;
       nick = args[1];
-      if (!nick_set) {
+      if (!isnickset()) {
         server.log("User %d set nick to %s".printf(id,nick));
-        nick_set = true;
         if (!reg_complete && user_set) {
           reg_finished();
         }
@@ -93,7 +102,7 @@ namespace yrcd {
           builder.append(" ");
         }
         realname = builder.str.strip();
-        if (nick_set) {
+        if (isnickset()) {
           reg_finished();
         }
       } else {
