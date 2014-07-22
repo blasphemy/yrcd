@@ -26,6 +26,7 @@ namespace yrcd {
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
       host = get_host();
+      check_ping.begin();
       server.log("User connected from %s with ID %d".printf(host,id));
     }
     public bool isnickset() {
@@ -37,6 +38,18 @@ namespace yrcd {
         } else {
           return false;
         }
+      }
+    }
+    private async void check_ping() {
+      while (true) {
+        SourceFunc callback = check_ping.callback;
+        int64 now = new DateTime.now_utc().to_unix();
+        int64 last = time_last_rcv.to_unix();
+        if (now > last) {
+          server.log("time checking is now working!");
+        }
+        Timeout.add(10000, callback);
+        yield;
       }
     }
     public string get_ip () {
