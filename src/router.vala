@@ -34,8 +34,14 @@ namespace yrcd {
           case "join" :
             join_handler(user,args);
             break;
+          default :
+            unknown_command_handler(user, args);
+            break;
         }
       }
+    }
+    public void unknown_command_handler(yrcd_user user, string[] args) {
+      user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
     }
     public void join_handler(yrcd_user user, string[] args) {
       if (server.get_channel_by_name(args[1]) == null) {
