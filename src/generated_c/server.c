@@ -637,12 +637,24 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 				yrcdyrcd_user* _tmp13_ = NULL;
 				const gchar* _tmp14_ = NULL;
 				const gchar* _tmp15_ = NULL;
-				const gchar* _tmp16_ = NULL;
+				gchar* _tmp16_ = NULL;
+				gchar* _tmp17_ = NULL;
+				const gchar* _tmp18_ = NULL;
+				gchar* _tmp19_ = NULL;
+				gchar* _tmp20_ = NULL;
+				gboolean _tmp21_ = FALSE;
 				_tmp13_ = k;
 				_tmp14_ = yrcd_yrcd_user_get_nick (_tmp13_);
 				_tmp15_ = _tmp14_;
-				_tmp16_ = nicktocheck;
-				if (g_strcmp0 (_tmp15_, _tmp16_) == 0) {
+				_tmp16_ = g_utf8_strdown (_tmp15_, (gssize) (-1));
+				_tmp17_ = _tmp16_;
+				_tmp18_ = nicktocheck;
+				_tmp19_ = g_utf8_strdown (_tmp18_, (gssize) (-1));
+				_tmp20_ = _tmp19_;
+				_tmp21_ = g_strcmp0 (_tmp17_, _tmp20_) == 0;
+				_g_free0 (_tmp20_);
+				_g_free0 (_tmp17_);
+				if (_tmp21_) {
 					result = k;
 					_g_object_unref0 (_k_list);
 					return result;
@@ -689,7 +701,12 @@ yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, c
 			yrcdyrcd_channel* _tmp11_ = NULL;
 			const gchar* _tmp12_ = NULL;
 			const gchar* _tmp13_ = NULL;
-			const gchar* _tmp14_ = NULL;
+			gchar* _tmp14_ = NULL;
+			gchar* _tmp15_ = NULL;
+			const gchar* _tmp16_ = NULL;
+			gchar* _tmp17_ = NULL;
+			gchar* _tmp18_ = NULL;
+			gboolean _tmp19_ = FALSE;
 			_tmp5_ = _k_index;
 			_k_index = _tmp5_ + 1;
 			_tmp6_ = _k_index;
@@ -704,8 +721,15 @@ yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, c
 			_tmp11_ = k;
 			_tmp12_ = yrcd_yrcd_channel_get_name (_tmp11_);
 			_tmp13_ = _tmp12_;
-			_tmp14_ = nametocheck;
-			if (g_strcmp0 (_tmp13_, _tmp14_) == 0) {
+			_tmp14_ = g_utf8_strdown (_tmp13_, (gssize) (-1));
+			_tmp15_ = _tmp14_;
+			_tmp16_ = nametocheck;
+			_tmp17_ = g_utf8_strdown (_tmp16_, (gssize) (-1));
+			_tmp18_ = _tmp17_;
+			_tmp19_ = g_strcmp0 (_tmp15_, _tmp18_) == 0;
+			_g_free0 (_tmp18_);
+			_g_free0 (_tmp15_);
+			if (_tmp19_) {
 				result = k;
 				_g_object_unref0 (_k_list);
 				return result;
@@ -738,6 +762,7 @@ gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* c
 	gboolean has_prefix = FALSE;
 	gboolean _tmp8_ = FALSE;
 	gboolean _tmp9_ = FALSE;
+	gboolean _tmp10_ = FALSE;
 	g_return_val_if_fail (self != NULL, FALSE);
 	g_return_val_if_fail (chan != NULL, FALSE);
 	valid = TRUE;
@@ -798,11 +823,23 @@ gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* c
 			}
 		}
 	}
-	_tmp9_ = has_prefix;
+	_tmp10_ = has_prefix;
+	if (_tmp10_) {
+		gboolean _tmp11_ = FALSE;
+		_tmp11_ = valid;
+		_tmp9_ = _tmp11_;
+	} else {
+		_tmp9_ = FALSE;
+	}
 	if (_tmp9_) {
-		gboolean _tmp10_ = FALSE;
-		_tmp10_ = valid;
-		_tmp8_ = _tmp10_;
+		const gchar* _tmp12_ = NULL;
+		yrcdyrcd_channel* _tmp13_ = NULL;
+		yrcdyrcd_channel* _tmp14_ = NULL;
+		_tmp12_ = chan;
+		_tmp13_ = yrcd_yrcd_server_get_channel_by_name (self, _tmp12_);
+		_tmp14_ = _tmp13_;
+		_tmp8_ = _tmp14_ == NULL;
+		_g_object_unref0 (_tmp14_);
 	} else {
 		_tmp8_ = FALSE;
 	}
