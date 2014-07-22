@@ -9,6 +9,8 @@ namespace yrcd {
     public int id { get; set; }
     private DateTime time_last_rcv;
     private DateTime epoch;
+    private int64 check_ping_at;
+    private bool awaiting_response;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
@@ -26,6 +28,8 @@ namespace yrcd {
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
       host = get_host();
+      awaiting_response = false;
+      check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
       check_ping.begin();
       server.log("User connected from %s with ID %d".printf(host,id));
     }
@@ -45,8 +49,16 @@ namespace yrcd {
         SourceFunc callback = check_ping.callback;
         int64 now = new DateTime.now_utc().to_unix();
         int64 last = time_last_rcv.to_unix();
-        if (now > last) {
-          server.log("time checking is now working!");
+        if (now > check_ping_at) {
+          if (check_ping_at > last) {
+            if (awaiting_response) {
+              quit(null);
+            } else {
+              send_line("PING :" + yrcd_constants.sname);
+              awaiting_response = true;
+            }
+          }
+          check_ping_at = now + yrcd_constants.ping_invertal;
         }
         Timeout.add(10000, callback);
         yield;
@@ -133,6 +145,7 @@ namespace yrcd {
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc();
+      awaiting_response = false;
     }
     public string get_hostmask() {
       string hm = nick + "!" + ident + "@" + host;
@@ -162,6 +175,7 @@ namespace yrcd {
     public void send_line(string msg) {
       try {
         dos.put_string("%s\n".printf(msg));
+        server.log("sending to %s: %s".printf(nick,msg));
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
       }
