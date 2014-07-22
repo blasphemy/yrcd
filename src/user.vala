@@ -49,6 +49,9 @@ namespace yrcd {
         SourceFunc callback = check_ping.callback;
         int64 now = new DateTime.now_utc().to_unix();
         int64 last = time_last_rcv.to_unix();
+        if (!sock.is_connected()) {
+          break;
+        }
         if (now > check_ping_at) {
           if (check_ping_at > last) {
             if (awaiting_response) {
