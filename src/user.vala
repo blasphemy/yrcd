@@ -36,7 +36,7 @@ namespace yrcd {
     }
     private uint setup_ping_timer() {
       uint t = Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
-          if (!sock.is_connected()) { return false; }
+          if (!sock.get_socket().is_connected()) { return false; }
           check_ping();
           return true;
           });

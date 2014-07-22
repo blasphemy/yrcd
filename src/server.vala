@@ -65,7 +65,7 @@ namespace yrcd {
     private async void process_request(yrcd_user user) {
       log("data streams open, entering main loop.");
       while (true) {
-        if (!user.sock.is_connected()) {
+        if (!user.sock.get_socket().is_connected()) {
           log("Socket not connected...breaking");
           break;
         }
