@@ -284,14 +284,13 @@ static gboolean __lambda3_ (yrcdyrcd_user* self) {
 	gboolean _tmp1_ = FALSE;
 	_tmp0_ = self->priv->_sock;
 	_tmp1_ = g_socket_connection_is_connected (_tmp0_);
-	if (_tmp1_) {
-		yrcd_yrcd_user_check_ping (self);
-		result = TRUE;
-		return result;
-	} else {
+	if (!_tmp1_) {
 		result = FALSE;
 		return result;
 	}
+	yrcd_yrcd_user_check_ping (self);
+	result = TRUE;
+	return result;
 }
 
 
