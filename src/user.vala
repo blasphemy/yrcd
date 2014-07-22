@@ -35,12 +35,9 @@ namespace yrcd {
     }
     private void setup_ping_timer() {
       Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
-          if (sock.is_connected()) {
+          if (!sock.is_connected()) { return false; }
           check_ping();
           return true;
-          } else {
-          return false;
-          }
           });
     }
     public bool isnickset() {
