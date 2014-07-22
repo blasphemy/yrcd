@@ -15,7 +15,7 @@ set( CFLAGS
     ${GIO_CFLAGS}
 )
 add_definitions(${CFLAGS})
-#add_definitions("-w")
+add_definitions("-w")
 set( LIBS
     ${GEE_LIBRARIES}    
     ${GIO_LIBRARIES}
