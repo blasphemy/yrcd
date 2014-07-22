@@ -808,7 +808,7 @@ gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* c
 	} else {
 		valid = FALSE;
 	}
-	result = TRUE;
+	result = valid;
 	return result;
 }
 
