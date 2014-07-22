@@ -83,6 +83,7 @@ struct _yrcdyrcd_userPrivate {
 	GDateTime* epoch;
 	gint64 check_ping_at;
 	gboolean awaiting_response;
+	guint ping_timer;
 	gchar* _nick;
 	gchar* _ident;
 	gchar* _realname;
@@ -144,7 +145,7 @@ gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
 gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self);
 #define YRCD_YRCD_CONSTANTS_ping_invertal ((gint64) 45)
-static void yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self);
+static guint yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 static gboolean __lambda3_ (yrcdyrcd_user* self);
@@ -216,11 +217,12 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	gchar* _tmp17_ = NULL;
 	GDateTime* _tmp18_ = NULL;
 	gint64 _tmp19_ = 0LL;
-	yrcdyrcd_server* _tmp20_ = NULL;
-	const gchar* _tmp21_ = NULL;
-	gint _tmp22_ = 0;
-	gchar* _tmp23_ = NULL;
+	guint _tmp20_ = 0U;
+	yrcdyrcd_server* _tmp21_ = NULL;
+	const gchar* _tmp22_ = NULL;
+	gint _tmp23_ = 0;
 	gchar* _tmp24_ = NULL;
+	gchar* _tmp25_ = NULL;
 	g_return_val_if_fail (conn != NULL, NULL);
 	g_return_val_if_fail (_server != NULL, NULL);
 	self = (yrcdyrcd_user*) g_object_new (object_type, NULL);
@@ -261,14 +263,15 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	_tmp18_ = self->priv->epoch;
 	_tmp19_ = g_date_time_to_unix (_tmp18_);
 	self->priv->check_ping_at = _tmp19_ + YRCD_YRCD_CONSTANTS_ping_invertal;
-	yrcd_yrcd_user_setup_ping_timer (self);
-	_tmp20_ = self->priv->_server;
-	_tmp21_ = self->host;
-	_tmp22_ = self->priv->_id;
-	_tmp23_ = g_strdup_printf ("User connected from %s with ID %d", _tmp21_, _tmp22_);
-	_tmp24_ = _tmp23_;
-	yrcd_yrcd_server_log (_tmp20_, _tmp24_);
-	_g_free0 (_tmp24_);
+	_tmp20_ = yrcd_yrcd_user_setup_ping_timer (self);
+	self->priv->ping_timer = _tmp20_;
+	_tmp21_ = self->priv->_server;
+	_tmp22_ = self->host;
+	_tmp23_ = self->priv->_id;
+	_tmp24_ = g_strdup_printf ("User connected from %s with ID %d", _tmp22_, _tmp23_);
+	_tmp25_ = _tmp24_;
+	yrcd_yrcd_server_log (_tmp21_, _tmp25_);
+	_g_free0 (_tmp25_);
 	return self;
 }
 
@@ -301,9 +304,15 @@ static gboolean ___lambda3__gsource_func (gpointer self) {
 }
 
 
-static void yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self) {
-	g_return_if_fail (self != NULL);
-	g_timeout_add_seconds_full (G_PRIORITY_DEFAULT, (guint) 10, ___lambda3__gsource_func, g_object_ref (self), g_object_unref);
+static guint yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self) {
+	guint result = 0U;
+	guint t = 0U;
+	guint _tmp0_ = 0U;
+	g_return_val_if_fail (self != NULL, 0U);
+	_tmp0_ = g_timeout_add_seconds_full (G_PRIORITY_DEFAULT, (guint) 10, ___lambda3__gsource_func, g_object_ref (self), g_object_unref);
+	t = _tmp0_;
+	result = t;
+	return result;
 }
 
 
@@ -460,38 +469,41 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
 	{
-		GSocketConnection* _tmp0_ = NULL;
-		GSocket* _tmp1_ = NULL;
-		yrcdyrcd_server* _tmp2_ = NULL;
-		gint _tmp3_ = 0;
-		_tmp0_ = self->priv->_sock;
-		_tmp1_ = g_socket_connection_get_socket (_tmp0_);
-		g_socket_close (_tmp1_, &_inner_error_);
+		guint _tmp0_ = 0U;
+		GSocketConnection* _tmp1_ = NULL;
+		GSocket* _tmp2_ = NULL;
+		yrcdyrcd_server* _tmp3_ = NULL;
+		gint _tmp4_ = 0;
+		_tmp0_ = self->priv->ping_timer;
+		g_source_remove (_tmp0_);
+		_tmp1_ = self->priv->_sock;
+		_tmp2_ = g_socket_connection_get_socket (_tmp1_);
+		g_socket_close (_tmp2_, &_inner_error_);
 		if (_inner_error_ != NULL) {
 			goto __catch3_g_error;
 		}
-		_tmp2_ = self->priv->_server;
-		_tmp3_ = self->priv->_id;
-		yrcd_yrcd_server_remove_user (_tmp2_, _tmp3_);
+		_tmp3_ = self->priv->_server;
+		_tmp4_ = self->priv->_id;
+		yrcd_yrcd_server_remove_user (_tmp3_, _tmp4_);
 	}
 	goto __finally3;
 	__catch3_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp4_ = NULL;
-		GError* _tmp5_ = NULL;
-		const gchar* _tmp6_ = NULL;
-		gchar* _tmp7_ = NULL;
+		yrcdyrcd_server* _tmp5_ = NULL;
+		GError* _tmp6_ = NULL;
+		const gchar* _tmp7_ = NULL;
 		gchar* _tmp8_ = NULL;
+		gchar* _tmp9_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp4_ = self->priv->_server;
-		_tmp5_ = e;
-		_tmp6_ = _tmp5_->message;
-		_tmp7_ = g_strdup_printf ("Error closing socket: %s", _tmp6_);
-		_tmp8_ = _tmp7_;
-		yrcd_yrcd_server_log (_tmp4_, _tmp8_);
-		_g_free0 (_tmp8_);
+		_tmp5_ = self->priv->_server;
+		_tmp6_ = e;
+		_tmp7_ = _tmp6_->message;
+		_tmp8_ = g_strdup_printf ("Error closing socket: %s", _tmp7_);
+		_tmp9_ = _tmp8_;
+		yrcd_yrcd_server_log (_tmp5_, _tmp9_);
+		_g_free0 (_tmp9_);
 		_g_error_free0 (e);
 	}
 	__finally3:
