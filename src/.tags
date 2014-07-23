@@ -1,0 +1,110 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	Development	//
+ERR_ALREADYREGISTRED	numerics.vala	27;"	f
+ERR_ERRONEOUSNICKNAME	numerics.vala	25;"	f
+ERR_NICKNAMEINUSE	numerics.vala	26;"	f
+ERR_NONICKNAMEGIVEN	numerics.vala	24;"	f
+ERR_UNKNOWNCOMMAND	numerics.vala	23;"	f
+RPL_CREATED	numerics.vala	21;"	f
+RPL_MYINFO	numerics.vala	22;"	f
+RPL_WELCOME	numerics.vala	19;"	f
+RPL_YOURHOST	numerics.vala	20;"	f
+_cid	channel.vala	7;"	f	class:yrcd_channel
+_dis	user.vala	6;"	f	class:yrcd_user
+_dos	user.vala	7;"	f	class:yrcd_user
+_id	user.vala	9;"	f	class:yrcd_user
+_ident	user.vala	16;"	f	class:yrcd_user
+_name	channel.vala	5;"	f	class:yrcd_channel
+_nick	user.vala	15;"	f	class:yrcd_user
+_realname	user.vala	17;"	f	class:yrcd_user
+_server	user.vala	8;"	f	class:yrcd_user
+_sock	user.vala	5;"	f	class:yrcd_user
+_user_set	user.vala	18;"	f	class:yrcd_user
+add_listeners	server.vala	38;"	m	class:yrcd_server
+add_user	channel.vala	12;"	m	class:yrcd_channel
+awaiting_response	user.vala	13;"	f	class:yrcd_user
+chan_forbidden	constants.vala	13;"	f	class:yrcd_constants
+chan_prefixes	constants.vala	12;"	f	class:yrcd_constants
+change_nick	user.vala	96;"	m	class:yrcd_user
+channellist	server.vala	9;"	f	class:yrcd_server
+check_ping	user.vala	56;"	m	class:yrcd_user
+check_ping_at	user.vala	12;"	f	class:yrcd_user
+cid	channel.vala	7;"	p	class:yrcd_channel
+cid_counter	server.vala	11;"	f	class:yrcd_server
+cmodes	constants.vala	9;"	f	class:yrcd_constants
+dis	user.vala	6;"	p	class:yrcd_user
+dos	user.vala	7;"	p	class:yrcd_user
+epoch	server.vala	12;"	f	class:yrcd_server
+epoch	user.vala	11;"	f	class:yrcd_user
+fire_numeric	user.vala	189;"	m	class:yrcd_user
+forbidden_nick_chars	constants.vala	11;"	f	class:yrcd_constants
+get_channel_by_name	server.vala	94;"	m	class:yrcd_server
+get_host	user.vala	160;"	m	class:yrcd_user
+get_hostmask	user.vala	156;"	m	class:yrcd_user
+get_ip	user.vala	72;"	m	class:yrcd_user
+get_user_by_nick	server.vala	84;"	m	class:yrcd_server
+host	user.vala	20;"	f	class:yrcd_user
+id	user.vala	9;"	p	class:yrcd_user
+ident	user.vala	16;"	p	class:yrcd_user
+ip	user.vala	19;"	f	class:yrcd_user
+isnickset	user.vala	45;"	m	class:yrcd_user
+join	user.vala	91;"	m	class:yrcd_user
+join_handler	router.vala	46;"	m	class:yrcd_router
+listen_ips	constants.vala	6;"	f	class:yrcd_constants
+listen_ports	constants.vala	7;"	f	class:yrcd_constants
+log	server.vala	23;"	m	class:yrcd_server
+loop	server.vala	6;"	f	class:yrcd_server
+main	main.vala	2;"	m
+max_users	server.vala	13;"	f	class:yrcd_server
+modes	channel.vala	6;"	f	class:yrcd_channel
+motd	constants.vala	5;"	f	class:yrcd_constants
+name	channel.vala	5;"	p	class:yrcd_channel
+new_cid	server.vala	15;"	m	class:yrcd_server
+new_userid	server.vala	19;"	m	class:yrcd_server
+nick	user.vala	15;"	p	class:yrcd_user
+numeric_wrapper	server.vala	14;"	f	class:yrcd_server
+numerics	numerics.vala	5;"	f	class:yrcd_numeric_wrapper
+on_connection	server.vala	53;"	m	class:yrcd_server
+ping_invertal	constants.vala	14;"	f	class:yrcd_constants
+ping_timer	user.vala	14;"	f	class:yrcd_user
+privmsg_handler	router.vala	55;"	m	class:yrcd_router
+process_request	server.vala	65;"	m	class:yrcd_server
+quit	user.vala	82;"	m	class:yrcd_user
+realname	user.vala	17;"	p	class:yrcd_user
+reg_finished	user.vala	145;"	m	class:yrcd_user
+remove_user	server.vala	35;"	m	class:yrcd_server
+route	router.vala	9;"	m	class:yrcd_router
+router	server.vala	7;"	f	class:yrcd_server
+send_line	user.vala	181;"	m	class:yrcd_user
+server	router.vala	5;"	f	class:yrcd_router
+server	user.vala	8;"	p	class:yrcd_user
+setup_ping_timer	user.vala	37;"	m	class:yrcd_user
+sname	constants.vala	8;"	f	class:yrcd_constants
+sock	user.vala	5;"	p	class:yrcd_user
+software	constants.vala	4;"	f	class:yrcd_constants
+ss	server.vala	5;"	f	class:yrcd_server
+strip_end	router.vala	79;"	m	class:yrcd_router
+time_last_rcv	user.vala	10;"	f	class:yrcd_user
+tokenize	router.vala	85;"	m	class:yrcd_router
+umodes	constants.vala	10;"	f	class:yrcd_constants
+unknown_command_handler	router.vala	43;"	m	class:yrcd_router
+update_timestamp	user.vala	152;"	m	class:yrcd_user
+user_chanels	user.vala	21;"	f	class:yrcd_user
+user_counter	server.vala	10;"	f	class:yrcd_server
+user_reg	user.vala	123;"	m	class:yrcd_user
+user_set	user.vala	18;"	p	class:yrcd_user
+userlist	server.vala	8;"	f	class:yrcd_server
+users	channel.vala	8;"	f	class:yrcd_channel
+ut_to_utc	server.vala	80;"	m	class:yrcd_server
+valid_chan_name	server.vala	103;"	m	class:yrcd_server
+version	constants.vala	3;"	f	class:yrcd_constants
+yrcd_channel	channel.vala	4;"	c
+yrcd_constants	constants.vala	2;"	c
+yrcd_numeric_wrapper	numerics.vala	4;"	c
+yrcd_router	router.vala	4;"	c
+yrcd_server	server.vala	4;"	c
+yrcd_user	user.vala	4;"	c
