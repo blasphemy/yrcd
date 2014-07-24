@@ -63,7 +63,7 @@ namespace yrcd {
           if (awaiting_response) {
             quit(null);
           } else {
-            send_line("PING :" + yrcd_constants.sname);
+            send_line("PING :" + server.config.sname);
             awaiting_response = true;
           }
         }
@@ -146,9 +146,9 @@ namespace yrcd {
     public void reg_finished () {
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(RPL_WELCOME, nick, ident, host);
-      fire_numeric(RPL_YOURHOST, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
+      fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);
       fire_numeric(RPL_CREATED, "%s".printf(server.ut_to_utc(server.epoch)));
-      fire_numeric(RPL_MYINFO, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
+      fire_numeric(RPL_MYINFO, server.config.sname, yrcd_constants.version, "", ""); //No modes yet....
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc();
@@ -204,13 +204,13 @@ namespace yrcd {
     }
     public void fire_numeric(int numeric, ...) {
       va_list args = va_list();
-      string msg = ":%s %.3d %s :".printf(yrcd_constants.sname,numeric,nick);
+      string msg = ":%s %.3d %s :".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
       send_line(msg);
     }
     public void send_notice (string msg) {
-      send_line(":%s NOTICE %s :%s".printf(yrcd_constants.sname,nick,msg));
+      send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));
     }
   }
 }

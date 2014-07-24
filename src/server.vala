@@ -12,6 +12,7 @@ namespace yrcd {
     public int64 epoch;
     public int max_users = 0;
     public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
+    public yrcd_config config;
     public int new_cid() {
       cid_counter++;
       return cid_counter;
@@ -23,7 +24,8 @@ namespace yrcd {
     public void log (string msg) {
       stdout.printf("LOG: %s\n", msg);
     } 
-    public yrcd_server () {
+    public yrcd_server (yrcd_config _config) {
+      config = _config;
       log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
       epoch = new DateTime.now_utc().to_unix();
       add_listeners();
