@@ -38,7 +38,7 @@ namespace yrcd {
       userlist.unset(id);
     }
     public void add_listeners () {
-      foreach (string k in yrcd_constants.listen_ips) {
+      foreach (string k in config.listen_ips) {
         foreach (uint16 j in config.listen_ports) {
           log("Adding listener on IP: %s port %d".printf(k,j));
           SocketAddress serversock = null;
