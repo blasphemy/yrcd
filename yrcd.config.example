@@ -1,0 +1,7 @@
+[Networking]
+listening_ips=127.0.0.1,192.168.1.100
+listening_ports=6667,6668,6669
+
+[ServerVariables]
+server_name=test.net.local
+ping_invertal=45
