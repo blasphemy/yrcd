@@ -207,12 +207,8 @@ void yrcd_yrcd_user_set_dos (yrcdyrcd_user* self, GDataOutputStream* value);
 yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
-<<<<<<< HEAD
 void yrcd_yrcd_user_hostname_lookup (yrcdyrcd_user* self, GAsyncReadyCallback _callback_, gpointer _user_data_);
 void yrcd_yrcd_user_hostname_lookup_finish (yrcdyrcd_user* self, GAsyncResult* _res_);
-=======
-gchar* yrcd_yrcd_user_get_host (yrcdyrcd_user* self);
->>>>>>> 5ad3eb0b5a1b616a8976c3ac0065bc90426d6e9e
 #define YRCD_YRCD_CONSTANTS_ping_invertal ((gint64) 45)
 static guint yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
@@ -260,10 +256,6 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 static void yrcd_yrcd_user_hostname_lookup_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
 static void _g_object_unref0_ (gpointer var);
 static void _g_list_free__g_object_unref0_ (GList* self);
-<<<<<<< HEAD
-=======
-GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
->>>>>>> 5ad3eb0b5a1b616a8976c3ac0065bc90426d6e9e
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 static void yrcd_yrcd_user_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
@@ -290,7 +282,6 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	gint _tmp14_ = 0;
 	GDateTime* _tmp15_ = NULL;
 	GDateTime* _tmp16_ = NULL;
-<<<<<<< HEAD
 	const gchar* _tmp17_ = NULL;
 	gchar* _tmp18_ = NULL;
 	GDateTime* _tmp19_ = NULL;
@@ -301,17 +292,6 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	gint _tmp24_ = 0;
 	gchar* _tmp25_ = NULL;
 	gchar* _tmp26_ = NULL;
-=======
-	gchar* _tmp17_ = NULL;
-	GDateTime* _tmp18_ = NULL;
-	gint64 _tmp19_ = 0LL;
-	guint _tmp20_ = 0U;
-	yrcdyrcd_server* _tmp21_ = NULL;
-	const gchar* _tmp22_ = NULL;
-	gint _tmp23_ = 0;
-	gchar* _tmp24_ = NULL;
-	gchar* _tmp25_ = NULL;
->>>>>>> 5ad3eb0b5a1b616a8976c3ac0065bc90426d6e9e
 	g_return_val_if_fail (conn != NULL, NULL);
 	g_return_val_if_fail (_server != NULL, NULL);
 	self = (yrcdyrcd_user*) g_object_new (object_type, NULL);
@@ -345,7 +325,6 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	_tmp16_ = g_date_time_new_now_utc ();
 	_g_date_time_unref0 (self->priv->time_last_rcv);
 	self->priv->time_last_rcv = _tmp16_;
-<<<<<<< HEAD
 	_tmp17_ = self->ip;
 	_tmp18_ = g_strdup (_tmp17_);
 	_g_free0 (self->host);
@@ -364,24 +343,6 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	_tmp26_ = _tmp25_;
 	yrcd_yrcd_server_log (_tmp22_, _tmp26_);
 	_g_free0 (_tmp26_);
-=======
-	_tmp17_ = yrcd_yrcd_user_get_host (self);
-	_g_free0 (self->host);
-	self->host = _tmp17_;
-	self->priv->awaiting_response = FALSE;
-	_tmp18_ = self->priv->epoch;
-	_tmp19_ = g_date_time_to_unix (_tmp18_);
-	self->priv->check_ping_at = _tmp19_ + YRCD_YRCD_CONSTANTS_ping_invertal;
-	_tmp20_ = yrcd_yrcd_user_setup_ping_timer (self);
-	self->priv->ping_timer = _tmp20_;
-	_tmp21_ = self->priv->_server;
-	_tmp22_ = self->host;
-	_tmp23_ = self->priv->_id;
-	_tmp24_ = g_strdup_printf ("User connected from %s with ID %d", _tmp22_, _tmp23_);
-	_tmp25_ = _tmp24_;
-	yrcd_yrcd_server_log (_tmp21_, _tmp25_);
-	_g_free0 (_tmp25_);
->>>>>>> 5ad3eb0b5a1b616a8976c3ac0065bc90426d6e9e
 	return self;
 }
 
