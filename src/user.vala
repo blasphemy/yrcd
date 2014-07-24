@@ -28,7 +28,8 @@ namespace yrcd {
       id = server.new_userid();
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
-      host = get_host();
+      host = ip;
+      hostname_lookup.begin();
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
       ping_timer = setup_ping_timer();
@@ -157,33 +158,48 @@ namespace yrcd {
       string hm = nick + "!" + ident + "@" + host;
       return hm;
     }
-    public string get_host() {
-      try {
-        InetAddress address = new InetAddress.from_string(ip);
-        Resolver resolver = Resolver.get_default();
-        string hostname = resolver.lookup_by_address(address,null);
-        GLib.List<InetAddress> addresses = resolver.lookup_by_name(hostname);
-        bool match = false;
-        foreach (InetAddress k in addresses) {
-          if (k.to_string() == ip) {
-            match = true;
-          }
-        }
-        if (!match) {
-          hostname = ip;
-        }
-        return hostname;
-      } catch (Error e) {
-        server.log("Error resolving user %d IP %s".printf(id,ip));
-        return ip;
-      }
-    }
     public void send_line(string msg) {
       try {
         dos.put_string("%s\n".printf(msg));
         server.log("sending to %s: %s".printf(nick,msg));
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
+      }
+    }
+    public async void hostname_lookup() {
+      send_line(":%s NOTICE %s :*** Looking up your hostname...".printf(yrcd_constants.sname,nick));
+      Resolver resolv = Resolver.get_default();
+      InetAddress add = new InetAddress.from_string(ip);
+      string hn;
+      GLib.List<InetAddress> addresses;
+      bool match = false;
+      try {
+        hn = yield resolv.lookup_by_address_async(add);
+      } catch (Error e) {
+        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        host = ip;
+        return;
+      }
+      try {
+        addresses = yield resolv.lookup_by_name_async(hn);
+      } catch (Error e) {
+        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        host = ip;
+        return;
+      }
+      foreach (InetAddress k in addresses) {
+        if (k.to_string() == ip) {
+          match = true;
+          break;
+        }
+      }
+      if (!match) {
+        host = ip;
+        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+      } else {
+        host = hn;
+        send_line(":%s NOTICE %s :*** Found your hostname".printf(yrcd_constants.sname,nick));
+        return;
       }
     }
     public void fire_numeric(int numeric, ...) {
