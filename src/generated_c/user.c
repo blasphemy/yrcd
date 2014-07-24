@@ -110,60 +110,45 @@ struct _YrcdYrcdUserHostnameLookupData {
 	GAsyncResult* _res_;
 	GSimpleAsyncResult* _async_result;
 	yrcdyrcd_user* self;
-	const gchar* _tmp0_;
-	gchar* _tmp1_;
-	gchar* _tmp2_;
 	GResolver* resolv;
-	GResolver* _tmp3_;
+	GResolver* _tmp0_;
 	GInetAddress* add;
-	const gchar* _tmp4_;
-	GInetAddress* _tmp5_;
+	const gchar* _tmp1_;
+	GInetAddress* _tmp2_;
 	gchar* hn;
 	GList* addresses;
 	gboolean match;
+	gchar* _tmp3_;
+	GResolver* _tmp4_;
+	GInetAddress* _tmp5_;
 	gchar* _tmp6_;
-	GResolver* _tmp7_;
-	GInetAddress* _tmp8_;
-	gchar* _tmp9_;
-	gchar* _tmp10_;
+	gchar* _tmp7_;
 	GError* e;
-	const gchar* _tmp11_;
-	gchar* _tmp12_;
-	gchar* _tmp13_;
-	const gchar* _tmp14_;
-	gchar* _tmp15_;
-	GList* _tmp16_;
-	GResolver* _tmp17_;
-	const gchar* _tmp18_;
-	GList* _tmp19_;
-	GList* _tmp20_;
+	const gchar* _tmp8_;
+	gchar* _tmp9_;
+	GList* _tmp10_;
+	GResolver* _tmp11_;
+	const gchar* _tmp12_;
+	GList* _tmp13_;
+	GList* _tmp14_;
 	GError* _vala1_e;
-	const gchar* _tmp21_;
-	gchar* _tmp22_;
-	gchar* _tmp23_;
-	const gchar* _tmp24_;
-	gchar* _tmp25_;
-	GList* _tmp26_;
+	const gchar* _tmp15_;
+	gchar* _tmp16_;
+	GList* _tmp17_;
 	GList* k_collection;
 	GList* k_it;
-	GInetAddress* _tmp27_;
+	GInetAddress* _tmp18_;
 	GInetAddress* k;
-	GInetAddress* _tmp28_;
-	gchar* _tmp29_;
-	gchar* _tmp30_;
-	const gchar* _tmp31_;
-	gboolean _tmp32_;
-	gboolean _tmp33_;
-	const gchar* _tmp34_;
-	gchar* _tmp35_;
-	const gchar* _tmp36_;
-	gchar* _tmp37_;
-	gchar* _tmp38_;
-	const gchar* _tmp39_;
-	gchar* _tmp40_;
-	const gchar* _tmp41_;
-	gchar* _tmp42_;
-	gchar* _tmp43_;
+	GInetAddress* _tmp19_;
+	gchar* _tmp20_;
+	gchar* _tmp21_;
+	const gchar* _tmp22_;
+	gboolean _tmp23_;
+	gboolean _tmp24_;
+	const gchar* _tmp25_;
+	gchar* _tmp26_;
+	const gchar* _tmp27_;
+	gchar* _tmp28_;
 	GError * _inner_error_;
 };
 
@@ -253,6 +238,7 @@ void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
 static void yrcd_yrcd_user_hostname_lookup_data_free (gpointer _data);
 static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupData* _data_);
+void yrcd_yrcd_user_send_notice (yrcdyrcd_user* self, const gchar* msg);
 static void yrcd_yrcd_user_hostname_lookup_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
 static void _g_object_unref0_ (gpointer var);
 static void _g_list_free__g_object_unref0_ (GList* self);
@@ -1177,64 +1163,50 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		g_assert_not_reached ();
 	}
 	_state_0:
+	yrcd_yrcd_user_send_notice (_data_->self, "*** Looking up your hostname...");
 	_data_->_tmp0_ = NULL;
-	_data_->_tmp0_ = _data_->self->priv->_nick;
+	_data_->_tmp0_ = g_resolver_get_default ();
+	_data_->resolv = _data_->_tmp0_;
 	_data_->_tmp1_ = NULL;
-	_data_->_tmp1_ = g_strdup_printf (":%s NOTICE %s :*** Looking up your hostname...", YRCD_YRCD_CONSTANTS_sname, _data_->_tmp0_);
+	_data_->_tmp1_ = _data_->self->ip;
 	_data_->_tmp2_ = NULL;
-	_data_->_tmp2_ = _data_->_tmp1_;
-	yrcd_yrcd_user_send_line (_data_->self, _data_->_tmp2_);
-	_g_free0 (_data_->_tmp2_);
-	_data_->_tmp3_ = NULL;
-	_data_->_tmp3_ = g_resolver_get_default ();
-	_data_->resolv = _data_->_tmp3_;
-	_data_->_tmp4_ = NULL;
-	_data_->_tmp4_ = _data_->self->ip;
-	_data_->_tmp5_ = NULL;
-	_data_->_tmp5_ = g_inet_address_new_from_string (_data_->_tmp4_);
-	_data_->add = _data_->_tmp5_;
+	_data_->_tmp2_ = g_inet_address_new_from_string (_data_->_tmp1_);
+	_data_->add = _data_->_tmp2_;
 	_data_->match = FALSE;
 	{
-		_data_->_tmp7_ = NULL;
-		_data_->_tmp7_ = _data_->resolv;
-		_data_->_tmp8_ = NULL;
-		_data_->_tmp8_ = _data_->add;
+		_data_->_tmp4_ = NULL;
+		_data_->_tmp4_ = _data_->resolv;
+		_data_->_tmp5_ = NULL;
+		_data_->_tmp5_ = _data_->add;
 		_data_->_state_ = 1;
-		g_resolver_lookup_by_address_async (_data_->_tmp7_, _data_->_tmp8_, NULL, yrcd_yrcd_user_hostname_lookup_ready, _data_);
+		g_resolver_lookup_by_address_async (_data_->_tmp4_, _data_->_tmp5_, NULL, yrcd_yrcd_user_hostname_lookup_ready, _data_);
 		return FALSE;
 		_state_1:
-		_data_->_tmp9_ = NULL;
-		_data_->_tmp9_ = g_resolver_lookup_by_address_finish (_data_->_tmp7_, _data_->_res_, &_data_->_inner_error_);
-		_data_->_tmp6_ = _data_->_tmp9_;
+		_data_->_tmp6_ = NULL;
+		_data_->_tmp6_ = g_resolver_lookup_by_address_finish (_data_->_tmp4_, _data_->_res_, &_data_->_inner_error_);
+		_data_->_tmp3_ = _data_->_tmp6_;
 		if (_data_->_inner_error_ != NULL) {
 			goto __catch6_g_error;
 		}
-		_data_->_tmp10_ = NULL;
-		_data_->_tmp10_ = _data_->_tmp6_;
-		_data_->_tmp6_ = NULL;
+		_data_->_tmp7_ = NULL;
+		_data_->_tmp7_ = _data_->_tmp3_;
+		_data_->_tmp3_ = NULL;
 		_g_free0 (_data_->hn);
-		_data_->hn = _data_->_tmp10_;
-		_g_free0 (_data_->_tmp6_);
+		_data_->hn = _data_->_tmp7_;
+		_g_free0 (_data_->_tmp3_);
 	}
 	goto __finally6;
 	__catch6_g_error:
 	{
 		_data_->e = _data_->_inner_error_;
 		_data_->_inner_error_ = NULL;
-		_data_->_tmp11_ = NULL;
-		_data_->_tmp11_ = _data_->self->priv->_nick;
-		_data_->_tmp12_ = NULL;
-		_data_->_tmp12_ = g_strdup_printf (":%s NOTICE %s :*** Unable to resolve your hostname", YRCD_YRCD_CONSTANTS_sname, _data_->_tmp11_);
-		_data_->_tmp13_ = NULL;
-		_data_->_tmp13_ = _data_->_tmp12_;
-		yrcd_yrcd_user_send_line (_data_->self, _data_->_tmp13_);
-		_g_free0 (_data_->_tmp13_);
-		_data_->_tmp14_ = NULL;
-		_data_->_tmp14_ = _data_->self->ip;
-		_data_->_tmp15_ = NULL;
-		_data_->_tmp15_ = g_strdup (_data_->_tmp14_);
+		yrcd_yrcd_user_send_notice (_data_->self, "*** Unable to resolve your hostname");
+		_data_->_tmp8_ = NULL;
+		_data_->_tmp8_ = _data_->self->ip;
+		_data_->_tmp9_ = NULL;
+		_data_->_tmp9_ = g_strdup (_data_->_tmp8_);
 		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp15_;
+		_data_->self->host = _data_->_tmp9_;
 		_g_error_free0 (_data_->e);
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
 		_g_free0 (_data_->hn);
@@ -1259,46 +1231,39 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		return FALSE;
 	}
 	{
-		_data_->_tmp17_ = NULL;
-		_data_->_tmp17_ = _data_->resolv;
-		_data_->_tmp18_ = NULL;
-		_data_->_tmp18_ = _data_->hn;
+		_data_->_tmp11_ = NULL;
+		_data_->_tmp11_ = _data_->resolv;
+		_data_->_tmp12_ = NULL;
+		_data_->_tmp12_ = _data_->hn;
 		_data_->_state_ = 2;
-		g_resolver_lookup_by_name_async (_data_->_tmp17_, _data_->_tmp18_, NULL, yrcd_yrcd_user_hostname_lookup_ready, _data_);
+		g_resolver_lookup_by_name_async (_data_->_tmp11_, _data_->_tmp12_, NULL, yrcd_yrcd_user_hostname_lookup_ready, _data_);
 		return FALSE;
 		_state_2:
-		_data_->_tmp19_ = NULL;
-		_data_->_tmp19_ = g_resolver_lookup_by_name_finish (_data_->_tmp17_, _data_->_res_, &_data_->_inner_error_);
-		_data_->_tmp16_ = _data_->_tmp19_;
+		_data_->_tmp13_ = NULL;
+		_data_->_tmp13_ = g_resolver_lookup_by_name_finish (_data_->_tmp11_, _data_->_res_, &_data_->_inner_error_);
+		_data_->_tmp10_ = _data_->_tmp13_;
 		if (_data_->_inner_error_ != NULL) {
 			goto __catch7_g_error;
 		}
-		_data_->_tmp20_ = NULL;
-		_data_->_tmp20_ = _data_->_tmp16_;
-		_data_->_tmp16_ = NULL;
+		_data_->_tmp14_ = NULL;
+		_data_->_tmp14_ = _data_->_tmp10_;
+		_data_->_tmp10_ = NULL;
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
-		_data_->addresses = _data_->_tmp20_;
-		__g_list_free__g_object_unref0_0 (_data_->_tmp16_);
+		_data_->addresses = _data_->_tmp14_;
+		__g_list_free__g_object_unref0_0 (_data_->_tmp10_);
 	}
 	goto __finally7;
 	__catch7_g_error:
 	{
 		_data_->_vala1_e = _data_->_inner_error_;
 		_data_->_inner_error_ = NULL;
-		_data_->_tmp21_ = NULL;
-		_data_->_tmp21_ = _data_->self->priv->_nick;
-		_data_->_tmp22_ = NULL;
-		_data_->_tmp22_ = g_strdup_printf (":%s NOTICE %s :*** Unable to resolve your hostname", YRCD_YRCD_CONSTANTS_sname, _data_->_tmp21_);
-		_data_->_tmp23_ = NULL;
-		_data_->_tmp23_ = _data_->_tmp22_;
-		yrcd_yrcd_user_send_line (_data_->self, _data_->_tmp23_);
-		_g_free0 (_data_->_tmp23_);
-		_data_->_tmp24_ = NULL;
-		_data_->_tmp24_ = _data_->self->ip;
-		_data_->_tmp25_ = NULL;
-		_data_->_tmp25_ = g_strdup (_data_->_tmp24_);
+		yrcd_yrcd_user_send_notice (_data_->self, "*** Unable to resolve your hostname");
+		_data_->_tmp15_ = NULL;
+		_data_->_tmp15_ = _data_->self->ip;
+		_data_->_tmp16_ = NULL;
+		_data_->_tmp16_ = g_strdup (_data_->_tmp15_);
 		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp25_;
+		_data_->self->host = _data_->_tmp16_;
 		_g_error_free0 (_data_->_vala1_e);
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
 		_g_free0 (_data_->hn);
@@ -1322,27 +1287,27 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		g_clear_error (&_data_->_inner_error_);
 		return FALSE;
 	}
-	_data_->_tmp26_ = NULL;
-	_data_->_tmp26_ = _data_->addresses;
+	_data_->_tmp17_ = NULL;
+	_data_->_tmp17_ = _data_->addresses;
 	{
-		_data_->k_collection = _data_->_tmp26_;
+		_data_->k_collection = _data_->_tmp17_;
 		for (_data_->k_it = _data_->k_collection; _data_->k_it != NULL; _data_->k_it = _data_->k_it->next) {
-			_data_->_tmp27_ = NULL;
-			_data_->_tmp27_ = _g_object_ref0 ((GInetAddress*) _data_->k_it->data);
-			_data_->k = _data_->_tmp27_;
+			_data_->_tmp18_ = NULL;
+			_data_->_tmp18_ = _g_object_ref0 ((GInetAddress*) _data_->k_it->data);
+			_data_->k = _data_->_tmp18_;
 			{
-				_data_->_tmp28_ = NULL;
-				_data_->_tmp28_ = _data_->k;
-				_data_->_tmp29_ = NULL;
-				_data_->_tmp29_ = g_inet_address_to_string (_data_->_tmp28_);
-				_data_->_tmp30_ = NULL;
-				_data_->_tmp30_ = _data_->_tmp29_;
-				_data_->_tmp31_ = NULL;
-				_data_->_tmp31_ = _data_->self->ip;
-				_data_->_tmp32_ = FALSE;
-				_data_->_tmp32_ = g_strcmp0 (_data_->_tmp30_, _data_->_tmp31_) == 0;
-				_g_free0 (_data_->_tmp30_);
-				if (_data_->_tmp32_) {
+				_data_->_tmp19_ = NULL;
+				_data_->_tmp19_ = _data_->k;
+				_data_->_tmp20_ = NULL;
+				_data_->_tmp20_ = g_inet_address_to_string (_data_->_tmp19_);
+				_data_->_tmp21_ = NULL;
+				_data_->_tmp21_ = _data_->_tmp20_;
+				_data_->_tmp22_ = NULL;
+				_data_->_tmp22_ = _data_->self->ip;
+				_data_->_tmp23_ = FALSE;
+				_data_->_tmp23_ = g_strcmp0 (_data_->_tmp21_, _data_->_tmp22_) == 0;
+				_g_free0 (_data_->_tmp21_);
+				if (_data_->_tmp23_) {
 					_data_->match = TRUE;
 					_g_object_unref0 (_data_->k);
 					break;
@@ -1351,38 +1316,24 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 			}
 		}
 	}
-	_data_->_tmp33_ = FALSE;
-	_data_->_tmp33_ = _data_->match;
-	if (!_data_->_tmp33_) {
-		_data_->_tmp34_ = NULL;
-		_data_->_tmp34_ = _data_->self->ip;
-		_data_->_tmp35_ = NULL;
-		_data_->_tmp35_ = g_strdup (_data_->_tmp34_);
+	_data_->_tmp24_ = FALSE;
+	_data_->_tmp24_ = _data_->match;
+	if (!_data_->_tmp24_) {
+		_data_->_tmp25_ = NULL;
+		_data_->_tmp25_ = _data_->self->ip;
+		_data_->_tmp26_ = NULL;
+		_data_->_tmp26_ = g_strdup (_data_->_tmp25_);
 		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp35_;
-		_data_->_tmp36_ = NULL;
-		_data_->_tmp36_ = _data_->self->priv->_nick;
-		_data_->_tmp37_ = NULL;
-		_data_->_tmp37_ = g_strdup_printf (":%s NOTICE %s :*** Unable to resolve your hostname", YRCD_YRCD_CONSTANTS_sname, _data_->_tmp36_);
-		_data_->_tmp38_ = NULL;
-		_data_->_tmp38_ = _data_->_tmp37_;
-		yrcd_yrcd_user_send_line (_data_->self, _data_->_tmp38_);
-		_g_free0 (_data_->_tmp38_);
+		_data_->self->host = _data_->_tmp26_;
+		yrcd_yrcd_user_send_notice (_data_->self, "*** Unable to resolve your hostname");
 	} else {
-		_data_->_tmp39_ = NULL;
-		_data_->_tmp39_ = _data_->hn;
-		_data_->_tmp40_ = NULL;
-		_data_->_tmp40_ = g_strdup (_data_->_tmp39_);
+		_data_->_tmp27_ = NULL;
+		_data_->_tmp27_ = _data_->hn;
+		_data_->_tmp28_ = NULL;
+		_data_->_tmp28_ = g_strdup (_data_->_tmp27_);
 		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp40_;
-		_data_->_tmp41_ = NULL;
-		_data_->_tmp41_ = _data_->self->priv->_nick;
-		_data_->_tmp42_ = NULL;
-		_data_->_tmp42_ = g_strdup_printf (":%s NOTICE %s :*** Found your hostname", YRCD_YRCD_CONSTANTS_sname, _data_->_tmp41_);
-		_data_->_tmp43_ = NULL;
-		_data_->_tmp43_ = _data_->_tmp42_;
-		yrcd_yrcd_user_send_line (_data_->self, _data_->_tmp43_);
-		_g_free0 (_data_->_tmp43_);
+		_data_->self->host = _data_->_tmp28_;
+		yrcd_yrcd_user_send_notice (_data_->self, "*** Found your hostname");
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
 		_g_free0 (_data_->hn);
 		_g_object_unref0 (_data_->add);
@@ -1452,6 +1403,22 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...) {
 	_g_free0 (msg2);
 	_g_free0 (msg);
 	va_end (args);
+}
+
+
+void yrcd_yrcd_user_send_notice (yrcdyrcd_user* self, const gchar* msg) {
+	const gchar* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (msg != NULL);
+	_tmp0_ = self->priv->_nick;
+	_tmp1_ = msg;
+	_tmp2_ = g_strdup_printf (":%s NOTICE %s :%s", YRCD_YRCD_CONSTANTS_sname, _tmp0_, _tmp1_);
+	_tmp3_ = _tmp2_;
+	yrcd_yrcd_user_send_line (self, _tmp3_);
+	_g_free0 (_tmp3_);
 }
 
 
