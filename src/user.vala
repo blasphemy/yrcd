@@ -167,7 +167,7 @@ namespace yrcd {
       }
     }
     public async void hostname_lookup() {
-      send_line(":%s NOTICE %s :*** Looking up your hostname...".printf(yrcd_constants.sname,nick));
+      send_notice("*** Looking up your hostname...");
       Resolver resolv = Resolver.get_default();
       InetAddress add = new InetAddress.from_string(ip);
       string hn;
@@ -176,14 +176,14 @@ namespace yrcd {
       try {
         hn = yield resolv.lookup_by_address_async(add);
       } catch (Error e) {
-        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        send_notice("*** Unable to resolve your hostname");
         host = ip;
         return;
       }
       try {
         addresses = yield resolv.lookup_by_name_async(hn);
       } catch (Error e) {
-        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        send_notice("*** Unable to resolve your hostname");
         host = ip;
         return;
       }
@@ -195,10 +195,10 @@ namespace yrcd {
       }
       if (!match) {
         host = ip;
-        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        send_notice("*** Unable to resolve your hostname");
       } else {
         host = hn;
-        send_line(":%s NOTICE %s :*** Found your hostname".printf(yrcd_constants.sname,nick));
+        send_notice("*** Found your hostname");
         return;
       }
     }
@@ -208,6 +208,9 @@ namespace yrcd {
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
       send_line(msg);
+    }
+    public void send_notice (string msg) {
+      send_line(":%s NOTICE %s :%s".printf(yrcd_constants.sname,nick,msg));
     }
   }
 }
