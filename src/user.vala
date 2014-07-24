@@ -158,27 +158,6 @@ namespace yrcd {
       string hm = nick + "!" + ident + "@" + host;
       return hm;
     }
-    public string get_host() {
-      try {
-        InetAddress address = new InetAddress.from_string(ip);
-        Resolver resolver = Resolver.get_default();
-        string hostname = resolver.lookup_by_address(address,null);
-        GLib.List<InetAddress> addresses = resolver.lookup_by_name(hostname);
-        bool match = false;
-        foreach (InetAddress k in addresses) {
-          if (k.to_string() == ip) {
-            match = true;
-          }
-        }
-        if (!match) {
-          hostname = ip;
-        }
-        return hostname;
-      } catch (Error e) {
-        server.log("Error resolving user %d IP %s".printf(id,ip));
-        return ip;
-      }
-    }
     public void send_line(string msg) {
       try {
         dos.put_string("%s\n".printf(msg));
@@ -188,26 +167,25 @@ namespace yrcd {
       }
     }
     public async void hostname_lookup() {
-      Resolver resolv = Resolver.get_default();
-      InetAddress add = new InetAddress.from_string(ip);
-      send_line(":%s NOTICE %s :*** Looking up your hostname...".printf(yrcd_constants.sname,nick));
-      string hn = yield resolv.lookup_by_address_async(add);
-      send_line("%s NOTICE %s :*** Found your hostname".printf(yrcd_constants.sname,nick));
-      host = hn;
-    }
-    public async void hostname_lookup() {
       send_line(":%s NOTICE %s :*** Looking up your hostname...".printf(yrcd_constants.sname,nick));
       Resolver resolv = Resolver.get_default();
       InetAddress add = new InetAddress.from_string(ip);
       string hn;
       try {
-        string hn = yield resolv.lookup_by_address_async(add);
+        hn = yield resolv.lookup_by_address_async(add);
       } catch (Error e) {
         send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
         host = ip;
         return;
       }
-      Glib.List<InetAddress> addresses = yield resolv.lookup_by_name_async(hn);
+      GLib.List<InetAddress> addresses;
+      try {
+        addresses = yield resolv.lookup_by_name_async(hn);
+      } catch (Error e) {
+        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        host = ip;
+        return;
+      }
       bool match = false;
       foreach (InetAddress k in addresses) {
         if (k.to_string() == ip) {
@@ -217,11 +195,12 @@ namespace yrcd {
       }
       if (!match) {
         host = ip;
-        send_line(":%s NOTICE :s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
       } else {
-        host = hn
+        host = hn;
+        send_line(":%s NOTICE %s :*** Found your hostname".printf(yrcd_constants.sname,nick));
+        return;
       }
-
     }
     public void fire_numeric(int numeric, ...) {
       va_list args = va_list();
