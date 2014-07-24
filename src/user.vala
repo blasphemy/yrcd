@@ -203,9 +203,25 @@ namespace yrcd {
       try {
         string hn = yield resolv.lookup_by_address_async(add);
       } catch (Error e) {
-
+        send_line(":%s NOTICE %s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+        host = ip;
+        return;
       }
-      
+      Glib.List<InetAddress> addresses = yield resolv.lookup_by_name_async(hn);
+      bool match = false;
+      foreach (InetAddress k in addresses) {
+        if (k.to_string() == ip) {
+          match = true;
+          break;
+        }
+      }
+      if (!match) {
+        host = ip;
+        send_line(":%s NOTICE :s :*** Unable to resolve your hostname".printf(yrcd_constants.sname,nick));
+      } else {
+        host = hn
+      }
+
     }
     public void fire_numeric(int numeric, ...) {
       va_list args = va_list();
