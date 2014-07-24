@@ -171,6 +171,8 @@ namespace yrcd {
       Resolver resolv = Resolver.get_default();
       InetAddress add = new InetAddress.from_string(ip);
       string hn;
+      GLib.List<InetAddress> addresses;
+      bool match = false;
       try {
         hn = yield resolv.lookup_by_address_async(add);
       } catch (Error e) {
@@ -178,7 +180,6 @@ namespace yrcd {
         host = ip;
         return;
       }
-      GLib.List<InetAddress> addresses;
       try {
         addresses = yield resolv.lookup_by_name_async(hn);
       } catch (Error e) {
@@ -186,7 +187,6 @@ namespace yrcd {
         host = ip;
         return;
       }
-      bool match = false;
       foreach (InetAddress k in addresses) {
         if (k.to_string() == ip) {
           match = true;
