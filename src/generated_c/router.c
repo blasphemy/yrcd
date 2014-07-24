@@ -6,6 +6,7 @@
 #include <glib-object.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gee.h>
 
 
 #define YRCD_TYPE_YRCD_ROUTER (yrcd_yrcd_router_get_type ())
@@ -40,6 +41,27 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 typedef struct _yrcdyrcd_user yrcdyrcd_user;
 typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 #define _g_free0(var) (var = (g_free (var), NULL))
+
+#define YRCD_TYPE_YRCD_CHANNEL (yrcd_yrcd_channel_get_type ())
+#define YRCD_YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channel))
+#define YRCD_YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channelClass))
+#define YRCD_IS_YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CHANNEL))
+#define YRCD_IS_YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CHANNEL))
+#define YRCD_YRCD_CHANNEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channelClass))
+
+typedef struct _yrcdyrcd_channel yrcdyrcd_channel;
+typedef struct _yrcdyrcd_channelClass yrcdyrcd_channelClass;
+typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
+
+#define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
+#define YRCD_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapper))
+#define YRCD_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+#define YRCD_IS_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
+#define YRCD_IS_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
+#define YRCD_YRCD_NUMERIC_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+
+typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
+typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
 struct _yrcdyrcd_router {
@@ -49,6 +71,19 @@ struct _yrcdyrcd_router {
 };
 
 struct _yrcdyrcd_routerClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdyrcd_server {
+	GObject parent_instance;
+	yrcdyrcd_serverPrivate * priv;
+	GeeHashMap* channellist;
+	gint64 epoch;
+	gint max_users;
+	yrcdyrcd_numeric_wrapper* numeric_wrapper;
+};
+
+struct _yrcdyrcd_serverClass {
 	GObjectClass parent_class;
 };
 
@@ -73,7 +108,19 @@ gchar** yrcd_yrcd_router_tokenize (yrcdyrcd_router* self, const gchar* msg, int*
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
-void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, gchar** args, int args_length1);
+void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
+void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
+void yrcd_yrcd_router_unknown_command_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
+void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
+#define YRCD_ERR_UNKNOWNCOMMAND 421
+GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
+yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
+gint yrcd_yrcd_server_new_cid (yrcdyrcd_server* self);
+yrcdyrcd_channel* yrcd_yrcd_channel_new (gint id);
+yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, gint id);
+void yrcd_yrcd_channel_set_name (yrcdyrcd_channel* self, const gchar* value);
+GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
+void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan);
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
 static void yrcd_yrcd_router_finalize (GObject* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -179,6 +226,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 		static GQuark _tmp31_label1 = 0;
 		static GQuark _tmp31_label2 = 0;
 		static GQuark _tmp31_label3 = 0;
+		static GQuark _tmp31_label4 = 0;
 		_tmp17_ = user;
 		_tmp18_ = yrcd_yrcd_user_get_server (_tmp17_);
 		_tmp19_ = _tmp18_;
@@ -248,11 +296,41 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 			switch (0) {
 				default:
 				{
-					gchar** _tmp41_ = NULL;
-					gint _tmp41__length1 = 0;
-					_tmp41_ = args;
-					_tmp41__length1 = args_length1;
-					yrcd_yrcd_router_privmsg_handler (self, _tmp41_, _tmp41__length1);
+					yrcdyrcd_user* _tmp41_ = NULL;
+					gchar** _tmp42_ = NULL;
+					gint _tmp42__length1 = 0;
+					_tmp41_ = user;
+					_tmp42_ = args;
+					_tmp42__length1 = args_length1;
+					yrcd_yrcd_router_privmsg_handler (self, _tmp41_, _tmp42_, _tmp42__length1);
+					break;
+				}
+			}
+		} else if (_tmp32_ == ((0 != _tmp31_label4) ? _tmp31_label4 : (_tmp31_label4 = g_quark_from_static_string ("join")))) {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp43_ = NULL;
+					gchar** _tmp44_ = NULL;
+					gint _tmp44__length1 = 0;
+					_tmp43_ = user;
+					_tmp44_ = args;
+					_tmp44__length1 = args_length1;
+					yrcd_yrcd_router_join_handler (self, _tmp43_, _tmp44_, _tmp44__length1);
+					break;
+				}
+			}
+		} else {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp45_ = NULL;
+					gchar** _tmp46_ = NULL;
+					gint _tmp46__length1 = 0;
+					_tmp45_ = user;
+					_tmp46_ = args;
+					_tmp46__length1 = args_length1;
+					yrcd_yrcd_router_unknown_command_handler (self, _tmp45_, _tmp46_, _tmp46__length1);
 					break;
 				}
 			}
@@ -260,6 +338,80 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 	}
 	args = (_vala_array_free (args, args_length1, (GDestroyNotify) g_free), NULL);
 	_g_free0 (stripped);
+}
+
+
+void yrcd_yrcd_router_unknown_command_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
+	yrcdyrcd_user* _tmp0_ = NULL;
+	gchar** _tmp1_ = NULL;
+	gint _tmp1__length1 = 0;
+	const gchar* _tmp2_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	_tmp0_ = user;
+	_tmp1_ = args;
+	_tmp1__length1 = args_length1;
+	_tmp2_ = _tmp1_[0];
+	yrcd_yrcd_user_fire_numeric (_tmp0_, YRCD_ERR_UNKNOWNCOMMAND, _tmp2_, NULL);
+}
+
+
+void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
+	yrcdyrcd_server* _tmp0_ = NULL;
+	gchar** _tmp1_ = NULL;
+	gint _tmp1__length1 = 0;
+	const gchar* _tmp2_ = NULL;
+	yrcdyrcd_channel* _tmp3_ = NULL;
+	yrcdyrcd_channel* _tmp4_ = NULL;
+	gboolean _tmp5_ = FALSE;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	_tmp0_ = self->server;
+	_tmp1_ = args;
+	_tmp1__length1 = args_length1;
+	_tmp2_ = _tmp1_[1];
+	_tmp3_ = yrcd_yrcd_server_get_channel_by_name (_tmp0_, _tmp2_);
+	_tmp4_ = _tmp3_;
+	_tmp5_ = _tmp4_ == NULL;
+	_g_object_unref0 (_tmp4_);
+	if (_tmp5_) {
+		gint cid = 0;
+		yrcdyrcd_server* _tmp6_ = NULL;
+		gint _tmp7_ = 0;
+		yrcdyrcd_channel* newchan = NULL;
+		gint _tmp8_ = 0;
+		yrcdyrcd_channel* _tmp9_ = NULL;
+		yrcdyrcd_channel* _tmp10_ = NULL;
+		gchar** _tmp11_ = NULL;
+		gint _tmp11__length1 = 0;
+		const gchar* _tmp12_ = NULL;
+		yrcdyrcd_server* _tmp13_ = NULL;
+		GeeHashMap* _tmp14_ = NULL;
+		gint _tmp15_ = 0;
+		yrcdyrcd_channel* _tmp16_ = NULL;
+		yrcdyrcd_user* _tmp17_ = NULL;
+		yrcdyrcd_channel* _tmp18_ = NULL;
+		_tmp6_ = self->server;
+		_tmp7_ = yrcd_yrcd_server_new_cid (_tmp6_);
+		cid = _tmp7_;
+		_tmp8_ = cid;
+		_tmp9_ = yrcd_yrcd_channel_new (_tmp8_);
+		newchan = _tmp9_;
+		_tmp10_ = newchan;
+		_tmp11_ = args;
+		_tmp11__length1 = args_length1;
+		_tmp12_ = _tmp11_[1];
+		yrcd_yrcd_channel_set_name (_tmp10_, _tmp12_);
+		_tmp13_ = self->server;
+		_tmp14_ = _tmp13_->channellist;
+		_tmp15_ = cid;
+		_tmp16_ = newchan;
+		gee_abstract_map_set ((GeeAbstractMap*) _tmp14_, (gpointer) ((gintptr) _tmp15_), _tmp16_);
+		_tmp17_ = user;
+		_tmp18_ = newchan;
+		yrcd_yrcd_user_join (_tmp17_, _tmp18_);
+		_g_object_unref0 (newchan);
+	}
 }
 
 
@@ -276,10 +428,11 @@ static gboolean string_contains (const gchar* self, const gchar* needle) {
 }
 
 
-void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, gchar** args, int args_length1) {
+void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
 	gchar** _tmp0_ = NULL;
 	gint _tmp0__length1 = 0;
 	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
 	_tmp0_ = args;
 	_tmp0__length1 = args_length1;
 	if (_tmp0__length1 < 2) {
