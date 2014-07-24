@@ -29,15 +29,33 @@ namespace yrcd {
             user.user_reg(args);
             break;
           case "privmsg" :
-            privmsg_handler(args);
+            privmsg_handler(user,args);
+            break;
+          case "join" :
+            join_handler(user,args);
+            break;
+          default :
+            unknown_command_handler(user, args);
             break;
         }
       }
     }
-    public void privmsg_handler(string[] args) {
-     /*
-      * No plans to support sending to hostmasks for now.
-      */
+    public void unknown_command_handler(yrcd_user user, string[] args) {
+      user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
+    }
+    public void join_handler(yrcd_user user, string[] args) {
+      if (server.get_channel_by_name(args[1]) == null) {
+        int cid = server.new_cid();
+        yrcd_channel newchan = new yrcd_channel(cid);
+        newchan.name = args[1];
+        server.channellist[cid] = newchan;
+        user.join(newchan);
+      }
+    }
+    public void privmsg_handler(yrcd_user user, string[] args) {
+      /*
+       * No plans to support sending to hostmasks for now.
+       */
       if (args.length < 2) {
         //todo ERR_NORECIPIENT
       } else if (args.length < 3) {
@@ -59,7 +77,7 @@ namespace yrcd {
       }
     }
     public string strip_end (string msg) {
-      var builder = new StringBuilder ();
+      StringBuilder builder = new StringBuilder ();
       builder.append(msg);
       builder.truncate(builder.len - 1);
       return builder.str;

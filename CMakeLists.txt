@@ -28,7 +28,7 @@ set ( LIB_PATHS
 link_directories(${LIB_PATHS})
 find_package(Vala REQUIRED)
 include(ValaVersion)
-ensure_vala_version("0.16" MINIMUM)
+ensure_vala_version("0.14" MINIMUM)
 include(ValaPrecompile)
 vala_precompile(YRCD_C ${YRCD_NAME}
     src/main.vala

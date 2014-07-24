@@ -6,11 +6,16 @@ namespace yrcd {
     private MainLoop loop = new MainLoop();
     private yrcd_router router;
     private HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
-    private HashMap<int, yrcd_channel> channellist = new HashMap<int, yrcd_channel>();
+    public HashMap<int, yrcd_channel> channellist = new HashMap<int, yrcd_channel>();
     private int user_counter = 0;
+    private int cid_counter = 0;
     public int64 epoch;
     public int max_users = 0;
     public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
+    public int new_cid() {
+      cid_counter++;
+      return cid_counter;
+    }
     public int new_userid() {
       user_counter++;
       return user_counter;
@@ -31,8 +36,8 @@ namespace yrcd {
       userlist.unset(id);
     }
     public void add_listeners () {
-      foreach (var k in yrcd_constants.listen_ips) {
-        foreach (var j in yrcd_constants.listen_ports) {
+      foreach (string k in yrcd_constants.listen_ips) {
+        foreach (uint16 j in yrcd_constants.listen_ports) {
           log("Adding listener on IP: %s port %d".printf(k,j));
           SocketAddress serversock = null;
           InetAddress inetaddr = new InetAddress.from_string(k);
@@ -60,7 +65,7 @@ namespace yrcd {
     private async void process_request(yrcd_user user) {
       log("data streams open, entering main loop.");
       while (true) {
-        if (!user.sock.is_connected()) {
+        if (!user.sock.get_socket().is_connected()) {
           log("Socket not connected...breaking");
           break;
         }
@@ -73,13 +78,13 @@ namespace yrcd {
       }
     }
     public string ut_to_utc(int64 ut) {
-    var time = new DateTime.from_unix_utc(ut);
-    return time.to_string();
+      DateTime time = new DateTime.from_unix_utc(ut);
+      return time.to_string();
     }
     public yrcd_user? get_user_by_nick (string nicktocheck) {
       foreach (yrcd_user k in userlist) {
-        if (k.nick_set) {
-          if (k.nick == nicktocheck) {
+        if (k.isnickset()) {
+          if (k.nick.down() == nicktocheck.down()) {
             return k;
           }
         }
@@ -88,12 +93,34 @@ namespace yrcd {
     }
     public yrcd_channel? get_channel_by_name(string nametocheck) {
       foreach (yrcd_channel k in channellist) {
-        if (k.name == nametocheck) {
+        if (k.name.down() == nametocheck.down()) {
           return k;
         }
       }
       //Nothing found, so return null
       return null;
+    }
+    public bool valid_chan_name (string chan) {
+      bool valid = true;
+      bool has_prefix = false;
+      foreach (string k in yrcd_constants.chan_prefixes) {
+        if (chan.has_prefix(k)) {
+          has_prefix = true;
+          break;
+        }
+      }
+      foreach (string k in yrcd_constants.chan_forbidden) {
+        if (k in chan) {
+          valid = false;
+          break;
+        } 
+      }
+      if (has_prefix && valid && get_channel_by_name(chan) == null) {
+        valid = true;
+      } else {
+        valid = false;
+      }
+      return valid;
     }
   }
 }
