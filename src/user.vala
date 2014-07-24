@@ -28,7 +28,8 @@ namespace yrcd {
       id = server.new_userid();
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
-      host = get_host();
+      //host = get_host();
+      hostname_lookup.begin();
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
       ping_timer = setup_ping_timer();
@@ -185,6 +186,13 @@ namespace yrcd {
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
       }
+    }
+    public async void hostname_lookup() {
+      Resolver resolv = new Resolver.get_default();
+      send_line(":%s NOTICE %s :*** Looking up your hostname...".printf(yrcd_constants.sname,nick));
+      string hn = yield resolv.lookup_by_address_async(ip);
+      send_line("%s NOTICE %s :*** Found your hostname".printf(yrcd_constants.sname,nick));
+      host = hn;
     }
     public void fire_numeric(int numeric, ...) {
       va_list args = va_list();
