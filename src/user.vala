@@ -188,9 +188,10 @@ namespace yrcd {
       }
     }
     public async void hostname_lookup() {
-      Resolver resolv = new Resolver.get_default();
+      Resolver resolv = Resolver.get_default();
+      InetAddress add = new InetAddress.from_string(ip);
       send_line(":%s NOTICE %s :*** Looking up your hostname...".printf(yrcd_constants.sname,nick));
-      string hn = yield resolv.lookup_by_address_async(ip);
+      string hn = yield resolv.lookup_by_address_async(add);
       send_line("%s NOTICE %s :*** Found your hostname".printf(yrcd_constants.sname,nick));
       host = hn;
     }
