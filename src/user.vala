@@ -28,7 +28,7 @@ namespace yrcd {
       id = server.new_userid();
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
-      //host = get_host();
+      host = ip;
       hostname_lookup.begin();
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
@@ -194,6 +194,18 @@ namespace yrcd {
       string hn = yield resolv.lookup_by_address_async(add);
       send_line("%s NOTICE %s :*** Found your hostname".printf(yrcd_constants.sname,nick));
       host = hn;
+    }
+    public async void hostname_lookup() {
+      send_line(":%s NOTICE %s :*** Looking up your hostname...".printf(yrcd_constants.sname,nick));
+      Resolver resolv = Resolver.get_default();
+      InetAddress add = new InetAddress.from_string(ip);
+      string hn;
+      try {
+        string hn = yield resolv.lookup_by_address_async(add);
+      } catch (Error e) {
+
+      }
+      
     }
     public void fire_numeric(int numeric, ...) {
       va_list args = va_list();
