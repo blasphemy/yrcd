@@ -1,3 +1,0 @@
-Roadmap:
-
-use GLib.KeyFile for configuration;
