@@ -13,9 +13,9 @@ env:
   - TRAVIS_VALA_VERSION="0.16"
   - TRAVIS_VALA_VERSION="0.14"
 
-#matrix:
-#  allow_failures:
-#    - env: TRAVIS_VALA_VERSION="0.14"
+matrix:
+  allow_failures:
+    - env: TRAVIS_VALA_VERSION="0.14"
 #    - env: TRAVIS_VALA_VERSION="0.16"
 #    - env: TRAVIS_VALA_VERSION="0.18"
 #    - env: TRAVIS_VALA_VERSION="0.20"
