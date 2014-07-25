@@ -8,6 +8,16 @@
 #include <string.h>
 
 
+#define YRCD_TYPE_YRCD_CONFIG (yrcd_yrcd_config_get_type ())
+#define YRCD_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config))
+#define YRCD_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+#define YRCD_IS_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONFIG))
+#define YRCD_IS_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONFIG))
+#define YRCD_YRCD_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+
+typedef struct _yrcdyrcd_config yrcdyrcd_config;
+typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
+
 #define YRCD_TYPE_YRCD_SERVER (yrcd_yrcd_server_get_type ())
 #define YRCD_YRCD_SERVER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_server))
 #define YRCD_YRCD_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_serverClass))
@@ -22,19 +32,27 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 
 
 void yrcd_main (void);
+GType yrcd_yrcd_config_get_type (void) G_GNUC_CONST;
+yrcdyrcd_config* yrcd_yrcd_config_new (const gchar* filepath);
+yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* filepath);
 GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
-yrcdyrcd_server* yrcd_yrcd_server_new (void);
-yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type);
+yrcdyrcd_server* yrcd_yrcd_server_new (yrcdyrcd_config* _config);
+yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type, yrcdyrcd_config* _config);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 
 
 void yrcd_main (void) {
+	yrcdyrcd_config* config = NULL;
+	yrcdyrcd_config* _tmp0_ = NULL;
 	yrcdyrcd_server* server = NULL;
-	yrcdyrcd_server* _tmp0_ = NULL;
-	_tmp0_ = yrcd_yrcd_server_new ();
-	server = _tmp0_;
+	yrcdyrcd_server* _tmp1_ = NULL;
+	_tmp0_ = yrcd_yrcd_config_new ("yrcd.config");
+	config = _tmp0_;
+	_tmp1_ = yrcd_yrcd_server_new (config);
+	server = _tmp1_;
 	yrcd_yrcd_server_log (server, "For some reason, we're all done here.... goodbye");
 	_g_object_unref0 (server);
+	_g_object_unref0 (config);
 }
 
 

@@ -42,6 +42,16 @@ typedef struct _yrcdyrcd_channelClass yrcdyrcd_channelClass;
 typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
 typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
 
+#define YRCD_TYPE_YRCD_CONFIG (yrcd_yrcd_config_get_type ())
+#define YRCD_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config))
+#define YRCD_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+#define YRCD_IS_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONFIG))
+#define YRCD_IS_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONFIG))
+#define YRCD_YRCD_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+
+typedef struct _yrcdyrcd_config yrcdyrcd_config;
+typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
+
 #define YRCD_TYPE_YRCD_ROUTER (yrcd_yrcd_router_get_type ())
 #define YRCD_YRCD_ROUTER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_router))
 #define YRCD_YRCD_ROUTER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_ROUTER, yrcdyrcd_routerClass))
@@ -65,6 +75,7 @@ typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 #define _g_main_loop_unref0(var) ((var == NULL) ? NULL : (var = (g_main_loop_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
+typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 typedef struct _YrcdYrcdServerProcessRequestData YrcdYrcdServerProcessRequestData;
 
@@ -75,6 +86,7 @@ struct _yrcdyrcd_server {
 	gint64 epoch;
 	gint max_users;
 	yrcdyrcd_numeric_wrapper* numeric_wrapper;
+	yrcdyrcd_config* config;
 };
 
 struct _yrcdyrcd_serverClass {
@@ -88,6 +100,20 @@ struct _yrcdyrcd_serverPrivate {
 	GeeHashMap* userlist;
 	gint user_counter;
 	gint cid_counter;
+};
+
+struct _yrcdyrcd_config {
+	GObject parent_instance;
+	yrcdyrcd_configPrivate * priv;
+	GList* listen_ports;
+	gchar** listen_ips;
+	gint listen_ips_length1;
+	GList* motd;
+	gint ping_invertal;
+};
+
+struct _yrcdyrcd_configClass {
+	GObjectClass parent_class;
 };
 
 struct _YrcdYrcdServerProcessRequestData {
@@ -124,6 +150,7 @@ static gpointer yrcd_yrcd_server_parent_class = NULL;
 GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
+GType yrcd_yrcd_config_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_router_get_type (void) G_GNUC_CONST;
 GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
 #define YRCD_YRCD_SERVER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_serverPrivate))
@@ -135,8 +162,8 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 gint yrcd_yrcd_server_new_cid (yrcdyrcd_server* self);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
-yrcdyrcd_server* yrcd_yrcd_server_new (void);
-yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type);
+yrcdyrcd_server* yrcd_yrcd_server_new (yrcdyrcd_config* _config);
+yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type, yrcdyrcd_config* _config);
 #define YRCD_YRCD_CONSTANTS_software "yrcd"
 #define YRCD_YRCD_CONSTANTS_version "0.1"
 void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self);
@@ -165,8 +192,6 @@ const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
 gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* chan);
 static void yrcd_yrcd_server_finalize (GObject* obj);
 
-extern const gchar* YRCD_YRCD_CONSTANTS_listen_ips[1];
-extern const guint16 YRCD_YRCD_CONSTANTS_listen_ports[2];
 extern const gchar* YRCD_YRCD_CONSTANTS_chan_prefixes[2];
 extern const gchar* YRCD_YRCD_CONSTANTS_chan_forbidden[5];
 
@@ -207,6 +232,11 @@ void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg) {
 }
 
 
+static gpointer _g_object_ref0 (gpointer self) {
+	return self ? g_object_ref (self) : NULL;
+}
+
+
 static gboolean _yrcd_yrcd_server_on_connection_g_socket_service_incoming (GSocketService* _sender, GSocketConnection* connection, GObject* source_object, gpointer self) {
 	gboolean result;
 	result = yrcd_yrcd_server_on_connection ((yrcdyrcd_server*) self, connection);
@@ -214,43 +244,50 @@ static gboolean _yrcd_yrcd_server_on_connection_g_socket_service_incoming (GSock
 }
 
 
-yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type) {
+yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type, yrcdyrcd_config* _config) {
 	yrcdyrcd_server * self = NULL;
-	gchar* _tmp0_ = NULL;
-	gchar* _tmp1_ = NULL;
-	GDateTime* _tmp2_ = NULL;
-	GDateTime* _tmp3_ = NULL;
-	gint64 _tmp4_ = 0LL;
-	yrcdyrcd_router* _tmp5_ = NULL;
-	GSocketService* _tmp6_ = NULL;
-	GSocketService* _tmp7_ = NULL;
-	GMainLoop* _tmp8_ = NULL;
+	yrcdyrcd_config* _tmp0_ = NULL;
+	yrcdyrcd_config* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	GDateTime* _tmp4_ = NULL;
+	GDateTime* _tmp5_ = NULL;
+	gint64 _tmp6_ = 0LL;
+	yrcdyrcd_router* _tmp7_ = NULL;
+	GSocketService* _tmp8_ = NULL;
+	GSocketService* _tmp9_ = NULL;
+	GMainLoop* _tmp10_ = NULL;
+	g_return_val_if_fail (_config != NULL, NULL);
 	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
-	_tmp0_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
-	_tmp1_ = _tmp0_;
-	yrcd_yrcd_server_log (self, _tmp1_);
-	_g_free0 (_tmp1_);
-	_tmp2_ = g_date_time_new_now_utc ();
+	_tmp0_ = _config;
+	_tmp1_ = _g_object_ref0 (_tmp0_);
+	_g_object_unref0 (self->config);
+	self->config = _tmp1_;
+	_tmp2_ = g_strdup_printf ("Initializing server: %s %s", YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version);
 	_tmp3_ = _tmp2_;
-	_tmp4_ = g_date_time_to_unix (_tmp3_);
-	self->epoch = _tmp4_;
-	_g_date_time_unref0 (_tmp3_);
+	yrcd_yrcd_server_log (self, _tmp3_);
+	_g_free0 (_tmp3_);
+	_tmp4_ = g_date_time_new_now_utc ();
+	_tmp5_ = _tmp4_;
+	_tmp6_ = g_date_time_to_unix (_tmp5_);
+	self->epoch = _tmp6_;
+	_g_date_time_unref0 (_tmp5_);
 	yrcd_yrcd_server_add_listeners (self);
-	_tmp5_ = yrcd_yrcd_router_new (self);
+	_tmp7_ = yrcd_yrcd_router_new (self);
 	_g_object_unref0 (self->priv->router);
-	self->priv->router = _tmp5_;
-	_tmp6_ = self->priv->ss;
-	g_signal_connect_object (_tmp6_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
-	_tmp7_ = self->priv->ss;
-	g_socket_service_start (_tmp7_);
-	_tmp8_ = self->priv->loop;
-	g_main_loop_run (_tmp8_);
+	self->priv->router = _tmp7_;
+	_tmp8_ = self->priv->ss;
+	g_signal_connect_object (_tmp8_, "incoming", (GCallback) _yrcd_yrcd_server_on_connection_g_socket_service_incoming, self, 0);
+	_tmp9_ = self->priv->ss;
+	g_socket_service_start (_tmp9_);
+	_tmp10_ = self->priv->loop;
+	g_main_loop_run (_tmp10_);
 	return self;
 }
 
 
-yrcdyrcd_server* yrcd_yrcd_server_new (void) {
-	return yrcd_yrcd_server_construct (YRCD_TYPE_YRCD_SERVER);
+yrcdyrcd_server* yrcd_yrcd_server_new (yrcdyrcd_config* _config) {
+	return yrcd_yrcd_server_construct (YRCD_TYPE_YRCD_SERVER, _config);
 }
 
 
@@ -265,92 +302,99 @@ void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id) {
 
 
 void yrcd_yrcd_server_add_listeners (yrcdyrcd_server* self) {
+	yrcdyrcd_config* _tmp0_ = NULL;
+	gchar** _tmp1_ = NULL;
+	gint _tmp1__length1 = 0;
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
+	_tmp0_ = self->config;
+	_tmp1_ = _tmp0_->listen_ips;
+	_tmp1__length1 = _tmp0_->listen_ips_length1;
 	{
-		const gchar** k_collection = NULL;
+		gchar** k_collection = NULL;
 		gint k_collection_length1 = 0;
 		gint _k_collection_size_ = 0;
 		gint k_it = 0;
-		k_collection = YRCD_YRCD_CONSTANTS_listen_ips;
-		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ips);
-		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ips); k_it = k_it + 1) {
-			gchar* _tmp0_ = NULL;
+		k_collection = _tmp1_;
+		k_collection_length1 = _tmp1__length1;
+		for (k_it = 0; k_it < _tmp1__length1; k_it = k_it + 1) {
+			gchar* _tmp2_ = NULL;
 			gchar* k = NULL;
-			_tmp0_ = g_strdup (k_collection[k_it]);
-			k = _tmp0_;
+			_tmp2_ = g_strdup (k_collection[k_it]);
+			k = _tmp2_;
 			{
+				yrcdyrcd_config* _tmp3_ = NULL;
+				GList* _tmp4_ = NULL;
+				_tmp3_ = self->config;
+				_tmp4_ = _tmp3_->listen_ports;
 				{
-					guint16* j_collection = NULL;
-					gint j_collection_length1 = 0;
-					gint _j_collection_size_ = 0;
-					gint j_it = 0;
-					j_collection = YRCD_YRCD_CONSTANTS_listen_ports;
-					j_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports);
-					for (j_it = 0; j_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_listen_ports); j_it = j_it + 1) {
+					GList* j_collection = NULL;
+					GList* j_it = NULL;
+					j_collection = _tmp4_;
+					for (j_it = j_collection; j_it != NULL; j_it = j_it->next) {
 						guint16 j = 0U;
-						j = j_collection[j_it];
+						j = (guint16) ((guintptr) j_it->data);
 						{
-							const gchar* _tmp1_ = NULL;
-							guint16 _tmp2_ = 0U;
-							gchar* _tmp3_ = NULL;
-							gchar* _tmp4_ = NULL;
+							const gchar* _tmp5_ = NULL;
+							guint16 _tmp6_ = 0U;
+							gchar* _tmp7_ = NULL;
+							gchar* _tmp8_ = NULL;
 							GSocketAddress* serversock = NULL;
 							GInetAddress* inetaddr = NULL;
-							const gchar* _tmp5_ = NULL;
-							GInetAddress* _tmp6_ = NULL;
+							const gchar* _tmp9_ = NULL;
+							GInetAddress* _tmp10_ = NULL;
 							GSocketAddress* sockaddr = NULL;
-							GInetAddress* _tmp7_ = NULL;
-							guint16 _tmp8_ = 0U;
-							GInetSocketAddress* _tmp9_ = NULL;
-							_tmp1_ = k;
-							_tmp2_ = j;
-							_tmp3_ = g_strdup_printf ("Adding listener on IP: %s port %d", _tmp1_, (gint) _tmp2_);
-							_tmp4_ = _tmp3_;
-							yrcd_yrcd_server_log (self, _tmp4_);
-							_g_free0 (_tmp4_);
-							serversock = NULL;
+							GInetAddress* _tmp11_ = NULL;
+							guint16 _tmp12_ = 0U;
+							GInetSocketAddress* _tmp13_ = NULL;
 							_tmp5_ = k;
-							_tmp6_ = g_inet_address_new_from_string (_tmp5_);
-							inetaddr = _tmp6_;
-							_tmp7_ = inetaddr;
-							_tmp8_ = j;
-							_tmp9_ = (GInetSocketAddress*) g_inet_socket_address_new (_tmp7_, _tmp8_);
-							sockaddr = (GSocketAddress*) _tmp9_;
+							_tmp6_ = j;
+							_tmp7_ = g_strdup_printf ("Adding listener on IP: %s port %d", _tmp5_, (gint) _tmp6_);
+							_tmp8_ = _tmp7_;
+							yrcd_yrcd_server_log (self, _tmp8_);
+							_g_free0 (_tmp8_);
+							serversock = NULL;
+							_tmp9_ = k;
+							_tmp10_ = g_inet_address_new_from_string (_tmp9_);
+							inetaddr = _tmp10_;
+							_tmp11_ = inetaddr;
+							_tmp12_ = j;
+							_tmp13_ = (GInetSocketAddress*) g_inet_socket_address_new (_tmp11_, _tmp12_);
+							sockaddr = (GSocketAddress*) _tmp13_;
 							{
-								GSocketService* _tmp10_ = NULL;
-								GSocketAddress* _tmp11_ = NULL;
-								GSocketService* _tmp12_ = NULL;
-								GSocketAddress* _tmp13_ = NULL;
-								_tmp10_ = self->priv->ss;
-								_tmp11_ = sockaddr;
-								_tmp12_ = self->priv->ss;
-								g_socket_listener_add_address ((GSocketListener*) _tmp10_, _tmp11_, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, (GObject*) _tmp12_, &_tmp13_, &_inner_error_);
+								GSocketService* _tmp14_ = NULL;
+								GSocketAddress* _tmp15_ = NULL;
+								GSocketService* _tmp16_ = NULL;
+								GSocketAddress* _tmp17_ = NULL;
+								_tmp14_ = self->priv->ss;
+								_tmp15_ = sockaddr;
+								_tmp16_ = self->priv->ss;
+								g_socket_listener_add_address ((GSocketListener*) _tmp14_, _tmp15_, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, (GObject*) _tmp16_, &_tmp17_, &_inner_error_);
 								_g_object_unref0 (serversock);
-								serversock = _tmp13_;
+								serversock = _tmp17_;
 								if (_inner_error_ != NULL) {
-									goto __catch0_g_error;
+									goto __catch1_g_error;
 								}
 							}
-							goto __finally0;
-							__catch0_g_error:
+							goto __finally1;
+							__catch1_g_error:
 							{
 								GError* e = NULL;
-								GError* _tmp14_ = NULL;
-								const gchar* _tmp15_ = NULL;
-								gchar* _tmp16_ = NULL;
-								gchar* _tmp17_ = NULL;
+								GError* _tmp18_ = NULL;
+								const gchar* _tmp19_ = NULL;
+								gchar* _tmp20_ = NULL;
+								gchar* _tmp21_ = NULL;
 								e = _inner_error_;
 								_inner_error_ = NULL;
-								_tmp14_ = e;
-								_tmp15_ = _tmp14_->message;
-								_tmp16_ = g_strdup_printf ("Error opening socket: %s", _tmp15_);
-								_tmp17_ = _tmp16_;
-								yrcd_yrcd_server_log (self, _tmp17_);
-								_g_free0 (_tmp17_);
+								_tmp18_ = e;
+								_tmp19_ = _tmp18_->message;
+								_tmp20_ = g_strdup_printf ("Error opening socket: %s", _tmp19_);
+								_tmp21_ = _tmp20_;
+								yrcd_yrcd_server_log (self, _tmp21_);
+								_g_free0 (_tmp21_);
 								_g_error_free0 (e);
 							}
-							__finally0:
+							__finally1:
 							if (_inner_error_ != NULL) {
 								_g_object_unref0 (sockaddr);
 								_g_object_unref0 (inetaddr);
@@ -438,11 +482,6 @@ static void yrcd_yrcd_server_process_request_data_free (gpointer _data) {
 }
 
 
-static gpointer _g_object_ref0 (gpointer self) {
-	return self ? g_object_ref (self) : NULL;
-}
-
-
 static void yrcd_yrcd_server_process_request (yrcdyrcd_server* self, yrcdyrcd_user* user, GAsyncReadyCallback _callback_, gpointer _user_data_) {
 	YrcdYrcdServerProcessRequestData* _data_;
 	yrcdyrcd_server* _tmp0_ = NULL;
@@ -517,7 +556,7 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			_data_->_tmp8_ = g_data_input_stream_read_line_finish (_data_->_tmp7_, _data_->_res_, NULL, &_data_->_inner_error_);
 			_data_->msg = _data_->_tmp8_;
 			if (_data_->_inner_error_ != NULL) {
-				goto __catch1_g_error;
+				goto __catch2_g_error;
 			}
 			_data_->_tmp9_ = NULL;
 			_data_->_tmp9_ = _data_->self->priv->router;
@@ -528,8 +567,8 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			yrcd_yrcd_router_route (_data_->_tmp9_, _data_->_tmp10_, _data_->_tmp11_);
 			_g_free0 (_data_->msg);
 		}
-		goto __finally1;
-		__catch1_g_error:
+		goto __finally2;
+		__catch2_g_error:
 		{
 			_data_->e = _data_->_inner_error_;
 			_data_->_inner_error_ = NULL;
@@ -545,7 +584,7 @@ static gboolean yrcd_yrcd_server_process_request_co (YrcdYrcdServerProcessReques
 			_g_free0 (_data_->_tmp15_);
 			_g_error_free0 (_data_->e);
 		}
-		__finally1:
+		__finally2:
 		if (_data_->_inner_error_ != NULL) {
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _data_->_inner_error_->message, g_quark_to_string (_data_->_inner_error_->domain), _data_->_inner_error_->code);
 			g_clear_error (&_data_->_inner_error_);
@@ -892,6 +931,7 @@ static void yrcd_yrcd_server_finalize (GObject* obj) {
 	_g_object_unref0 (self->priv->userlist);
 	_g_object_unref0 (self->channellist);
 	_g_object_unref0 (self->numeric_wrapper);
+	_g_object_unref0 (self->config);
 	G_OBJECT_CLASS (yrcd_yrcd_server_parent_class)->finalize (obj);
 }
 

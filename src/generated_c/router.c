@@ -62,6 +62,16 @@ typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
 typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
 typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
+
+#define YRCD_TYPE_YRCD_CONFIG (yrcd_yrcd_config_get_type ())
+#define YRCD_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config))
+#define YRCD_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+#define YRCD_IS_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONFIG))
+#define YRCD_IS_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONFIG))
+#define YRCD_YRCD_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+
+typedef struct _yrcdyrcd_config yrcdyrcd_config;
+typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
 struct _yrcdyrcd_router {
@@ -81,6 +91,7 @@ struct _yrcdyrcd_server {
 	gint64 epoch;
 	gint max_users;
 	yrcdyrcd_numeric_wrapper* numeric_wrapper;
+	yrcdyrcd_config* config;
 };
 
 struct _yrcdyrcd_serverClass {
@@ -120,6 +131,7 @@ yrcdyrcd_channel* yrcd_yrcd_channel_new (gint id);
 yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, gint id);
 void yrcd_yrcd_channel_set_name (yrcdyrcd_channel* self, const gchar* value);
 GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
+GType yrcd_yrcd_config_get_type (void) G_GNUC_CONST;
 void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan);
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
 static void yrcd_yrcd_router_finalize (GObject* obj);
