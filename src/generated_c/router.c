@@ -239,6 +239,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 		static GQuark _tmp31_label2 = 0;
 		static GQuark _tmp31_label3 = 0;
 		static GQuark _tmp31_label4 = 0;
+		static GQuark _tmp31_label5 = 0;
 		_tmp17_ = user;
 		_tmp18_ = yrcd_yrcd_user_get_server (_tmp17_);
 		_tmp19_ = _tmp18_;
@@ -329,6 +330,13 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					_tmp44_ = args;
 					_tmp44__length1 = args_length1;
 					yrcd_yrcd_router_join_handler (self, _tmp43_, _tmp44_, _tmp44__length1);
+					break;
+				}
+			}
+		} else if (_tmp32_ == ((0 != _tmp31_label5) ? _tmp31_label5 : (_tmp31_label5 = g_quark_from_static_string ("pong")))) {
+			switch (0) {
+				default:
+				{
 					break;
 				}
 			}
