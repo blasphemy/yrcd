@@ -34,6 +34,8 @@ namespace yrcd {
           case "join" :
             join_handler(user,args);
             break;
+          case "pong" :
+            break;
           default :
             unknown_command_handler(user, args);
             break;
