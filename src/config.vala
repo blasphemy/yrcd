@@ -4,6 +4,7 @@ namespace yrcd {
     public string sname { get; set; }
     public List<uint16> listen_ports;
     public string[] listen_ips;
+    public List<string> motd;
       public yrcd_config(string filepath) {
         try {
           file.load_from_file(filepath,KeyFileFlags.NONE);
@@ -18,6 +19,13 @@ namespace yrcd {
             listen_ports.append(j);
           }
           listen_ips = file.get_string_list("Networking", "listening_ips");
+          string motdpath = file.get_string("ServerVariables","motd_path");
+          var motdfile = File.new_for_path(motdpath);
+          var dis = new DataInputStream(motdfile.read());
+          string motd_line;
+          while ((motd_line = dis.read_line(null)) != null) {
+            motd.append(motd_line);
+          }
         } catch (Error e) {
           error("Error reading config file: %s".printf(e.message));
         }
