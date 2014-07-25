@@ -31,7 +31,7 @@ namespace yrcd {
       host = ip;
       hostname_lookup.begin();
       awaiting_response = false;
-      check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
+      check_ping_at = epoch.to_unix() + server.config.ping_invertal;
       ping_timer = setup_ping_timer();
       server.log("User connected from %s with ID %d".printf(host,id));
     }
@@ -67,7 +67,7 @@ namespace yrcd {
             awaiting_response = true;
           }
         }
-        check_ping_at = now + yrcd_constants.ping_invertal;
+        check_ping_at = now + server.config.ping_invertal;
       }
     }
     public string get_ip () {
