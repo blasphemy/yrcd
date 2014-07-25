@@ -28,9 +28,10 @@ namespace yrcd {
       id = server.new_userid();
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
-      host = get_host();
+      host = ip;
+      hostname_lookup.begin();
       awaiting_response = false;
-      check_ping_at = epoch.to_unix() + yrcd_constants.ping_invertal;
+      check_ping_at = epoch.to_unix() + server.config.ping_invertal;
       ping_timer = setup_ping_timer();
       server.log("User connected from %s with ID %d".printf(host,id));
     }
@@ -62,11 +63,11 @@ namespace yrcd {
           if (awaiting_response) {
             quit(null);
           } else {
-            send_line("PING :" + yrcd_constants.sname);
+            send_line("PING :" + server.config.sname);
             awaiting_response = true;
           }
         }
-        check_ping_at = now + yrcd_constants.ping_invertal;
+        check_ping_at = now + server.config.ping_invertal;
       }
     }
     public string get_ip () {
@@ -145,9 +146,9 @@ namespace yrcd {
     public void reg_finished () {
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(RPL_WELCOME, nick, ident, host);
-      fire_numeric(RPL_YOURHOST, yrcd_constants.sname, yrcd_constants.software, yrcd_constants.version);
+      fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);
       fire_numeric(RPL_CREATED, "%s".printf(server.ut_to_utc(server.epoch)));
-      fire_numeric(RPL_MYINFO, yrcd_constants.sname, yrcd_constants.version, "", ""); //No modes yet....
+      fire_numeric(RPL_MYINFO, server.config.sname, yrcd_constants.version, "", ""); //No modes yet....
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc();
@@ -157,27 +158,6 @@ namespace yrcd {
       string hm = nick + "!" + ident + "@" + host;
       return hm;
     }
-    public string get_host() {
-      try {
-        InetAddress address = new InetAddress.from_string(ip);
-        Resolver resolver = Resolver.get_default();
-        string hostname = resolver.lookup_by_address(address,null);
-        GLib.List<InetAddress> addresses = resolver.lookup_by_name(hostname);
-        bool match = false;
-        foreach (InetAddress k in addresses) {
-          if (k.to_string() == ip) {
-            match = true;
-          }
-        }
-        if (!match) {
-          hostname = ip;
-        }
-        return hostname;
-      } catch (Error e) {
-        server.log("Error resolving user %d IP %s".printf(id,ip));
-        return ip;
-      }
-    }
     public void send_line(string msg) {
       try {
         dos.put_string("%s\n".printf(msg));
@@ -186,12 +166,51 @@ namespace yrcd {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
       }
     }
+    public async void hostname_lookup() {
+      send_notice("*** Looking up your hostname...");
+      Resolver resolv = Resolver.get_default();
+      InetAddress add = new InetAddress.from_string(ip);
+      string hn;
+      GLib.List<InetAddress> addresses;
+      bool match = false;
+      try {
+        hn = yield resolv.lookup_by_address_async(add);
+      } catch (Error e) {
+        send_notice("*** Unable to resolve your hostname");
+        host = ip;
+        return;
+      }
+      try {
+        addresses = yield resolv.lookup_by_name_async(hn);
+      } catch (Error e) {
+        send_notice("*** Unable to resolve your hostname");
+        host = ip;
+        return;
+      }
+      foreach (InetAddress k in addresses) {
+        if (k.to_string() == ip) {
+          match = true;
+          break;
+        }
+      }
+      if (!match) {
+        host = ip;
+        send_notice("*** Unable to resolve your hostname");
+      } else {
+        host = hn;
+        send_notice("*** Found your hostname");
+        return;
+      }
+    }
     public void fire_numeric(int numeric, ...) {
       va_list args = va_list();
-      string msg = ":%s %.3d %s :".printf(yrcd_constants.sname,numeric,nick);
+      string msg = ":%s %.3d %s :".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
       send_line(msg);
+    }
+    public void send_notice (string msg) {
+      send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));
     }
   }
 }

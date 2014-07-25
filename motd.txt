@@ -1,0 +1,5 @@
+*** Welcome to our YRCD Network ***
+*** *************************** ***
+*** You are seeing this because ***
+*** your network operator is    ***
+*** Too lazy to change the motd ***

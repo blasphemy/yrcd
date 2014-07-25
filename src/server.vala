@@ -12,6 +12,7 @@ namespace yrcd {
     public int64 epoch;
     public int max_users = 0;
     public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
+    public yrcd_config config;
     public int new_cid() {
       cid_counter++;
       return cid_counter;
@@ -23,7 +24,8 @@ namespace yrcd {
     public void log (string msg) {
       stdout.printf("LOG: %s\n", msg);
     } 
-    public yrcd_server () {
+    public yrcd_server (yrcd_config _config) {
+      config = _config;
       log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
       epoch = new DateTime.now_utc().to_unix();
       add_listeners();
@@ -36,8 +38,8 @@ namespace yrcd {
       userlist.unset(id);
     }
     public void add_listeners () {
-      foreach (string k in yrcd_constants.listen_ips) {
-        foreach (uint16 j in yrcd_constants.listen_ports) {
+      foreach (string k in config.listen_ips) {
+        foreach (uint16 j in config.listen_ports) {
           log("Adding listener on IP: %s port %d".printf(k,j));
           SocketAddress serversock = null;
           InetAddress inetaddr = new InetAddress.from_string(k);
