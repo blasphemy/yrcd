@@ -17,6 +17,8 @@
 
 typedef struct _yrcdyrcd_config yrcdyrcd_config;
 typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
+typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
+#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
 #define YRCD_TYPE_YRCD_SERVER (yrcd_yrcd_server_get_type ())
 #define YRCD_YRCD_SERVER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_server))
@@ -27,7 +29,21 @@ typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
 
 typedef struct _yrcdyrcd_server yrcdyrcd_server;
 typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
-#define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
+
+struct _yrcdyrcd_config {
+	GObject parent_instance;
+	yrcdyrcd_configPrivate * priv;
+	GList* listen_ports;
+	gchar** listen_ips;
+	gint listen_ips_length1;
+	GList* motd;
+	gint ping_invertal;
+	gboolean config_error;
+};
+
+struct _yrcdyrcd_configClass {
+	GObjectClass parent_class;
+};
 
 
 
@@ -44,13 +60,25 @@ void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 void yrcd_main (void) {
 	yrcdyrcd_config* config = NULL;
 	yrcdyrcd_config* _tmp0_ = NULL;
+	yrcdyrcd_config* _tmp1_ = NULL;
+	gboolean _tmp2_ = FALSE;
 	yrcdyrcd_server* server = NULL;
-	yrcdyrcd_server* _tmp1_ = NULL;
+	yrcdyrcd_config* _tmp3_ = NULL;
+	yrcdyrcd_server* _tmp4_ = NULL;
+	yrcdyrcd_server* _tmp5_ = NULL;
 	_tmp0_ = yrcd_yrcd_config_new ("yrcd.config");
 	config = _tmp0_;
-	_tmp1_ = yrcd_yrcd_server_new (config);
-	server = _tmp1_;
-	yrcd_yrcd_server_log (server, "For some reason, we're all done here.... goodbye");
+	_tmp1_ = config;
+	_tmp2_ = _tmp1_->config_error;
+	if (_tmp2_) {
+		_g_object_unref0 (config);
+		return;
+	}
+	_tmp3_ = config;
+	_tmp4_ = yrcd_yrcd_server_new (_tmp3_);
+	server = _tmp4_;
+	_tmp5_ = server;
+	yrcd_yrcd_server_log (_tmp5_, "For some reason, we're all done here.... goodbye");
 	_g_object_unref0 (server);
 	_g_object_unref0 (config);
 }

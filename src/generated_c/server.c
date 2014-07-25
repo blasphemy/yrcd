@@ -110,6 +110,7 @@ struct _yrcdyrcd_config {
 	gint listen_ips_length1;
 	GList* motd;
 	gint ping_invertal;
+	gboolean config_error;
 };
 
 struct _yrcdyrcd_configClass {

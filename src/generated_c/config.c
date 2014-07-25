@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gio/gio.h>
+#include <stdio.h>
 
 
 #define YRCD_TYPE_YRCD_CONFIG (yrcd_yrcd_config_get_type ())
@@ -34,6 +35,7 @@ struct _yrcdyrcd_config {
 	gint listen_ips_length1;
 	GList* motd;
 	gint ping_invertal;
+	gboolean config_error;
 };
 
 struct _yrcdyrcd_configClass {
@@ -291,16 +293,21 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 	__catch0_g_error:
 	{
 		GError* e = NULL;
-		const gchar* _tmp38_ = NULL;
-		gchar* _tmp39_ = NULL;
-		gchar* _tmp40_ = NULL;
+		FILE* _tmp38_ = NULL;
+		GError* _tmp39_ = NULL;
+		const gchar* _tmp40_ = NULL;
+		gchar* _tmp41_ = NULL;
+		gchar* _tmp42_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp38_ = e->message;
-		_tmp39_ = g_strdup_printf ("Error reading config file: %s", _tmp38_);
-		_tmp40_ = _tmp39_;
-		g_error ("config.vala:32: %s", _tmp40_);
-		_g_free0 (_tmp40_);
+		_tmp38_ = stdout;
+		_tmp39_ = e;
+		_tmp40_ = _tmp39_->message;
+		_tmp41_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp40_);
+		_tmp42_ = _tmp41_;
+		fprintf (_tmp38_, "%s", _tmp42_);
+		_g_free0 (_tmp42_);
+		self->config_error = TRUE;
 		_g_error_free0 (e);
 	}
 	__finally0:
@@ -355,6 +362,7 @@ static void yrcd_yrcd_config_instance_init (yrcdyrcd_config * self) {
 	self->priv = YRCD_YRCD_CONFIG_GET_PRIVATE (self);
 	_tmp0_ = g_key_file_new ();
 	self->priv->file = _tmp0_;
+	self->config_error = FALSE;
 }
 
 
