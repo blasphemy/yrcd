@@ -6,3 +6,4 @@ listening_ports=6667,6668,6669
 server_name=test.net.local
 ping_invertal=45
 motd_path=motd.txt
+host_salt=s3krit
