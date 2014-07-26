@@ -15,7 +15,7 @@ namespace yrcd {
         return;
       }
       string stripped = strip_end(msg);
-      string[] args = tokenize(stripped);
+      string[] args = stripped.split(" ");
       if (args[0] != null) {
         user.server.log("USER %d: received line %s".printf(user.id,stripped));
         user.update_timestamp(); //timestamp should be updated as soon as possible to be accurate. Not that perfect acuracy is a thing in this ircd.
@@ -37,6 +37,9 @@ namespace yrcd {
             join_handler(user,args);
             break;
           case "pong" : //at this point, ping is just sent as a poke to the user. We don't care what we get back, as long as we get something. About as lazy as it gets.
+            break;
+          case "motd" :
+            user.fire_motd();
             break;
           default :
             unknown_command_handler(user, args);
@@ -85,9 +88,6 @@ namespace yrcd {
       builder.append(msg);
       builder.truncate(builder.len - 1);
       return builder.str;
-    }
-    public string[] tokenize (string msg) {
-      return msg.split(" ");
     }
   }
 }
