@@ -195,7 +195,7 @@ namespace yrcd {
       }
       if (!match) {
         host = ip;
-        send_notice("*** Unable to resolve your hostname");
+        send_notice("*** Your forward and reverse DNS do not match, ignoring hostname");
       } else {
         host = hn;
         send_notice("*** Found your hostname");
