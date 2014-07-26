@@ -111,6 +111,7 @@ struct _yrcdyrcd_config {
 	GList* motd;
 	gint ping_invertal;
 	gboolean config_error;
+	gchar* salt;
 };
 
 struct _yrcdyrcd_configClass {
@@ -191,6 +192,7 @@ const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
 gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* chan);
+gchar* yrcd_yrcd_server_secure_hash (yrcdyrcd_server* self, const gchar* in);
 static void yrcd_yrcd_server_finalize (GObject* obj);
 
 extern const gchar* YRCD_YRCD_CONSTANTS_chan_prefixes[2];
@@ -889,6 +891,32 @@ gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* c
 		valid = FALSE;
 	}
 	result = valid;
+	return result;
+}
+
+
+gchar* yrcd_yrcd_server_secure_hash (yrcdyrcd_server* self, const gchar* in) {
+	gchar* result = NULL;
+	yrcdyrcd_config* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	const gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	gchar* _tmp4_ = NULL;
+	guint _tmp5_ = 0U;
+	gchar* _tmp6_ = NULL;
+	gchar* _tmp7_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	g_return_val_if_fail (in != NULL, NULL);
+	_tmp0_ = self->config;
+	_tmp1_ = _tmp0_->salt;
+	_tmp2_ = in;
+	_tmp3_ = g_strdup_printf ("%s%s", _tmp1_, _tmp2_);
+	_tmp4_ = _tmp3_;
+	_tmp5_ = g_str_hash (_tmp4_);
+	_tmp6_ = g_strdup_printf ("%u", _tmp5_);
+	_tmp7_ = _tmp6_;
+	_g_free0 (_tmp4_);
+	result = _tmp7_;
 	return result;
 }
 

@@ -39,6 +39,7 @@ struct _yrcdyrcd_config {
 	GList* motd;
 	gint ping_invertal;
 	gboolean config_error;
+	gchar* salt;
 };
 
 struct _yrcdyrcd_configClass {
