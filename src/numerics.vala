@@ -17,7 +17,7 @@ namespace yrcd {
   }
   /*
       Numerics are purposely defined in the global namespace.
-      the reasoning behind this is to make the sytax when firing numerics easier.
+      the reasoning behind this is to make the syntax when firing numerics easier.
       Ex: user.fire_numeric(ERR_ALREADYREGISTERED).
       Easy.
   */
