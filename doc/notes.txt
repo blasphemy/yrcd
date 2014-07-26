@@ -1,0 +1,3 @@
+Roadmap:
+
+v 0.2: Semi working channels and privmsgs.
