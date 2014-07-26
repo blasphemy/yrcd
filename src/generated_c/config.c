@@ -36,6 +36,7 @@ struct _yrcdyrcd_config {
 	GList* motd;
 	gint ping_invertal;
 	gboolean config_error;
+	gchar* salt;
 };
 
 struct _yrcdyrcd_configClass {
@@ -123,6 +124,10 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 		gint _tmp35_ = 0;
 		GKeyFile* _tmp36_ = NULL;
 		gint _tmp37_ = 0;
+		gchar* _tmp38_ = NULL;
+		GKeyFile* _tmp39_ = NULL;
+		gchar* _tmp40_ = NULL;
+		gchar* _tmp41_ = NULL;
 		_tmp0_ = self->priv->file;
 		_tmp1_ = filepath;
 		g_key_file_load_from_file (_tmp0_, _tmp1_, G_KEY_FILE_NONE, &_inner_error_);
@@ -280,6 +285,25 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 			goto __catch0_g_error;
 		}
 		self->ping_invertal = _tmp35_;
+		_tmp39_ = self->priv->file;
+		_tmp40_ = g_key_file_get_string (_tmp39_, "ServerVariables", "host_salt", &_inner_error_);
+		_tmp38_ = _tmp40_;
+		if (_inner_error_ != NULL) {
+			_g_free0 (motd_line);
+			_g_object_unref0 (dis);
+			_g_object_unref0 (_tmp24_);
+			_g_object_unref0 (motdfile);
+			_g_free0 (motdpath);
+			_tmp15_ = (_vala_array_free (_tmp15_, _tmp15__length1, (GDestroyNotify) g_free), NULL);
+			tmplist = (g_free (tmplist), NULL);
+			_g_free0 (_tmp3_);
+			goto __catch0_g_error;
+		}
+		_tmp41_ = _tmp38_;
+		_tmp38_ = NULL;
+		_g_free0 (self->salt);
+		self->salt = _tmp41_;
+		_g_free0 (_tmp38_);
 		_g_free0 (motd_line);
 		_g_object_unref0 (dis);
 		_g_object_unref0 (_tmp24_);
@@ -293,20 +317,20 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 	__catch0_g_error:
 	{
 		GError* e = NULL;
-		FILE* _tmp38_ = NULL;
-		GError* _tmp39_ = NULL;
-		const gchar* _tmp40_ = NULL;
-		gchar* _tmp41_ = NULL;
-		gchar* _tmp42_ = NULL;
+		FILE* _tmp42_ = NULL;
+		GError* _tmp43_ = NULL;
+		const gchar* _tmp44_ = NULL;
+		gchar* _tmp45_ = NULL;
+		gchar* _tmp46_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp38_ = stdout;
-		_tmp39_ = e;
-		_tmp40_ = _tmp39_->message;
-		_tmp41_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp40_);
-		_tmp42_ = _tmp41_;
-		fprintf (_tmp38_, "%s", _tmp42_);
-		_g_free0 (_tmp42_);
+		_tmp42_ = stdout;
+		_tmp43_ = e;
+		_tmp44_ = _tmp43_->message;
+		_tmp45_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp44_);
+		_tmp46_ = _tmp45_;
+		fprintf (_tmp42_, "%s", _tmp46_);
+		_g_free0 (_tmp46_);
 		self->config_error = TRUE;
 		_g_error_free0 (e);
 	}
@@ -374,6 +398,7 @@ static void yrcd_yrcd_config_finalize (GObject* obj) {
 	_g_list_free0 (self->listen_ports);
 	self->listen_ips = (_vala_array_free (self->listen_ips, self->listen_ips_length1, (GDestroyNotify) g_free), NULL);
 	__g_list_free__g_free0_0 (self->motd);
+	_g_free0 (self->salt);
 	G_OBJECT_CLASS (yrcd_yrcd_config_parent_class)->finalize (obj);
 }
 
