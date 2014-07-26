@@ -131,17 +131,16 @@ namespace yrcd {
       }
       return valid;
     }
-    public string secure_hash(string in) { //rly sekure guise!
-      /*
-         Nothing secure about it. If anyone is curious, this uses the djb hashing algorithm.
-         from developer.gnome.org on g_str_hash():
-          "This function implements the widely used "djb" hash apparently posted by Daniel Bernstein to comp.lang.c some time ago. 
-           The 32 bit unsigned hash value starts at 5381 and for each byte 'c' in the string, is updated: hash = hash * 33 + c. 
-           This function uses the signed value of each byte."
-
-        TODO: replace this
-       */
-      return "%s%s".printf(config.salt,in).hash().to_string();
+    public string secure_hash (string in) {
+      StringBuilder builder = new StringBuilder();
+      //hash the input data with salt
+      builder.append(GLib.Checksum.compute_for_string(ChecksumType.MD5,in));
+      while (builder.str.length < in.length) {
+        builder.append(GLib.Checksum.compute_for_string(ChecksumType.MD5,builder.str));
+      }
+      //and shorten it to the original length.
+      builder.truncate(in.length);
+      return builder.str;
     }
   }
 }
