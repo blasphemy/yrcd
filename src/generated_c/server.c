@@ -78,6 +78,7 @@ typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 typedef struct _YrcdYrcdServerProcessRequestData YrcdYrcdServerProcessRequestData;
+#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
 struct _yrcdyrcd_server {
 	GObject parent_instance;
@@ -897,26 +898,70 @@ gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* c
 
 gchar* yrcd_yrcd_server_secure_hash (yrcdyrcd_server* self, const gchar* in) {
 	gchar* result = NULL;
-	yrcdyrcd_config* _tmp0_ = NULL;
-	const gchar* _tmp1_ = NULL;
+	GString* builder = NULL;
+	GString* _tmp0_ = NULL;
+	GString* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
 	gchar* _tmp3_ = NULL;
 	gchar* _tmp4_ = NULL;
-	guint _tmp5_ = 0U;
-	gchar* _tmp6_ = NULL;
-	gchar* _tmp7_ = NULL;
+	GString* _tmp17_ = NULL;
+	const gchar* _tmp18_ = NULL;
+	gint _tmp19_ = 0;
+	gint _tmp20_ = 0;
+	GString* _tmp21_ = NULL;
+	const gchar* _tmp22_ = NULL;
+	gchar* _tmp23_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
 	g_return_val_if_fail (in != NULL, NULL);
-	_tmp0_ = self->config;
-	_tmp1_ = _tmp0_->salt;
+	_tmp0_ = g_string_new ("");
+	builder = _tmp0_;
+	_tmp1_ = builder;
 	_tmp2_ = in;
-	_tmp3_ = g_strdup_printf ("%s%s", _tmp1_, _tmp2_);
+	_tmp3_ = g_compute_checksum_for_string (G_CHECKSUM_MD5, _tmp2_, (gsize) (-1));
 	_tmp4_ = _tmp3_;
-	_tmp5_ = g_str_hash (_tmp4_);
-	_tmp6_ = g_strdup_printf ("%u", _tmp5_);
-	_tmp7_ = _tmp6_;
+	g_string_append (_tmp1_, _tmp4_);
 	_g_free0 (_tmp4_);
-	result = _tmp7_;
+	while (TRUE) {
+		GString* _tmp5_ = NULL;
+		const gchar* _tmp6_ = NULL;
+		gint _tmp7_ = 0;
+		gint _tmp8_ = 0;
+		const gchar* _tmp9_ = NULL;
+		gint _tmp10_ = 0;
+		gint _tmp11_ = 0;
+		GString* _tmp12_ = NULL;
+		GString* _tmp13_ = NULL;
+		const gchar* _tmp14_ = NULL;
+		gchar* _tmp15_ = NULL;
+		gchar* _tmp16_ = NULL;
+		_tmp5_ = builder;
+		_tmp6_ = _tmp5_->str;
+		_tmp7_ = strlen (_tmp6_);
+		_tmp8_ = _tmp7_;
+		_tmp9_ = in;
+		_tmp10_ = strlen (_tmp9_);
+		_tmp11_ = _tmp10_;
+		if (!(_tmp8_ < _tmp11_)) {
+			break;
+		}
+		_tmp12_ = builder;
+		_tmp13_ = builder;
+		_tmp14_ = _tmp13_->str;
+		_tmp15_ = g_compute_checksum_for_string (G_CHECKSUM_MD5, _tmp14_, (gsize) (-1));
+		_tmp16_ = _tmp15_;
+		g_string_append (_tmp12_, _tmp16_);
+		_g_free0 (_tmp16_);
+	}
+	_tmp17_ = builder;
+	_tmp18_ = in;
+	_tmp19_ = strlen (_tmp18_);
+	_tmp20_ = _tmp19_;
+	g_string_truncate (_tmp17_, (gsize) _tmp20_);
+	_tmp21_ = builder;
+	_tmp22_ = _tmp21_->str;
+	_tmp23_ = g_strdup (_tmp22_);
+	result = _tmp23_;
+	_g_string_free0 (builder);
 	return result;
 }
 
