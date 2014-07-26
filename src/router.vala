@@ -1,5 +1,7 @@
 using Gee;
-
+/*
+    Router.vala. I absolutely hate this file, because if I wasn't so stupid, I would have made commands modular.
+*/
 namespace yrcd {
   class yrcd_router : Object {
     public yrcd_server server;
@@ -78,7 +80,7 @@ namespace yrcd {
         return; 
       }
     }
-    public string strip_end (string msg) {
+    public string strip_end (string msg) { //TODO: Remove string builder, I can do better than that.
       StringBuilder builder = new StringBuilder ();
       builder.append(msg);
       builder.truncate(builder.len - 1);
