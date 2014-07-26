@@ -8,6 +8,8 @@ namespace yrcd {
       numerics[RPL_YOURHOST] = "Your host is %s, running %s version %s";
       numerics[RPL_CREATED] = "This server was created %s";
       numerics[RPL_MYINFO] = "%s %s %s %s";
+      numerics[RPL_MOTD] = ":- %s";
+      numerics[RPL_MOTDSTART] = ":- %s Message of the day -";
       numerics[ERR_UNKNOWNCOMMAND] = "%s :Unkown command";
       numerics[ERR_NONICKNAMEGIVEN] = "No nickname given";
       numerics[ERR_NICKNAMEINUSE] = "%s :Nickname is already in use";
@@ -26,6 +28,8 @@ namespace yrcd {
   public const int RPL_YOURHOST = 002;
   public const int RPL_CREATED = 003;
   public const int RPL_MYINFO = 004;
+  public const int RPL_MOTD = 372;
+  public const int RPL_MOTDSTART = 375;
   public const int ERR_UNKNOWNCOMMAND = 421;
   public const int ERR_NONICKNAMEGIVEN = 431;
   public const int ERR_ERRONEOUSNICKNAME = 432;

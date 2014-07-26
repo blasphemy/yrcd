@@ -153,6 +153,7 @@ namespace yrcd {
       fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);
       fire_numeric(RPL_CREATED, "%s".printf(server.ut_to_utc(server.epoch)));
       fire_numeric(RPL_MYINFO, server.config.sname, yrcd_constants.version, "", ""); //No modes yet....
+      fire_motd();
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc();
@@ -215,6 +216,12 @@ namespace yrcd {
     }
     public void send_notice (string msg) {
       send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));
+    }
+    public void fire_motd () {
+      fire_numeric(RPL_MOTDSTART, server.config.sname);
+      foreach (string line in server.config.motd) {
+        fire_numeric(RPL_MOTD, line);
+      }
     }
   }
 }
