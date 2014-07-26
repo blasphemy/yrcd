@@ -7,6 +7,7 @@ namespace yrcd {
     public List<string> motd;
     public int ping_invertal;
     public bool config_error = false;
+    public string salt;
     public yrcd_config(string filepath) {
       try {
         file.load_from_file(filepath,KeyFileFlags.NONE);
@@ -29,6 +30,7 @@ namespace yrcd {
           motd.append(motd_line);
         }
         ping_invertal = file.get_integer("ServerVariables", "ping_invertal");
+        salt = file.get_string("ServerVariables","host_salt");
       } catch (Error e) {
         stdout.printf("Error Loading config file: %s\n".printf(e.message));
         config_error = true;

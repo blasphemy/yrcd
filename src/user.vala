@@ -80,7 +80,7 @@ namespace yrcd {
         return "unknown";
       }
     }
-    public void quit (string? msg) {
+    public void quit (string? msg) { //TODO Finish this.
       try {
         Source.remove(ping_timer);
         sock.get_socket().close();
@@ -89,12 +89,12 @@ namespace yrcd {
         server.log("Error closing socket: %s".printf(e.message));
       }
     }
-    public void join (yrcd_channel chan) {
+    public void join (yrcd_channel chan) { //TODO: Everything
       if (chan.add_user(this)) {
         user_chanels[chan.cid] = chan;
       }
     }
-    public void change_nick (string[] args) {
+    public void change_nick (string[] args) { //Possible TODO, implement nick validity checker in server.vala, or possibly utils.vala.
       if (args.length < 2) {
         server.log("User %d attempted NICK with invalid arguments".printf(id));
         fire_numeric(ERR_NONICKNAMEGIVEN);
@@ -123,6 +123,10 @@ namespace yrcd {
     }
     public void user_reg (string[] args) {
       if (!user_set) {
+        if (args.length < 5) {
+          fire_numeric(ERR_NEEDMOREPARAMS, "USER");
+          return;
+        }
         ident = args[1];
         if (args[4].has_prefix(":")) {
           args[4] = args[4].replace(":","");
@@ -149,12 +153,13 @@ namespace yrcd {
       fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);
       fire_numeric(RPL_CREATED, "%s".printf(server.ut_to_utc(server.epoch)));
       fire_numeric(RPL_MYINFO, server.config.sname, yrcd_constants.version, "", ""); //No modes yet....
+      fire_motd();
     }
     public void update_timestamp() {
       time_last_rcv = new DateTime.now_utc();
       awaiting_response = false;
     }
-    public string get_hostmask() {
+    public string get_hostmask() { //TODO Implement cloaking here.
       string hm = nick + "!" + ident + "@" + host;
       return hm;
     }
@@ -195,22 +200,29 @@ namespace yrcd {
       }
       if (!match) {
         host = ip;
-        send_notice("*** Unable to resolve your hostname");
+        send_notice("*** Your forward and reverse DNS do not match, ignoring hostname");
       } else {
         host = hn;
         send_notice("*** Found your hostname");
         return;
       }
     }
-    public void fire_numeric(int numeric, ...) {
+    public void fire_numeric(int numeric, ...) { //TODO Fix this mess. not all numerics will look like this. Formats will also have to be changed in numerics.vala.
       va_list args = va_list();
-      string msg = ":%s %.3d %s :".printf(server.config.sname,numeric,nick);
+      string msg = ":%s %.3d %s ".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
       send_line(msg);
     }
     public void send_notice (string msg) {
       send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));
+    }
+    public void fire_motd () {
+      fire_numeric(RPL_MOTDSTART, server.config.sname);
+      foreach (string line in server.config.motd) {
+        fire_numeric(RPL_MOTD, line);
+      }
+      fire_numeric(RPL_ENDOFMOTD);
     }
   }
 }
