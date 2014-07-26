@@ -1,3 +1,5 @@
 Roadmap:
 
+pre v0.2 - Write a threaded stress tester in vala to help check for leaks and other bugs.
+
 v 0.2: Semi working channels and privmsgs.
