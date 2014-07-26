@@ -124,5 +124,8 @@ namespace yrcd {
       }
       return valid;
     }
+    public string secure_hash(string in) { //rly sekure guise!
+      return "%s%s".printf(config.salt,in).hash().to_string();
+    }
   }
 }
