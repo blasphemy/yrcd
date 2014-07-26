@@ -1,5 +1,7 @@
 using Gee;
-
+/*
+    Router.vala. I absolutely hate this file, because if I wasn't so stupid, I would have made commands modular.
+*/
 namespace yrcd {
   class yrcd_router : Object {
     public yrcd_server server;
@@ -16,7 +18,7 @@ namespace yrcd {
       string[] args = tokenize(stripped);
       if (args[0] != null) {
         user.server.log("USER %d: received line %s".printf(user.id,stripped));
-        user.update_timestamp();
+        user.update_timestamp(); //timestamp should be updated as soon as possible to be accurate. Not that perfect acuracy is a thing in this ircd.
         switch (args[0].down()) {
           case "quit" :
             user.server.log("Received QUIT");
@@ -34,7 +36,7 @@ namespace yrcd {
           case "join" :
             join_handler(user,args);
             break;
-          case "pong" :
+          case "pong" : //at this point, ping is just sent as a poke to the user. We don't care what we get back, as long as we get something. About as lazy as it gets.
             break;
           default :
             unknown_command_handler(user, args);
@@ -78,7 +80,7 @@ namespace yrcd {
         return; 
       }
     }
-    public string strip_end (string msg) {
+    public string strip_end (string msg) { //TODO: Remove string builder, I can do better than that.
       StringBuilder builder = new StringBuilder ();
       builder.append(msg);
       builder.truncate(builder.len - 1);

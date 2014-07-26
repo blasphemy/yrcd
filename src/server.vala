@@ -79,18 +79,19 @@ namespace yrcd {
         }
       }
     }
-    public string ut_to_utc(int64 ut) {
+    public string ut_to_utc(int64 ut) { //why does this function even exist? TODO: Remove me.
       DateTime time = new DateTime.from_unix_utc(ut);
       return time.to_string();
     }
     public yrcd_user? get_user_by_nick (string nicktocheck) {
       foreach (yrcd_user k in userlist) {
         if (k.isnickset()) {
-          if (k.nick.down() == nicktocheck.down()) {
+          if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
             return k;
           }
         }
       }
+      //Nothing found, so return null. This is useful in other functions to find if a user exists by that name at all.
       return null;
     }
     public yrcd_channel? get_channel_by_name(string nametocheck) {
@@ -99,30 +100,47 @@ namespace yrcd {
           return k;
         }
       }
-      //Nothing found, so return null
+      //Nothing found, so return null. This is useful in other functions to find if a channel exists by that name at all.
       return null;
     }
     public bool valid_chan_name (string chan) {
       bool valid = true;
       bool has_prefix = false;
-      foreach (string k in yrcd_constants.chan_prefixes) {
+      /*
+         Checking if a channel is valid:
+         1. check if it has a valid prefix as defined in constants.vala
+         2. check if it has any forbidden characters as in constants.vala
+         3. combine the previous factors, along with checking if there's already a channel by the name.
+      */
+      foreach (string k in yrcd_constants.chan_prefixes) { //step 1
         if (chan.has_prefix(k)) {
           has_prefix = true;
           break;
         }
       }
-      foreach (string k in yrcd_constants.chan_forbidden) {
+      foreach (string k in yrcd_constants.chan_forbidden) { //step 2
         if (k in chan) {
           valid = false;
           break;
         } 
       }
-      if (has_prefix && valid && get_channel_by_name(chan) == null) {
+      if (has_prefix && valid && get_channel_by_name(chan) == null) { //step 3
         valid = true;
       } else {
         valid = false;
       }
       return valid;
+    }
+    public string secure_hash (string in) {
+      StringBuilder builder = new StringBuilder();
+      //hash the input data with salt
+      builder.append(GLib.Checksum.compute_for_string(ChecksumType.MD5,in));
+      while (builder.str.length < in.length) {
+        builder.append(GLib.Checksum.compute_for_string(ChecksumType.MD5,builder.str));
+      }
+      //and shorten it to the original length.
+      builder.truncate(in.length);
+      return builder.str;
     }
   }
 }
