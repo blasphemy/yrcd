@@ -80,7 +80,7 @@ namespace yrcd {
         return "unknown";
       }
     }
-    public void quit (string? msg) {
+    public void quit (string? msg) { //TODO Finish this.
       try {
         Source.remove(ping_timer);
         sock.get_socket().close();
@@ -89,12 +89,12 @@ namespace yrcd {
         server.log("Error closing socket: %s".printf(e.message));
       }
     }
-    public void join (yrcd_channel chan) {
+    public void join (yrcd_channel chan) { //TODO: Everything
       if (chan.add_user(this)) {
         user_chanels[chan.cid] = chan;
       }
     }
-    public void change_nick (string[] args) {
+    public void change_nick (string[] args) { //Possible TODO, implement nick validity checker in server.vala, or possibly utils.vala.
       if (args.length < 2) {
         server.log("User %d attempted NICK with invalid arguments".printf(id));
         fire_numeric(ERR_NONICKNAMEGIVEN);
@@ -121,7 +121,7 @@ namespace yrcd {
         server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
       }
     }
-    public void user_reg (string[] args) {
+    public void user_reg (string[] args) { //TODO: Error checking
       if (!user_set) {
         ident = args[1];
         if (args[4].has_prefix(":")) {
@@ -154,7 +154,7 @@ namespace yrcd {
       time_last_rcv = new DateTime.now_utc();
       awaiting_response = false;
     }
-    public string get_hostmask() {
+    public string get_hostmask() { //TODO Implement cloaking here.
       string hm = nick + "!" + ident + "@" + host;
       return hm;
     }
@@ -202,7 +202,7 @@ namespace yrcd {
         return;
       }
     }
-    public void fire_numeric(int numeric, ...) {
+    public void fire_numeric(int numeric, ...) { //TODO Fix this mess. not all numerics will look like this. Formats will also have to be changed in numerics.vala.
       va_list args = va_list();
       string msg = ":%s %.3d %s :".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
