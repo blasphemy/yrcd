@@ -13,7 +13,7 @@ namespace yrcd {
     public HashMap<int,yrcd_user> users = new HashMap<int,yrcd_user>();
     public yrcd_channel(int id, yrcd_server _server) {
       server = _server;
-      set_topic("", "system!system@" + server.config.sname);
+      set_topic("", "system");
       cid = id;
       epoch = new DateTime.now_utc().to_unix();
     }
@@ -30,7 +30,7 @@ namespace yrcd {
     public void set_topic(string newtopic, string hostmask) {
       topic = newtopic;
       topic_host = hostmask;
-      topictime = new DateTime.now_utc().to_unix();
+      //topictime = new DateTime.now_utc().to_unix();
     }
   }
 }
