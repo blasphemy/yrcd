@@ -222,6 +222,7 @@ namespace yrcd {
       foreach (string line in server.config.motd) {
         fire_numeric(RPL_MOTD, line);
       }
+      fire_numeric(RPL_ENDOFMOTD);
     }
   }
 }
