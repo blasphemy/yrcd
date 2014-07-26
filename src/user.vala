@@ -121,8 +121,12 @@ namespace yrcd {
         server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
       }
     }
-    public void user_reg (string[] args) { //TODO: Error checking
+    public void user_reg (string[] args) {
       if (!user_set) {
+        if (args.length < 5) {
+          fire_numeric(ERR_NEEDMOREPARAMS, "USER");
+          return;
+        }
         ident = args[1];
         if (args[4].has_prefix(":")) {
           args[4] = args[4].replace(":","");
@@ -204,7 +208,7 @@ namespace yrcd {
     }
     public void fire_numeric(int numeric, ...) { //TODO Fix this mess. not all numerics will look like this. Formats will also have to be changed in numerics.vala.
       va_list args = va_list();
-      string msg = ":%s %.3d %s :".printf(server.config.sname,numeric,nick);
+      string msg = ":%s %.3d %s ".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
       send_line(msg);
