@@ -18,10 +18,10 @@ namespace yrcd {
       server.log (@"New channel created $name");
     }
     public bool add_user(yrcd_user user) {
-      foreach (yrcd_user k in users) {
-        if (k == user) {
-          return false;
-        }
+      if (users[user.id] != null) {
+        string nick = user.nick;
+        server.log(@"user $nick attempted to join $name while already joined... doing nothing");
+        return false;
       }
       users[user.id] = user;
       foreach (yrcd_user k in users) {
