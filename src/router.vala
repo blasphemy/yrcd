@@ -53,10 +53,13 @@ namespace yrcd {
     public void join_handler(yrcd_user user, string[] args) {
       if (server.get_channel_by_name(args[1]) == null) {
         int cid = server.new_cid();
-        yrcd_channel newchan = new yrcd_channel(cid);
+        yrcd_channel newchan = new yrcd_channel(cid,server);
         newchan.name = args[1];
         server.channellist[cid] = newchan;
         user.join(newchan);
+      } else {
+        yrcd_channel chan = server.get_channel_by_name(args[1]);
+        user.join(chan);
       }
     }
     public void privmsg_handler(yrcd_user user, string[] args) {
