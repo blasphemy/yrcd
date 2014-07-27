@@ -41,11 +41,17 @@ namespace yrcd {
           case "motd" :
             user.fire_motd();
             break;
+          case "ping" :
+            ping_handler(user, args);
+            break;
           default :
             unknown_command_handler(user, args);
             break;
         }
       }
+    }
+    public void ping_handler(yrcd_user user, string[] args) {
+      user.send_line("PONG %s".printf(args[1]));
     }
     public void unknown_command_handler(yrcd_user user, string[] args) {
       user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
