@@ -105,6 +105,7 @@ struct _yrcdyrcd_userPrivate {
 struct _yrcdyrcd_server {
 	GObject parent_instance;
 	yrcdyrcd_serverPrivate * priv;
+	GeeHashMap* userlist;
 	GeeHashMap* channellist;
 	gint64 epoch;
 	gint max_users;
