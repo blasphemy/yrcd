@@ -90,10 +90,12 @@ namespace yrcd {
         server.log("Error closing socket: %s".printf(e.message));
       }
     }
-    public void join (yrcd_channel chan) { //TODO: Everything
-      if (chan.add_user(this)) {
-        user_chanels[chan.name] = chan;
-      }
+    public void join (yrcd_channel chan) {
+        if (chan.add_user(this)) {
+          string name = chan.name;
+          server.log(@"user $nick joining chan $name");
+          user_chanels[chan.name] = chan;
+        }
     }
     public void change_nick (string[] args) { //Possible TODO, implement nick validity checker in server.vala, or possibly utils.vala.
       if (args.length < 2) {
