@@ -38,6 +38,7 @@ vala_precompile(YRCD_C ${YRCD_NAME}
     src/constants.vala
     src/numerics.vala
     src/channel.vala
+    src/channel_wrapper.vala
     src/config.vala
 PACKAGES
     gio-2.0

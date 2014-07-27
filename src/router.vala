@@ -86,7 +86,7 @@ namespace yrcd {
         return; 
       }
     }
-    public string strip_end (string msg) { //TODO: Remove string builder, I can do better than that.
+    public string strip_end (string msg) {
       StringBuilder builder = new StringBuilder ();
       builder.append(msg);
       builder.truncate(builder.len - 1);
