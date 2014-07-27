@@ -5,9 +5,9 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <gee.h>
-#include <gio/gio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gio/gio.h>
 #include <stdio.h>
 
 
@@ -153,6 +153,8 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 gboolean yrcd_yrcd_user_isnickset (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
+yrcdyrcd_channel* yrcd_yrcd_channel_new (yrcdyrcd_server* _server, const gchar* _name);
+yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, yrcdyrcd_server* _server, const gchar* _name);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
 gboolean yrcd_yrcd_server_valid_chan_name (yrcdyrcd_server* self, const gchar* chan);
 gchar* yrcd_yrcd_server_secure_hash (yrcdyrcd_server* self, const gchar* in);
@@ -220,9 +222,10 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type, yrcdyrcd_config*
 	GDateTime* _tmp5_ = NULL;
 	gint64 _tmp6_ = 0LL;
 	yrcdyrcd_router* _tmp7_ = NULL;
-	GSocketService* _tmp8_ = NULL;
+	GeeHashMap* _tmp8_ = NULL;
 	GSocketService* _tmp9_ = NULL;
-	GMainLoop* _tmp10_ = NULL;
+	GSocketService* _tmp10_ = NULL;
+	GMainLoop* _tmp11_ = NULL;
 	g_return_val_if_fail (_config != NULL, NULL);
 	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
 	_tmp0_ = _config;
@@ -242,12 +245,15 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type, yrcdyrcd_config*
 	_tmp7_ = yrcd_yrcd_router_new (self);
 	_g_object_unref0 (self->priv->router);
 	self->priv->router = _tmp7_;
-	_tmp8_ = self->priv->ss;
-	g_signal_connect_object (_tmp8_, "incoming", (GCallback) _yrcd_yrcd_server_accept_connection_g_socket_service_incoming, self, 0);
+	_tmp8_ = gee_hash_map_new (G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, YRCD_TYPE_YRCD_CHANNEL, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
+	_g_object_unref0 (self->channellist);
+	self->channellist = _tmp8_;
 	_tmp9_ = self->priv->ss;
-	g_socket_service_start (_tmp9_);
-	_tmp10_ = self->priv->loop;
-	g_main_loop_run (_tmp10_);
+	g_signal_connect_object (_tmp9_, "incoming", (GCallback) _yrcd_yrcd_server_accept_connection_g_socket_service_incoming, self, 0);
+	_tmp10_ = self->priv->ss;
+	g_socket_service_start (_tmp10_);
+	_tmp11_ = self->priv->loop;
+	g_main_loop_run (_tmp11_);
 	return self;
 }
 
@@ -504,76 +510,92 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 }
 
 
+static const gchar* string_to_string (const gchar* self) {
+	const gchar* result = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	result = self;
+	return result;
+}
+
+
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck) {
 	yrcdyrcd_channel* result = NULL;
+	const gchar* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	GeeHashMap* _tmp4_ = NULL;
+	const gchar* _tmp5_ = NULL;
+	gpointer _tmp6_ = NULL;
+	yrcdyrcd_channel* _tmp7_ = NULL;
+	gboolean _tmp8_ = FALSE;
+	const gchar* _tmp16_ = NULL;
+	const gchar* _tmp17_ = NULL;
+	gchar* _tmp18_ = NULL;
+	gchar* _tmp19_ = NULL;
+	yrcdyrcd_channel* chan = NULL;
+	const gchar* _tmp20_ = NULL;
+	yrcdyrcd_channel* _tmp21_ = NULL;
+	GeeHashMap* _tmp22_ = NULL;
+	yrcdyrcd_channel* _tmp23_ = NULL;
+	const gchar* _tmp24_ = NULL;
+	const gchar* _tmp25_ = NULL;
+	gchar* _tmp26_ = NULL;
+	gchar* _tmp27_ = NULL;
+	yrcdyrcd_channel* _tmp28_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
 	g_return_val_if_fail (nametocheck != NULL, NULL);
-	{
-		GeeHashMap* _k_list = NULL;
-		GeeHashMap* _tmp0_ = NULL;
-		GeeHashMap* _tmp1_ = NULL;
-		gint _k_size = 0;
-		GeeHashMap* _tmp2_ = NULL;
-		gint _tmp3_ = 0;
-		gint _tmp4_ = 0;
-		gint _k_index = 0;
-		_tmp0_ = self->channellist;
-		_tmp1_ = _g_object_ref0 (_tmp0_);
-		_k_list = _tmp1_;
-		_tmp2_ = _k_list;
-		_tmp3_ = gee_abstract_map_get_size ((GeeMap*) _tmp2_);
-		_tmp4_ = _tmp3_;
-		_k_size = _tmp4_;
-		_k_index = -1;
-		while (TRUE) {
-			gint _tmp5_ = 0;
-			gint _tmp6_ = 0;
-			gint _tmp7_ = 0;
-			yrcdyrcd_channel* k = NULL;
-			GeeHashMap* _tmp8_ = NULL;
-			gint _tmp9_ = 0;
-			gpointer _tmp10_ = NULL;
-			yrcdyrcd_channel* _tmp11_ = NULL;
-			const gchar* _tmp12_ = NULL;
-			const gchar* _tmp13_ = NULL;
-			gchar* _tmp14_ = NULL;
-			gchar* _tmp15_ = NULL;
-			const gchar* _tmp16_ = NULL;
-			gchar* _tmp17_ = NULL;
-			gchar* _tmp18_ = NULL;
-			gboolean _tmp19_ = FALSE;
-			_tmp5_ = _k_index;
-			_k_index = _tmp5_ + 1;
-			_tmp6_ = _k_index;
-			_tmp7_ = _k_size;
-			if (!(_tmp6_ < _tmp7_)) {
-				break;
-			}
-			_tmp8_ = _k_list;
-			_tmp9_ = _k_index;
-			_tmp10_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp8_, (gpointer) ((gintptr) _tmp9_));
-			k = (yrcdyrcd_channel*) _tmp10_;
-			_tmp11_ = k;
-			_tmp12_ = yrcd_yrcd_channel_get_name (_tmp11_);
-			_tmp13_ = _tmp12_;
-			_tmp14_ = g_utf8_strdown (_tmp13_, (gssize) (-1));
-			_tmp15_ = _tmp14_;
-			_tmp16_ = nametocheck;
-			_tmp17_ = g_utf8_strdown (_tmp16_, (gssize) (-1));
-			_tmp18_ = _tmp17_;
-			_tmp19_ = g_strcmp0 (_tmp15_, _tmp18_) == 0;
-			_g_free0 (_tmp18_);
-			_g_free0 (_tmp15_);
-			if (_tmp19_) {
-				result = k;
-				_g_object_unref0 (_k_list);
-				return result;
-			}
-			_g_object_unref0 (k);
-		}
-		_g_object_unref0 (_k_list);
+	_tmp0_ = nametocheck;
+	_tmp1_ = string_to_string (_tmp0_);
+	_tmp2_ = g_strconcat ("Looking for channel ", _tmp1_, NULL);
+	_tmp3_ = _tmp2_;
+	yrcd_yrcd_server_log (self, _tmp3_);
+	_g_free0 (_tmp3_);
+	_tmp4_ = self->channellist;
+	_tmp5_ = nametocheck;
+	_tmp6_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp4_, _tmp5_);
+	_tmp7_ = (yrcdyrcd_channel*) _tmp6_;
+	_tmp8_ = _tmp7_ != NULL;
+	_g_object_unref0 (_tmp7_);
+	if (_tmp8_) {
+		const gchar* _tmp9_ = NULL;
+		const gchar* _tmp10_ = NULL;
+		gchar* _tmp11_ = NULL;
+		gchar* _tmp12_ = NULL;
+		GeeHashMap* _tmp13_ = NULL;
+		const gchar* _tmp14_ = NULL;
+		gpointer _tmp15_ = NULL;
+		_tmp9_ = nametocheck;
+		_tmp10_ = string_to_string (_tmp9_);
+		_tmp11_ = g_strconcat ("channel ", _tmp10_, "  found", NULL);
+		_tmp12_ = _tmp11_;
+		yrcd_yrcd_server_log (self, _tmp12_);
+		_g_free0 (_tmp12_);
+		_tmp13_ = self->channellist;
+		_tmp14_ = nametocheck;
+		_tmp15_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp13_, _tmp14_);
+		result = (yrcdyrcd_channel*) _tmp15_;
+		return result;
 	}
-	result = NULL;
+	_tmp16_ = nametocheck;
+	_tmp17_ = string_to_string (_tmp16_);
+	_tmp18_ = g_strconcat ("Channel ", _tmp17_, " not found, creating it", NULL);
+	_tmp19_ = _tmp18_;
+	yrcd_yrcd_server_log (self, _tmp19_);
+	_g_free0 (_tmp19_);
+	_tmp20_ = nametocheck;
+	_tmp21_ = yrcd_yrcd_channel_new (self, _tmp20_);
+	chan = _tmp21_;
+	_tmp22_ = self->channellist;
+	_tmp23_ = chan;
+	_tmp24_ = yrcd_yrcd_channel_get_name (_tmp23_);
+	_tmp25_ = _tmp24_;
+	_tmp26_ = g_utf8_strdown (_tmp25_, (gssize) (-1));
+	_tmp27_ = _tmp26_;
+	_tmp28_ = chan;
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp22_, _tmp27_, _tmp28_);
+	_g_free0 (_tmp27_);
+	result = chan;
 	return result;
 }
 
@@ -769,8 +791,7 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	GSocketService* _tmp0_ = NULL;
 	GMainLoop* _tmp1_ = NULL;
 	GeeHashMap* _tmp2_ = NULL;
-	GeeHashMap* _tmp3_ = NULL;
-	yrcdyrcd_numeric_wrapper* _tmp4_ = NULL;
+	yrcdyrcd_numeric_wrapper* _tmp3_ = NULL;
 	self->priv = YRCD_YRCD_SERVER_GET_PRIVATE (self);
 	_tmp0_ = g_socket_service_new ();
 	self->priv->ss = _tmp0_;
@@ -778,13 +799,11 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	self->priv->loop = _tmp1_;
 	_tmp2_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
 	self->userlist = _tmp2_;
-	_tmp3_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_CHANNEL, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
-	self->channellist = _tmp3_;
 	self->priv->user_counter = 0;
 	self->priv->cid_counter = 0;
 	self->max_users = 0;
-	_tmp4_ = yrcd_yrcd_numeric_wrapper_new ();
-	self->numeric_wrapper = _tmp4_;
+	_tmp3_ = yrcd_yrcd_numeric_wrapper_new ();
+	self->numeric_wrapper = _tmp3_;
 }
 
 

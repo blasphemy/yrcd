@@ -6,8 +6,8 @@
 #include <glib-object.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gee.h>
 #include <gio/gio.h>
+#include <gee.h>
 
 
 #define YRCD_TYPE_YRCD_ROUTER (yrcd_yrcd_router_get_type ())
@@ -52,6 +52,7 @@ typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 
 typedef struct _yrcdyrcd_channel yrcdyrcd_channel;
 typedef struct _yrcdyrcd_channelClass yrcdyrcd_channelClass;
+#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
 #define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
@@ -73,7 +74,6 @@ typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
 
 typedef struct _yrcdyrcd_config yrcdyrcd_config;
 typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
-#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 typedef struct _YrcdYrcdRouterProcessUserData YrcdYrcdRouterProcessUserData;
 
@@ -181,12 +181,6 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_ERR_UNKNOWNCOMMAND 421
 GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
-gint yrcd_yrcd_server_new_cid (yrcdyrcd_server* self);
-yrcdyrcd_channel* yrcd_yrcd_channel_new (gint id, yrcdyrcd_server* _server);
-yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, gint id, yrcdyrcd_server* _server);
-void yrcd_yrcd_channel_set_name (yrcdyrcd_channel* self, const gchar* value);
-GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
-GType yrcd_yrcd_config_get_type (void) G_GNUC_CONST;
 void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan);
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
 static void yrcd_yrcd_router_process_user_data_free (gpointer _data);
@@ -195,6 +189,8 @@ void yrcd_yrcd_router_process_user_finish (yrcdyrcd_router* self, GAsyncResult* 
 static gboolean yrcd_yrcd_router_process_user_co (YrcdYrcdRouterProcessUserData* _data_);
 yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server);
 yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server);
+GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
+GType yrcd_yrcd_config_get_type (void) G_GNUC_CONST;
 GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self);
 GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
 static void yrcd_yrcd_router_process_user_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
@@ -452,13 +448,13 @@ void yrcd_yrcd_router_unknown_command_handler (yrcdyrcd_router* self, yrcdyrcd_u
 
 
 void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
+	yrcdyrcd_channel* chan = NULL;
 	yrcdyrcd_server* _tmp0_ = NULL;
 	gchar** _tmp1_ = NULL;
 	gint _tmp1__length1 = 0;
 	const gchar* _tmp2_ = NULL;
 	yrcdyrcd_channel* _tmp3_ = NULL;
-	yrcdyrcd_channel* _tmp4_ = NULL;
-	gboolean _tmp5_ = FALSE;
+	yrcdyrcd_user* _tmp4_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (user != NULL);
 	_tmp0_ = self->server;
@@ -466,68 +462,10 @@ void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, 
 	_tmp1__length1 = args_length1;
 	_tmp2_ = _tmp1_[1];
 	_tmp3_ = yrcd_yrcd_server_get_channel_by_name (_tmp0_, _tmp2_);
-	_tmp4_ = _tmp3_;
-	_tmp5_ = _tmp4_ == NULL;
-	_g_object_unref0 (_tmp4_);
-	if (_tmp5_) {
-		gint cid = 0;
-		yrcdyrcd_server* _tmp6_ = NULL;
-		gint _tmp7_ = 0;
-		yrcdyrcd_channel* newchan = NULL;
-		gint _tmp8_ = 0;
-		yrcdyrcd_server* _tmp9_ = NULL;
-		yrcdyrcd_channel* _tmp10_ = NULL;
-		yrcdyrcd_channel* _tmp11_ = NULL;
-		gchar** _tmp12_ = NULL;
-		gint _tmp12__length1 = 0;
-		const gchar* _tmp13_ = NULL;
-		yrcdyrcd_server* _tmp14_ = NULL;
-		GeeHashMap* _tmp15_ = NULL;
-		gint _tmp16_ = 0;
-		yrcdyrcd_channel* _tmp17_ = NULL;
-		yrcdyrcd_user* _tmp18_ = NULL;
-		yrcdyrcd_channel* _tmp19_ = NULL;
-		_tmp6_ = self->server;
-		_tmp7_ = yrcd_yrcd_server_new_cid (_tmp6_);
-		cid = _tmp7_;
-		_tmp8_ = cid;
-		_tmp9_ = self->server;
-		_tmp10_ = yrcd_yrcd_channel_new (_tmp8_, _tmp9_);
-		newchan = _tmp10_;
-		_tmp11_ = newchan;
-		_tmp12_ = args;
-		_tmp12__length1 = args_length1;
-		_tmp13_ = _tmp12_[1];
-		yrcd_yrcd_channel_set_name (_tmp11_, _tmp13_);
-		_tmp14_ = self->server;
-		_tmp15_ = _tmp14_->channellist;
-		_tmp16_ = cid;
-		_tmp17_ = newchan;
-		gee_abstract_map_set ((GeeAbstractMap*) _tmp15_, (gpointer) ((gintptr) _tmp16_), _tmp17_);
-		_tmp18_ = user;
-		_tmp19_ = newchan;
-		yrcd_yrcd_user_join (_tmp18_, _tmp19_);
-		_g_object_unref0 (newchan);
-	} else {
-		yrcdyrcd_channel* chan = NULL;
-		yrcdyrcd_server* _tmp20_ = NULL;
-		gchar** _tmp21_ = NULL;
-		gint _tmp21__length1 = 0;
-		const gchar* _tmp22_ = NULL;
-		yrcdyrcd_channel* _tmp23_ = NULL;
-		yrcdyrcd_user* _tmp24_ = NULL;
-		yrcdyrcd_channel* _tmp25_ = NULL;
-		_tmp20_ = self->server;
-		_tmp21_ = args;
-		_tmp21__length1 = args_length1;
-		_tmp22_ = _tmp21_[1];
-		_tmp23_ = yrcd_yrcd_server_get_channel_by_name (_tmp20_, _tmp22_);
-		chan = _tmp23_;
-		_tmp24_ = user;
-		_tmp25_ = chan;
-		yrcd_yrcd_user_join (_tmp24_, _tmp25_);
-		_g_object_unref0 (chan);
-	}
+	chan = _tmp3_;
+	_tmp4_ = user;
+	yrcd_yrcd_user_join (_tmp4_, chan);
+	_g_object_unref0 (chan);
 }
 
 
