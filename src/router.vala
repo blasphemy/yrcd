@@ -92,5 +92,23 @@ namespace yrcd {
       builder.truncate(builder.len - 1);
       return builder.str;
     }
+    public async void process_user (SocketConnection conn) {
+      yrcd_user user = new yrcd_user(conn, server);
+      server.userlist[user.id] = user;
+      if (server.userlist.size > server.max_users) {
+        server.max_users = server.userlist.size;
+        server.log("New max amount of users: %d".printf(server.max_users));
+      }
+      while (user.sock.get_socket().is_connected()) {
+        try {
+          string msg = yield user.dis.read_line_async (Priority.DEFAULT);
+          route(user, msg);
+        } catch (Error e) {
+          server.log("Encountered error reading %s (%d) socket...");
+          user.quit(null);
+          return;
+        }
+      }
+    }
   }
 }
