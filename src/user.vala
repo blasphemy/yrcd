@@ -16,10 +16,11 @@ namespace yrcd {
     public string ident { get; set; }
     public string realname { get; set; }
     public bool user_set { get; set; }
-    public string ip;
+    public string ip; 
     public string host;
-    public HashMap<int,yrcd_channel> user_chanels = new HashMap<int,yrcd_channel>();
+    public HashMap<string,yrcd_channel> user_chanels;
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
+      user_chanels = new HashMap<string,yrcd_channel>();
       sock = conn;
       server = _server;
       ip = get_ip();
@@ -91,7 +92,7 @@ namespace yrcd {
     }
     public void join (yrcd_channel chan) { //TODO: Everything
       if (chan.add_user(this)) {
-        user_chanels[chan.cid] = chan;
+        user_chanels[chan.name] = chan;
       }
     }
     public void change_nick (string[] args) { //Possible TODO, implement nick validity checker in server.vala, or possibly utils.vala.

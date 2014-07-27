@@ -5,19 +5,24 @@ namespace yrcd {
     public string name { get; set; } 
     public string[] modes;
     public string topic;
-    public int cid { get; set; }
     public int64 epoch;
     public int64 topictime;
     public string topic_host;
     public yrcd_server server;
     public HashMap<int,yrcd_user> users = new HashMap<int,yrcd_user>();
-    public yrcd_channel(int id, yrcd_server _server) {
+    public yrcd_channel(yrcd_server _server, string _name) {
       server = _server;
       set_topic("", "system");
-      cid = id;
       epoch = new DateTime.now_utc().to_unix();
+      name = _name;
+      server.log (@"New channel created $name");
     }
     public bool add_user(yrcd_user user) {
+      foreach (yrcd_user k in users) {
+        if (k == user) {
+          return false;
+        }
+      }
       users[user.id] = user;
       foreach (yrcd_user k in users) {
         string msg = ":%s JOIN %s".printf(user.get_hostmask(), this.name);

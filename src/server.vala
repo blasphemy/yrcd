@@ -6,7 +6,7 @@ namespace yrcd {
     private MainLoop loop = new MainLoop();
     private yrcd_router router;
     public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
-    public HashMap<int, yrcd_channel> channellist = new HashMap<int, yrcd_channel>();
+    public HashMap<string, yrcd_channel> channellist;
     private int user_counter = 0;
     private int cid_counter = 0;
     public int64 epoch;
@@ -30,6 +30,7 @@ namespace yrcd {
       epoch = new DateTime.now_utc().to_unix();
       add_listeners();
       router = new yrcd_router(this);
+      channellist = new HashMap<string, yrcd_channel>();
       ss.incoming.connect(accept_connection);
       ss.start();
       loop.run();
@@ -71,14 +72,17 @@ namespace yrcd {
       //Nothing found, so return null. This is useful in other functions to find if a user exists by that name at all.
       return null;
     }
-    public yrcd_channel? get_channel_by_name(string nametocheck) {
-      foreach (yrcd_channel k in channellist) {
-        if (k.name.down() == nametocheck.down()) {
-          return k;
-        }
+    public yrcd_channel get_channel_by_name(string nametocheck) {
+      log(@"Looking for channel $nametocheck");
+      if (channellist[nametocheck] != null) {
+        log(@"channel $nametocheck  found");
+        return channellist[nametocheck];
       }
       //Nothing found, so return null. This is useful in other functions to find if a channel exists by that name at all.
-      return null;
+      log(@"Channel $nametocheck not found, creating it");
+      yrcd_channel chan = new yrcd_channel(this, nametocheck);
+      channellist[chan.name.down()] = chan;
+      return chan;
     }
     public bool valid_chan_name (string chan) {
       bool valid = true;
