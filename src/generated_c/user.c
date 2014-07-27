@@ -637,6 +637,14 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 }
 
 
+static const gchar* string_to_string (const gchar* self) {
+	const gchar* result = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	result = self;
+	return result;
+}
+
+
 void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan) {
 	yrcdyrcd_channel* _tmp0_ = NULL;
 	gboolean _tmp1_ = FALSE;
@@ -645,17 +653,44 @@ void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan) {
 	_tmp0_ = chan;
 	_tmp1_ = yrcd_yrcd_channel_add_user (_tmp0_, self);
 	if (_tmp1_) {
-		GeeHashMap* _tmp2_ = NULL;
-		yrcdyrcd_channel* _tmp3_ = NULL;
+		gchar* name = NULL;
+		yrcdyrcd_channel* _tmp2_ = NULL;
+		const gchar* _tmp3_ = NULL;
 		const gchar* _tmp4_ = NULL;
-		const gchar* _tmp5_ = NULL;
-		yrcdyrcd_channel* _tmp6_ = NULL;
-		_tmp2_ = self->user_chanels;
-		_tmp3_ = chan;
-		_tmp4_ = yrcd_yrcd_channel_get_name (_tmp3_);
-		_tmp5_ = _tmp4_;
-		_tmp6_ = chan;
-		gee_abstract_map_set ((GeeAbstractMap*) _tmp2_, _tmp5_, _tmp6_);
+		gchar* _tmp5_ = NULL;
+		yrcdyrcd_server* _tmp6_ = NULL;
+		const gchar* _tmp7_ = NULL;
+		const gchar* _tmp8_ = NULL;
+		const gchar* _tmp9_ = NULL;
+		const gchar* _tmp10_ = NULL;
+		gchar* _tmp11_ = NULL;
+		gchar* _tmp12_ = NULL;
+		GeeHashMap* _tmp13_ = NULL;
+		yrcdyrcd_channel* _tmp14_ = NULL;
+		const gchar* _tmp15_ = NULL;
+		const gchar* _tmp16_ = NULL;
+		yrcdyrcd_channel* _tmp17_ = NULL;
+		_tmp2_ = chan;
+		_tmp3_ = yrcd_yrcd_channel_get_name (_tmp2_);
+		_tmp4_ = _tmp3_;
+		_tmp5_ = g_strdup (_tmp4_);
+		name = _tmp5_;
+		_tmp6_ = self->priv->_server;
+		_tmp7_ = self->priv->_nick;
+		_tmp8_ = string_to_string (_tmp7_);
+		_tmp9_ = name;
+		_tmp10_ = string_to_string (_tmp9_);
+		_tmp11_ = g_strconcat ("user ", _tmp8_, " joining chan ", _tmp10_, NULL);
+		_tmp12_ = _tmp11_;
+		yrcd_yrcd_server_log (_tmp6_, _tmp12_);
+		_g_free0 (_tmp12_);
+		_tmp13_ = self->user_chanels;
+		_tmp14_ = chan;
+		_tmp15_ = yrcd_yrcd_channel_get_name (_tmp14_);
+		_tmp16_ = _tmp15_;
+		_tmp17_ = chan;
+		gee_abstract_map_set ((GeeAbstractMap*) _tmp13_, _tmp16_, _tmp17_);
+		_g_free0 (name);
 	}
 }
 
