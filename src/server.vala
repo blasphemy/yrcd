@@ -3,7 +3,6 @@ using Gee;
 namespace yrcd {
   class yrcd_server : Object {
     private SocketService ss = new SocketService();
-    private MainLoop loop = new MainLoop();
     private yrcd_router router;
     public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     public HashMap<string, yrcd_channel> channellist;
@@ -33,7 +32,6 @@ namespace yrcd {
       channellist = new HashMap<string, yrcd_channel>();
       ss.incoming.connect(accept_connection);
       ss.start();
-      loop.run();
     }
     public void remove_user (int id) {
       userlist.unset(id);
