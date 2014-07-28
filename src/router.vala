@@ -14,7 +14,7 @@ namespace yrcd {
         user.quit(null);
         return;
       }
-      string stripped = strip_end(msg);
+      string stripped = msg.strip();
       string[] args = stripped.split(" ");
       if (args[0] != null) {
         user.server.log("USER %d: received line %s".printf(user.id,stripped));
@@ -100,12 +100,6 @@ namespace yrcd {
         //fire ERR_NOSUCHNICK?
         return; 
       }
-    }
-    public string strip_end (string msg) { //TODO: Remove string builder, I can do better than that.
-      StringBuilder builder = new StringBuilder ();
-      builder.append(msg);
-      builder.truncate(builder.len - 1);
-      return builder.str;
     }
     public async void process_user (SocketConnection conn) {
       yrcd_user user = new yrcd_user(conn, server);
