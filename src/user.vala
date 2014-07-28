@@ -16,6 +16,7 @@ namespace yrcd {
     public string ident { get; set; }
     public string realname { get; set; }
     public bool user_set { get; set; }
+    public bool nick_set { get; set; }
     public string ip; 
     public string host;
     public HashMap<string,yrcd_channel> user_chanels;
@@ -43,17 +44,6 @@ namespace yrcd {
           return true;
           });
       return t;
-    }
-    public bool isnickset() {
-      if (nick == null) {
-        return false;
-      } else {
-        if (nick.length > 0) {
-          return true;
-        } else {
-          return false;
-        }
-      }
     }
     private void check_ping() {
       server.log("check ping called on user %d".printf(id));
@@ -115,8 +105,9 @@ namespace yrcd {
       }
       string oldnick = nick;
       nick = args[1];
-      if (!isnickset()) {
+      if (!nick_set) {
         server.log("User %d set nick to %s".printf(id,nick));
+        nick_set = true;
         if (user_set) {
           reg_finished();
         }
@@ -142,7 +133,7 @@ namespace yrcd {
         }
         realname = builder.str.strip();
         user_set = true;
-        if (isnickset()) {
+        if (nick_set) {
           reg_finished();
         }
       } else {

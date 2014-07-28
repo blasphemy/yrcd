@@ -61,7 +61,7 @@ namespace yrcd {
     }
     public yrcd_user? get_user_by_nick (string nicktocheck) {
       foreach (yrcd_user k in userlist) {
-        if (k.isnickset()) {
+        if (k.nick_set) {
           if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
             return k;
           }
