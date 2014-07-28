@@ -169,7 +169,6 @@ yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
-gchar* yrcd_yrcd_router_strip_end (yrcdyrcd_router* self, const gchar* msg);
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
@@ -232,6 +231,21 @@ yrcdyrcd_router* yrcd_yrcd_router_new (yrcdyrcd_server* k) {
 }
 
 
+static gchar* string_strip (const gchar* self) {
+	gchar* result = NULL;
+	gchar* _result_ = NULL;
+	gchar* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = g_strdup (self);
+	_result_ = _tmp0_;
+	_tmp1_ = _result_;
+	g_strstrip (_tmp1_);
+	result = _result_;
+	return result;
+}
+
+
 void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const gchar* msg) {
 	const gchar* _tmp0_ = NULL;
 	gchar* stripped = NULL;
@@ -274,7 +288,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 		return;
 	}
 	_tmp10_ = msg;
-	_tmp11_ = yrcd_yrcd_router_strip_end (self, _tmp10_);
+	_tmp11_ = string_strip (_tmp10_);
 	stripped = _tmp11_;
 	_tmp12_ = stripped;
 	_tmp14_ = _tmp13_ = g_strsplit (_tmp12_, " ", 0);
@@ -543,21 +557,6 @@ void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, 
 }
 
 
-static gchar* string_strip (const gchar* self) {
-	gchar* result = NULL;
-	gchar* _result_ = NULL;
-	gchar* _tmp0_ = NULL;
-	const gchar* _tmp1_ = NULL;
-	g_return_val_if_fail (self != NULL, NULL);
-	_tmp0_ = g_strdup (self);
-	_result_ = _tmp0_;
-	_tmp1_ = _result_;
-	g_strstrip (_tmp1_);
-	result = _result_;
-	return result;
-}
-
-
 void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
 	gchar** _tmp0_ = NULL;
 	gint _tmp0__length1 = 0;
@@ -672,30 +671,6 @@ void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* use
 			return;
 		}
 	}
-}
-
-
-gchar* yrcd_yrcd_router_strip_end (yrcdyrcd_router* self, const gchar* msg) {
-	gchar* result = NULL;
-	GString* builder = NULL;
-	GString* _tmp0_ = NULL;
-	const gchar* _tmp1_ = NULL;
-	gssize _tmp2_ = 0L;
-	const gchar* _tmp3_ = NULL;
-	gchar* _tmp4_ = NULL;
-	g_return_val_if_fail (self != NULL, NULL);
-	g_return_val_if_fail (msg != NULL, NULL);
-	_tmp0_ = g_string_new ("");
-	builder = _tmp0_;
-	_tmp1_ = msg;
-	g_string_append (builder, _tmp1_);
-	_tmp2_ = builder->len;
-	g_string_truncate (builder, (gsize) (_tmp2_ - 1));
-	_tmp3_ = builder->str;
-	_tmp4_ = g_strdup (_tmp3_);
-	result = _tmp4_;
-	_g_string_free0 (builder);
-	return result;
 }
 
 
