@@ -29,6 +29,7 @@ typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
 
 typedef struct _yrcdyrcd_server yrcdyrcd_server;
 typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
+#define _g_main_loop_unref0(var) ((var == NULL) ? NULL : (var = (g_main_loop_unref (var), NULL)))
 
 struct _yrcdyrcd_config {
 	GObject parent_instance;
@@ -63,10 +64,13 @@ void yrcd_main (void) {
 	yrcdyrcd_config* _tmp0_ = NULL;
 	yrcdyrcd_config* _tmp1_ = NULL;
 	gboolean _tmp2_ = FALSE;
+	GMainLoop* loop = NULL;
+	GMainLoop* _tmp3_ = NULL;
 	yrcdyrcd_server* server = NULL;
-	yrcdyrcd_config* _tmp3_ = NULL;
-	yrcdyrcd_server* _tmp4_ = NULL;
+	yrcdyrcd_config* _tmp4_ = NULL;
 	yrcdyrcd_server* _tmp5_ = NULL;
+	GMainLoop* _tmp6_ = NULL;
+	yrcdyrcd_server* _tmp7_ = NULL;
 	_tmp0_ = yrcd_yrcd_config_new ("yrcd.config");
 	config = _tmp0_;
 	_tmp1_ = config;
@@ -75,12 +79,17 @@ void yrcd_main (void) {
 		_g_object_unref0 (config);
 		return;
 	}
-	_tmp3_ = config;
-	_tmp4_ = yrcd_yrcd_server_new (_tmp3_);
-	server = _tmp4_;
-	_tmp5_ = server;
-	yrcd_yrcd_server_log (_tmp5_, "For some reason, we're all done here.... goodbye");
+	_tmp3_ = g_main_loop_new (NULL, FALSE);
+	loop = _tmp3_;
+	_tmp4_ = config;
+	_tmp5_ = yrcd_yrcd_server_new (_tmp4_);
+	server = _tmp5_;
+	_tmp6_ = loop;
+	g_main_loop_run (_tmp6_);
+	_tmp7_ = server;
+	yrcd_yrcd_server_log (_tmp7_, "For some reason, we're all done here.... goodbye");
 	_g_object_unref0 (server);
+	_g_main_loop_unref0 (loop);
 	_g_object_unref0 (config);
 }
 

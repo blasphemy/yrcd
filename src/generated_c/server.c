@@ -72,7 +72,6 @@ typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
 typedef struct _yrcdyrcd_router yrcdyrcd_router;
 typedef struct _yrcdyrcd_routerClass yrcdyrcd_routerClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
-#define _g_main_loop_unref0(var) ((var == NULL) ? NULL : (var = (g_main_loop_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
@@ -96,7 +95,6 @@ struct _yrcdyrcd_serverClass {
 
 struct _yrcdyrcd_serverPrivate {
 	GSocketService* ss;
-	GMainLoop* loop;
 	yrcdyrcd_router* router;
 	gint user_counter;
 	gint cid_counter;
@@ -225,7 +223,6 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type, yrcdyrcd_config*
 	GeeHashMap* _tmp8_ = NULL;
 	GSocketService* _tmp9_ = NULL;
 	GSocketService* _tmp10_ = NULL;
-	GMainLoop* _tmp11_ = NULL;
 	g_return_val_if_fail (_config != NULL, NULL);
 	self = (yrcdyrcd_server*) g_object_new (object_type, NULL);
 	_tmp0_ = _config;
@@ -252,8 +249,6 @@ yrcdyrcd_server* yrcd_yrcd_server_construct (GType object_type, yrcdyrcd_config*
 	g_signal_connect_object (_tmp9_, "incoming", (GCallback) _yrcd_yrcd_server_accept_connection_g_socket_service_incoming, self, 0);
 	_tmp10_ = self->priv->ss;
 	g_socket_service_start (_tmp10_);
-	_tmp11_ = self->priv->loop;
-	g_main_loop_run (_tmp11_);
 	return self;
 }
 
@@ -789,21 +784,18 @@ static void yrcd_yrcd_server_class_init (yrcdyrcd_serverClass * klass) {
 
 static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	GSocketService* _tmp0_ = NULL;
-	GMainLoop* _tmp1_ = NULL;
-	GeeHashMap* _tmp2_ = NULL;
-	yrcdyrcd_numeric_wrapper* _tmp3_ = NULL;
+	GeeHashMap* _tmp1_ = NULL;
+	yrcdyrcd_numeric_wrapper* _tmp2_ = NULL;
 	self->priv = YRCD_YRCD_SERVER_GET_PRIVATE (self);
 	_tmp0_ = g_socket_service_new ();
 	self->priv->ss = _tmp0_;
-	_tmp1_ = g_main_loop_new (NULL, FALSE);
-	self->priv->loop = _tmp1_;
-	_tmp2_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
-	self->userlist = _tmp2_;
+	_tmp1_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
+	self->userlist = _tmp1_;
 	self->priv->user_counter = 0;
 	self->priv->cid_counter = 0;
 	self->max_users = 0;
-	_tmp3_ = yrcd_yrcd_numeric_wrapper_new ();
-	self->numeric_wrapper = _tmp3_;
+	_tmp2_ = yrcd_yrcd_numeric_wrapper_new ();
+	self->numeric_wrapper = _tmp2_;
 }
 
 
@@ -811,7 +803,6 @@ static void yrcd_yrcd_server_finalize (GObject* obj) {
 	yrcdyrcd_server * self;
 	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_SERVER, yrcdyrcd_server);
 	_g_object_unref0 (self->priv->ss);
-	_g_main_loop_unref0 (self->priv->loop);
 	_g_object_unref0 (self->priv->router);
 	_g_object_unref0 (self->userlist);
 	_g_object_unref0 (self->channellist);

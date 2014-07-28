@@ -176,7 +176,9 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
 void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
 void yrcd_yrcd_user_fire_motd (yrcdyrcd_user* self);
+void yrcd_yrcd_router_ping_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
 void yrcd_yrcd_router_unknown_command_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
+void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_ERR_UNKNOWNCOMMAND 421
 GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
@@ -301,6 +303,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 		static GQuark _tmp31_label4 = 0;
 		static GQuark _tmp31_label5 = 0;
 		static GQuark _tmp31_label6 = 0;
+		static GQuark _tmp31_label7 = 0;
 		_tmp17_ = user;
 		_tmp18_ = yrcd_yrcd_user_get_server (_tmp17_);
 		_tmp19_ = _tmp18_;
@@ -411,7 +414,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					break;
 				}
 			}
-		} else {
+		} else if (_tmp32_ == ((0 != _tmp31_label7) ? _tmp31_label7 : (_tmp31_label7 = g_quark_from_static_string ("ping")))) {
 			switch (0) {
 				default:
 				{
@@ -421,7 +424,21 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					_tmp46_ = user;
 					_tmp47_ = args;
 					_tmp47__length1 = args_length1;
-					yrcd_yrcd_router_unknown_command_handler (self, _tmp46_, _tmp47_, _tmp47__length1);
+					yrcd_yrcd_router_ping_handler (self, _tmp46_, _tmp47_, _tmp47__length1);
+					break;
+				}
+			}
+		} else {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp48_ = NULL;
+					gchar** _tmp49_ = NULL;
+					gint _tmp49__length1 = 0;
+					_tmp48_ = user;
+					_tmp49_ = args;
+					_tmp49__length1 = args_length1;
+					yrcd_yrcd_router_unknown_command_handler (self, _tmp48_, _tmp49_, _tmp49__length1);
 					break;
 				}
 			}
@@ -429,6 +446,26 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 	}
 	args = (_vala_array_free (args, args_length1, (GDestroyNotify) g_free), NULL);
 	_g_free0 (stripped);
+}
+
+
+void yrcd_yrcd_router_ping_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
+	yrcdyrcd_user* _tmp0_ = NULL;
+	gchar** _tmp1_ = NULL;
+	gint _tmp1__length1 = 0;
+	const gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	gchar* _tmp4_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	_tmp0_ = user;
+	_tmp1_ = args;
+	_tmp1__length1 = args_length1;
+	_tmp2_ = _tmp1_[1];
+	_tmp3_ = g_strdup_printf ("PONG %s", _tmp2_);
+	_tmp4_ = _tmp3_;
+	yrcd_yrcd_user_send_line (_tmp0_, _tmp4_);
+	_g_free0 (_tmp4_);
 }
 
 
