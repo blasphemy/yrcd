@@ -36,6 +36,9 @@ namespace yrcd {
     public void remove_user (int id) {
       userlist.unset(id);
     }
+    public void remove_channel(string name) {
+      channellist.unset(name);
+    }
     public void add_listeners () {
       foreach (string k in config.listen_ips) {
         foreach (uint16 j in config.listen_ports) {

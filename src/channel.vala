@@ -10,6 +10,7 @@ namespace yrcd {
     public string topic_host;
     public yrcd_server server;
     public GLib.List<yrcd_user> users;
+    public uint timer;
     public yrcd_channel(yrcd_server _server, string _name) {
       server = _server;
       set_topic("", server.config.sname);
@@ -17,6 +18,20 @@ namespace yrcd {
       name = _name;
       server.log (@"New channel created $name");
       users = new GLib.List<yrcd_user>();
+      check_users();
+    }
+    public void check_users() {
+      timer = Timeout.add_seconds_full(Priority.DEFAULT, 30, () => {
+          if (users.length() < 1) {
+            server.remove_channel(name);
+            Source.remove(timer);
+            server.log(@"channel $name has no users, destroying");
+            return false;
+            } else {
+            server.log("channel %s has %u users, all good here..".printf(name,users.length()));
+            return true;
+            }
+          });
     }
     public bool add_user(yrcd_user user) {
       if (users.find(user) != null) {
