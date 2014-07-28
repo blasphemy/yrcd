@@ -51,6 +51,7 @@ namespace yrcd {
     }
     public void privmsg(yrcd_user user, string msg) {
       string to_send = ":%s PRIVMSG %s :%s".printf(user.get_hostmask(), name, msg);
+      server.log(@"channel $name sending message $msg");
       foreach (yrcd_user k in users) {
         if (k != user) {
           k.send_line(to_send);
