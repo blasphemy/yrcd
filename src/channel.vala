@@ -31,12 +31,23 @@ namespace yrcd {
       }
       user.fire_numeric(RPL_TOPIC, name, topic);
       user.fire_numeric(RPL_TOPICWHOTIME, name, topic_host, topictime);
+      fire_names(user);
       return true;
     }
     public void set_topic(string newtopic, string hostmask) {
       topic = newtopic;
       topic_host = hostmask;
       //topictime = new DateTime.now_utc().to_unix();
+    }
+    public void fire_names(yrcd_user user) {
+      StringBuilder builder = new StringBuilder();
+      foreach (yrcd_user k in users) {
+        builder.append(k.nick);
+        builder.append(" ");
+      }
+      string resp = builder.str.strip();
+      user.fire_numeric(RPL_NAMEPLY, name, resp);
+      user.fire_numeric(RPL_ENDOFNAMES, name);
     }
   }
 }

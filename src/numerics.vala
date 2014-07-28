@@ -10,6 +10,8 @@ namespace yrcd {
       numerics[RPL_MYINFO] = "%s %s %s %s";
       numerics[RPL_TOPIC] =  "%s :%s";
       numerics[RPL_TOPICWHOTIME] = "%s %s %s";
+      numerics[RPL_NAMEPLY] = "= %s :%s";
+      numerics[RPL_ENDOFNAMES] = "%s :End of /NAMES list.";
       numerics[RPL_MOTD] = ":- %s";
       numerics[RPL_MOTDSTART] = ":- %s Message of the day -";
       numerics[RPL_ENDOFMOTD] = ":End of /MOTD command.";
@@ -33,6 +35,8 @@ namespace yrcd {
   public const int RPL_MYINFO = 004;
   public const int RPL_TOPIC = 332;
   public const int RPL_TOPICWHOTIME = 333;
+  public const int RPL_NAMEPLY = 353;
+  public const int RPL_ENDOFNAMES = 366;
   public const int RPL_MOTD = 372;
   public const int RPL_MOTDSTART = 375;
   public const int RPL_ENDOFMOTD = 376;
