@@ -1,7 +1,7 @@
 using Gee;
 /*
-    Router.vala. I absolutely hate this file, because if I wasn't so stupid, I would have made commands modular.
-*/
+   Router.vala. I absolutely hate this file, because if I wasn't so stupid, I would have made commands modular.
+ */
 namespace yrcd {
   class yrcd_router : Object {
     public yrcd_server server;
@@ -57,8 +57,16 @@ namespace yrcd {
       user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
     }
     public void join_handler(yrcd_user user, string[] args) {
-        yrcd_channel chan = server.get_channel_by_name(args[1]);
-        user.join(chan);
+      if (args.length < 2) {
+        user.fire_numeric(ERR_NEEDMOREPARAMS, "JOIN");
+        return;
+      }
+      if (!valid_chan_name(args[1])) {
+        user.fire_numeric(ERR_NOSUCHCHANNEL, args[1]);
+        return;
+      }
+      yrcd_channel chan = server.get_channel_by_name(args[1]);
+      user.join(chan);
     }
     public void privmsg_handler(yrcd_user user, string[] args) {
       /*
@@ -69,11 +77,20 @@ namespace yrcd {
       } else if (args.length < 3) {
         //todo ERR_NOTEXTTOSEND
       } else {
-        foreach(string k in yrcd_constants.chan_prefixes) {
-          if (k in args[1]) {
-            //presumably targeting a channel...
-            return;
+        if (valid_chan_name(args[1])) {
+          //looks like we're targetting a channel.
+          StringBuilder builder = new StringBuilder();
+          int i;
+          for (i=2;i<args.length;i++) {
+            builder.append(args[i]);
+            builder.append(" ");
           }
+          if (builder.str.has_prefix(":")) {
+            builder.erase(0,1);
+          }
+          string msg = builder.str.strip();
+          yrcd_channel chan = server.get_channel_by_name(args[1]);
+          chan.privmsg(user, msg);
         }
         //if we've reached this point, it's possible it could be a user
         if (server.get_user_by_nick == null) {
@@ -106,6 +123,35 @@ namespace yrcd {
           user.quit(null);
           return;
         }
+      }
+    }
+    public bool valid_chan_name (string chan) {
+      bool valid = true;
+      bool has_prefix = false;
+      /*
+         Checking if a channel is valid:
+         1. check if it has a valid prefix as defined in constants.vala
+         2. check if it has any forbidden characters as in constants.vala
+         3. combine the previous factors, along with checking if there's already a channel by the name.
+       */
+      foreach (string k in yrcd_constants.chan_prefixes) { //step 1
+        if (chan.has_prefix(k)) {
+          server.log (@"channel name $chan has valid prefix $k");
+          has_prefix = true;
+          break;
+        }
+      }
+      foreach (string k in yrcd_constants.chan_forbidden) { //step 2
+        if (k in chan) {
+          server.log(@"channel name $chan has invalid char $k");
+          valid = false;
+          break;
+        } 
+      }
+      if (has_prefix && valid) {
+        return true;
+      } else {
+        return false;
       }
     }
   }

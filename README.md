@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/blasphemy/yrcd.svg?branch=master)](https://travis-ci.org/blasphemy/yrcd) [![Stories in Ready](https://badge.waffle.io/blasphemy/yrcd.png?label=ready&title=Ready)](https://waffle.io/blasphemy/yrcd) 
 yrcd
 ====
-A Simple ircd in vala. How simple? So simple that channels don't even exist yet.
+A Simple ircd in vala.
 
 
 BUILDING

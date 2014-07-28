@@ -34,6 +34,13 @@ namespace yrcd {
       fire_names(user);
       return true;
     }
+    public void quit(yrcd_user user, string msg) {
+      foreach (yrcd_user k in users) {
+        //:danieltest!~k@2604:180::d8f:be0e QUIT :Client Quit
+        k.send_line(":%s QUIT :%s".printf(user.get_hostmask(),msg));
+      }
+      users.remove(user);
+    }
     public void set_topic(string newtopic, string hostmask) {
       topic = newtopic;
       topic_host = hostmask;
@@ -49,5 +56,15 @@ namespace yrcd {
       user.fire_numeric(RPL_NAMEPLY, name, resp);
       user.fire_numeric(RPL_ENDOFNAMES, name);
     }
+    public void privmsg(yrcd_user user, string msg) {
+      string to_send = ":%s PRIVMSG %s :%s".printf(user.get_hostmask(), name, msg);
+      server.log(@"channel $name sending message $msg");
+      foreach (yrcd_user k in users) {
+        if (k != user) {
+          k.send_line(to_send);
+        }
+      }
+    }
+
   }
 }

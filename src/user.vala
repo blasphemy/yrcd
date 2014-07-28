@@ -16,6 +16,7 @@ namespace yrcd {
     public string ident { get; set; }
     public string realname { get; set; }
     public bool user_set { get; set; }
+    public bool nick_set { get; set; }
     public string ip; 
     public string host;
     public HashMap<string,yrcd_channel> user_chanels;
@@ -44,17 +45,6 @@ namespace yrcd {
           });
       return t;
     }
-    public bool isnickset() {
-      if (nick == null) {
-        return false;
-      } else {
-        if (nick.length > 0) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
     private void check_ping() {
       server.log("check ping called on user %d".printf(id));
       int64 now = new DateTime.now_utc().to_unix();
@@ -62,7 +52,7 @@ namespace yrcd {
       if (now > check_ping_at) {
         if (check_ping_at > last) {
           if (awaiting_response) {
-            quit(null);
+            quit("Ping timeout: %d seconds".printf(server.config.ping_invertal));
           } else {
             send_line("PING :" + server.config.sname);
             awaiting_response = true;
@@ -83,6 +73,12 @@ namespace yrcd {
     }
     public void quit (string? msg) { //TODO Finish this.
       try {
+        if (msg == null) {
+          msg = "Quit";
+        }
+        foreach (yrcd_channel k in user_chanels.values) {
+          k.quit(this, msg);
+        }
         Source.remove(ping_timer);
         sock.get_socket().close();
         server.remove_user(id);
@@ -91,11 +87,11 @@ namespace yrcd {
       }
     }
     public void join (yrcd_channel chan) {
-        if (chan.add_user(this)) {
-          string name = chan.name;
-          server.log(@"user $nick joining chan $name");
-          user_chanels[chan.name] = chan;
-        }
+      if (chan.add_user(this)) {
+        string name = chan.name;
+        server.log(@"user $nick joining chan $name");
+        user_chanels[chan.name] = chan;
+      }
     }
     public void change_nick (string[] args) { //Possible TODO, implement nick validity checker in server.vala, or possibly utils.vala.
       if (args.length < 2) {
@@ -115,8 +111,9 @@ namespace yrcd {
       }
       string oldnick = nick;
       nick = args[1];
-      if (!isnickset()) {
+      if (!nick_set) {
         server.log("User %d set nick to %s".printf(id,nick));
+        nick_set = true;
         if (user_set) {
           reg_finished();
         }
@@ -142,7 +139,7 @@ namespace yrcd {
         }
         realname = builder.str.strip();
         user_set = true;
-        if (isnickset()) {
+        if (nick_set) {
           reg_finished();
         }
       } else {
