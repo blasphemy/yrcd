@@ -73,6 +73,12 @@ namespace yrcd {
     }
     public void quit (string? msg) { //TODO Finish this.
       try {
+        if (msg == null) {
+          msg = "Quit";
+        }
+        foreach (yrcd_channel k in user_chanels.values) {
+          k.quit(this, msg);
+        }
         Source.remove(ping_timer);
         sock.get_socket().close();
         server.remove_user(id);
@@ -81,11 +87,11 @@ namespace yrcd {
       }
     }
     public void join (yrcd_channel chan) {
-        if (chan.add_user(this)) {
-          string name = chan.name;
-          server.log(@"user $nick joining chan $name");
-          user_chanels[chan.name] = chan;
-        }
+      if (chan.add_user(this)) {
+        string name = chan.name;
+        server.log(@"user $nick joining chan $name");
+        user_chanels[chan.name] = chan;
+      }
     }
     public void change_nick (string[] args) { //Possible TODO, implement nick validity checker in server.vala, or possibly utils.vala.
       if (args.length < 2) {

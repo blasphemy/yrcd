@@ -25,11 +25,11 @@ namespace yrcd {
     }
   }
   /*
-      Numerics are purposely defined in the global namespace.
-      the reasoning behind this is to make the syntax when firing numerics easier.
-      Ex: user.fire_numeric(ERR_ALREADYREGISTERED).
-      Easy.
-  */
+     Numerics are purposely defined in the global namespace.
+     the reasoning behind this is to make the syntax when firing numerics easier.
+Ex: user.fire_numeric(ERR_ALREADYREGISTERED).
+Easy.
+   */
   public const int RPL_WELCOME = 001;
   public const int RPL_YOURHOST = 002;
   public const int RPL_CREATED = 003;
