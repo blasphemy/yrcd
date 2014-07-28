@@ -52,7 +52,7 @@ namespace yrcd {
       if (now > check_ping_at) {
         if (check_ping_at > last) {
           if (awaiting_response) {
-            quit(null);
+            quit("Ping timeout: %d seconds".printf(server.config.ping_invertal));
           } else {
             send_line("PING :" + server.config.sname);
             awaiting_response = true;
