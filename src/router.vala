@@ -21,8 +21,7 @@ namespace yrcd {
         user.update_timestamp(); //timestamp should be updated as soon as possible to be accurate. Not that perfect acuracy is a thing in this ircd.
         switch (args[0].down()) {
           case "quit" :
-            user.server.log("Received QUIT");
-            user.quit(null);
+            quit_handler(user,args);
             break;
           case "nick" :
             user.change_nick(args);
@@ -50,6 +49,27 @@ namespace yrcd {
         }
       }
     }
+    public string assemble(int position, string[] args) {
+      int i;
+      StringBuilder builder = new StringBuilder();
+      for (i=position;i<args.length;i++) {
+        builder.append(args[i]);
+        builder.append(" ");
+      }
+      return builder.str.strip();
+    }
+    public void quit_handler(yrcd_user user, string[] args) {
+      if (args.length < 2) {
+        user.quit(null);
+      } else {
+        StringBuilder builder = new StringBuilder();
+        builder.append(assemble(1,args));
+        if (builder.str.has_prefix(":")) {
+          builder.erase(0,1);
+        }
+        user.quit(builder.str);
+      }
+    } 
     public void ping_handler(yrcd_user user, string[] args) {
       user.send_line("PONG %s".printf(args[1]));
     }
