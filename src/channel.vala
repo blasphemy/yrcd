@@ -28,7 +28,6 @@ namespace yrcd {
             server.log(@"channel $name has no users, destroying");
             return false;
             } else {
-            server.log("channel %s has %u users, all good here..".printf(name,users.length()));
             return true;
             }
           });
