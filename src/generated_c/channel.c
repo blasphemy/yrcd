@@ -78,6 +78,7 @@ struct _yrcdyrcd_channel {
 	gchar* topic_host;
 	yrcdyrcd_server* server;
 	GList* users;
+	guint timer;
 };
 
 struct _yrcdyrcd_channelClass {
@@ -125,6 +126,10 @@ const gchar* yrcd_yrcd_config_get_sname (yrcdyrcd_config* self);
 void yrcd_yrcd_channel_set_name (yrcdyrcd_channel* self, const gchar* value);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
+void yrcd_yrcd_channel_check_users (yrcdyrcd_channel* self);
+static gboolean __lambda4_ (yrcdyrcd_channel* self);
+void yrcd_yrcd_server_remove_channel (yrcdyrcd_server* self, const gchar* name);
+static gboolean ___lambda4__gsource_func (gpointer self);
 gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
@@ -213,12 +218,78 @@ yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, yrcdyrcd_serve
 	_g_free0 (_tmp14_);
 	__g_list_free__g_object_unref0_0 (self->users);
 	self->users = NULL;
+	yrcd_yrcd_channel_check_users (self);
 	return self;
 }
 
 
 yrcdyrcd_channel* yrcd_yrcd_channel_new (yrcdyrcd_server* _server, const gchar* _name) {
 	return yrcd_yrcd_channel_construct (YRCD_TYPE_YRCD_CHANNEL, _server, _name);
+}
+
+
+static gboolean __lambda4_ (yrcdyrcd_channel* self) {
+	gboolean result = FALSE;
+	GList* _tmp0_ = NULL;
+	guint _tmp1_ = 0U;
+	_tmp0_ = self->users;
+	_tmp1_ = g_list_length (_tmp0_);
+	if (_tmp1_ < ((guint) 1)) {
+		yrcdyrcd_server* _tmp2_ = NULL;
+		const gchar* _tmp3_ = NULL;
+		guint _tmp4_ = 0U;
+		yrcdyrcd_server* _tmp5_ = NULL;
+		const gchar* _tmp6_ = NULL;
+		const gchar* _tmp7_ = NULL;
+		gchar* _tmp8_ = NULL;
+		gchar* _tmp9_ = NULL;
+		_tmp2_ = self->server;
+		_tmp3_ = self->priv->_name;
+		yrcd_yrcd_server_remove_channel (_tmp2_, _tmp3_);
+		_tmp4_ = self->timer;
+		g_source_remove (_tmp4_);
+		_tmp5_ = self->server;
+		_tmp6_ = self->priv->_name;
+		_tmp7_ = string_to_string (_tmp6_);
+		_tmp8_ = g_strconcat ("channel ", _tmp7_, " has no users, destroying", NULL);
+		_tmp9_ = _tmp8_;
+		yrcd_yrcd_server_log (_tmp5_, _tmp9_);
+		_g_free0 (_tmp9_);
+		result = FALSE;
+		return result;
+	} else {
+		yrcdyrcd_server* _tmp10_ = NULL;
+		const gchar* _tmp11_ = NULL;
+		GList* _tmp12_ = NULL;
+		guint _tmp13_ = 0U;
+		gchar* _tmp14_ = NULL;
+		gchar* _tmp15_ = NULL;
+		_tmp10_ = self->server;
+		_tmp11_ = self->priv->_name;
+		_tmp12_ = self->users;
+		_tmp13_ = g_list_length (_tmp12_);
+		_tmp14_ = g_strdup_printf ("channel %s has %u users, all good here..", _tmp11_, _tmp13_);
+		_tmp15_ = _tmp14_;
+		yrcd_yrcd_server_log (_tmp10_, _tmp15_);
+		_g_free0 (_tmp15_);
+		result = TRUE;
+		return result;
+	}
+}
+
+
+static gboolean ___lambda4__gsource_func (gpointer self) {
+	gboolean result;
+	result = __lambda4_ ((yrcdyrcd_channel*) self);
+	return result;
+}
+
+
+void yrcd_yrcd_channel_check_users (yrcdyrcd_channel* self) {
+	guint _tmp0_ = 0U;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = g_timeout_add_seconds_full (G_PRIORITY_DEFAULT, (guint) 30, ___lambda4__gsource_func, g_object_ref (self), g_object_unref);
+	self->timer = _tmp0_;
 }
 
 

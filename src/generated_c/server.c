@@ -144,6 +144,7 @@ yrcdyrcd_router* yrcd_yrcd_router_construct (GType object_type, yrcdyrcd_server*
 gboolean yrcd_yrcd_server_accept_connection (yrcdyrcd_server* self, GSocketConnection* conn);
 static gboolean _yrcd_yrcd_server_accept_connection_g_socket_service_incoming (GSocketService* _sender, GSocketConnection* connection, GObject* source_object, gpointer self);
 void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
+void yrcd_yrcd_server_remove_channel (yrcdyrcd_server* self, const gchar* name);
 void yrcd_yrcd_router_process_user (yrcdyrcd_router* self, GSocketConnection* conn, GAsyncReadyCallback _callback_, gpointer _user_data_);
 void yrcd_yrcd_router_process_user_finish (yrcdyrcd_router* self, GAsyncResult* _res_);
 gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
@@ -262,6 +263,17 @@ void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id) {
 	_tmp0_ = self->userlist;
 	_tmp1_ = id;
 	gee_abstract_map_unset ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) _tmp1_), NULL);
+}
+
+
+void yrcd_yrcd_server_remove_channel (yrcdyrcd_server* self, const gchar* name) {
+	GeeHashMap* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (name != NULL);
+	_tmp0_ = self->channellist;
+	_tmp1_ = name;
+	gee_abstract_map_unset ((GeeAbstractMap*) _tmp0_, _tmp1_, NULL);
 }
 
 
