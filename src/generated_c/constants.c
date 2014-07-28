@@ -35,7 +35,7 @@ GType yrcd_yrcd_constants_get_type (void) G_GNUC_CONST;
 enum  {
 	YRCD_YRCD_CONSTANTS_DUMMY_PROPERTY
 };
-#define YRCD_YRCD_CONSTANTS_version "0.1"
+#define YRCD_YRCD_CONSTANTS_version "0.2"
 #define YRCD_YRCD_CONSTANTS_software "yrcd"
 yrcdyrcd_constants* yrcd_yrcd_constants_new (void);
 yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type);

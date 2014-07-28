@@ -181,9 +181,13 @@ void yrcd_yrcd_router_unknown_command_handler (yrcdyrcd_router* self, yrcdyrcd_u
 void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_ERR_UNKNOWNCOMMAND 421
+#define YRCD_ERR_NEEDMOREPARAMS 461
+gboolean yrcd_yrcd_router_valid_chan_name (yrcdyrcd_router* self, const gchar* chan);
+#define YRCD_ERR_NOSUCHCHANNEL 403
 GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
 void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan);
+void yrcd_yrcd_channel_privmsg (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
 static void yrcd_yrcd_router_process_user_data_free (gpointer _data);
 void yrcd_yrcd_router_process_user (yrcdyrcd_router* self, GSocketConnection* conn, GAsyncReadyCallback _callback_, gpointer _user_data_);
@@ -202,6 +206,7 @@ static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify 
 static gint _vala_array_length (gpointer array);
 
 extern const gchar* YRCD_YRCD_CONSTANTS_chan_prefixes[2];
+extern const gchar* YRCD_YRCD_CONSTANTS_chan_forbidden[5];
 
 static gpointer _g_object_ref0 (gpointer self) {
 	return self ? g_object_ref (self) : NULL;
@@ -485,36 +490,70 @@ void yrcd_yrcd_router_unknown_command_handler (yrcdyrcd_router* self, yrcdyrcd_u
 
 
 void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
+	gchar** _tmp0_ = NULL;
+	gint _tmp0__length1 = 0;
+	gchar** _tmp2_ = NULL;
+	gint _tmp2__length1 = 0;
+	const gchar* _tmp3_ = NULL;
+	gboolean _tmp4_ = FALSE;
 	yrcdyrcd_channel* chan = NULL;
-	yrcdyrcd_server* _tmp0_ = NULL;
-	gchar** _tmp1_ = NULL;
-	gint _tmp1__length1 = 0;
-	const gchar* _tmp2_ = NULL;
-	yrcdyrcd_channel* _tmp3_ = NULL;
-	yrcdyrcd_user* _tmp4_ = NULL;
+	yrcdyrcd_server* _tmp8_ = NULL;
+	gchar** _tmp9_ = NULL;
+	gint _tmp9__length1 = 0;
+	const gchar* _tmp10_ = NULL;
+	yrcdyrcd_channel* _tmp11_ = NULL;
+	yrcdyrcd_user* _tmp12_ = NULL;
+	yrcdyrcd_channel* _tmp13_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (user != NULL);
-	_tmp0_ = self->server;
-	_tmp1_ = args;
-	_tmp1__length1 = args_length1;
-	_tmp2_ = _tmp1_[1];
-	_tmp3_ = yrcd_yrcd_server_get_channel_by_name (_tmp0_, _tmp2_);
-	chan = _tmp3_;
-	_tmp4_ = user;
-	yrcd_yrcd_user_join (_tmp4_, chan);
+	_tmp0_ = args;
+	_tmp0__length1 = args_length1;
+	if (_tmp0__length1 < 2) {
+		yrcdyrcd_user* _tmp1_ = NULL;
+		_tmp1_ = user;
+		yrcd_yrcd_user_fire_numeric (_tmp1_, YRCD_ERR_NEEDMOREPARAMS, "JOIN", NULL);
+		return;
+	}
+	_tmp2_ = args;
+	_tmp2__length1 = args_length1;
+	_tmp3_ = _tmp2_[1];
+	_tmp4_ = yrcd_yrcd_router_valid_chan_name (self, _tmp3_);
+	if (!_tmp4_) {
+		yrcdyrcd_user* _tmp5_ = NULL;
+		gchar** _tmp6_ = NULL;
+		gint _tmp6__length1 = 0;
+		const gchar* _tmp7_ = NULL;
+		_tmp5_ = user;
+		_tmp6_ = args;
+		_tmp6__length1 = args_length1;
+		_tmp7_ = _tmp6_[1];
+		yrcd_yrcd_user_fire_numeric (_tmp5_, YRCD_ERR_NOSUCHCHANNEL, _tmp7_, NULL);
+		return;
+	}
+	_tmp8_ = self->server;
+	_tmp9_ = args;
+	_tmp9__length1 = args_length1;
+	_tmp10_ = _tmp9_[1];
+	_tmp11_ = yrcd_yrcd_server_get_channel_by_name (_tmp8_, _tmp10_);
+	chan = _tmp11_;
+	_tmp12_ = user;
+	_tmp13_ = chan;
+	yrcd_yrcd_user_join (_tmp12_, _tmp13_);
 	_g_object_unref0 (chan);
 }
 
 
-static gboolean string_contains (const gchar* self, const gchar* needle) {
-	gboolean result = FALSE;
-	const gchar* _tmp0_ = NULL;
-	gchar* _tmp1_ = NULL;
-	g_return_val_if_fail (self != NULL, FALSE);
-	g_return_val_if_fail (needle != NULL, FALSE);
-	_tmp0_ = needle;
-	_tmp1_ = strstr ((gchar*) self, (gchar*) _tmp0_);
-	result = _tmp1_ != NULL;
+static gchar* string_strip (const gchar* self) {
+	gchar* result = NULL;
+	gchar* _result_ = NULL;
+	gchar* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = g_strdup (self);
+	_result_ = _tmp0_;
+	_tmp1_ = _result_;
+	g_strstrip (_tmp1_);
+	result = _result_;
 	return result;
 }
 
@@ -534,39 +573,100 @@ void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* use
 		_tmp1__length1 = args_length1;
 		if (_tmp1__length1 < 3) {
 		} else {
-			yrcdyrcd_server* _tmp7_ = NULL;
-			{
-				const gchar** k_collection = NULL;
-				gint k_collection_length1 = 0;
-				gint _k_collection_size_ = 0;
-				gint k_it = 0;
-				k_collection = YRCD_YRCD_CONSTANTS_chan_prefixes;
-				k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes);
-				for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes); k_it = k_it + 1) {
-					gchar* _tmp2_ = NULL;
-					gchar* k = NULL;
-					_tmp2_ = g_strdup (k_collection[k_it]);
-					k = _tmp2_;
-					{
-						gchar** _tmp3_ = NULL;
-						gint _tmp3__length1 = 0;
-						const gchar* _tmp4_ = NULL;
-						const gchar* _tmp5_ = NULL;
-						gboolean _tmp6_ = FALSE;
-						_tmp3_ = args;
-						_tmp3__length1 = args_length1;
-						_tmp4_ = _tmp3_[1];
-						_tmp5_ = k;
-						_tmp6_ = string_contains (_tmp4_, _tmp5_);
-						if (_tmp6_) {
-							_g_free0 (k);
-							return;
+			gchar** _tmp2_ = NULL;
+			gint _tmp2__length1 = 0;
+			const gchar* _tmp3_ = NULL;
+			gboolean _tmp4_ = FALSE;
+			yrcdyrcd_server* _tmp29_ = NULL;
+			_tmp2_ = args;
+			_tmp2__length1 = args_length1;
+			_tmp3_ = _tmp2_[1];
+			_tmp4_ = yrcd_yrcd_router_valid_chan_name (self, _tmp3_);
+			if (_tmp4_) {
+				GString* builder = NULL;
+				GString* _tmp5_ = NULL;
+				gint i = 0;
+				GString* _tmp15_ = NULL;
+				const gchar* _tmp16_ = NULL;
+				gboolean _tmp17_ = FALSE;
+				gchar* msg = NULL;
+				GString* _tmp19_ = NULL;
+				const gchar* _tmp20_ = NULL;
+				gchar* _tmp21_ = NULL;
+				yrcdyrcd_channel* chan = NULL;
+				yrcdyrcd_server* _tmp22_ = NULL;
+				gchar** _tmp23_ = NULL;
+				gint _tmp23__length1 = 0;
+				const gchar* _tmp24_ = NULL;
+				yrcdyrcd_channel* _tmp25_ = NULL;
+				yrcdyrcd_channel* _tmp26_ = NULL;
+				yrcdyrcd_user* _tmp27_ = NULL;
+				const gchar* _tmp28_ = NULL;
+				_tmp5_ = g_string_new ("");
+				builder = _tmp5_;
+				{
+					gboolean _tmp6_ = FALSE;
+					i = 2;
+					_tmp6_ = TRUE;
+					while (TRUE) {
+						gint _tmp8_ = 0;
+						gchar** _tmp9_ = NULL;
+						gint _tmp9__length1 = 0;
+						GString* _tmp10_ = NULL;
+						gchar** _tmp11_ = NULL;
+						gint _tmp11__length1 = 0;
+						gint _tmp12_ = 0;
+						const gchar* _tmp13_ = NULL;
+						GString* _tmp14_ = NULL;
+						if (!_tmp6_) {
+							gint _tmp7_ = 0;
+							_tmp7_ = i;
+							i = _tmp7_ + 1;
 						}
-						_g_free0 (k);
+						_tmp6_ = FALSE;
+						_tmp8_ = i;
+						_tmp9_ = args;
+						_tmp9__length1 = args_length1;
+						if (!(_tmp8_ < _tmp9__length1)) {
+							break;
+						}
+						_tmp10_ = builder;
+						_tmp11_ = args;
+						_tmp11__length1 = args_length1;
+						_tmp12_ = i;
+						_tmp13_ = _tmp11_[_tmp12_];
+						g_string_append (_tmp10_, _tmp13_);
+						_tmp14_ = builder;
+						g_string_append (_tmp14_, " ");
 					}
 				}
+				_tmp15_ = builder;
+				_tmp16_ = _tmp15_->str;
+				_tmp17_ = g_str_has_prefix (_tmp16_, ":");
+				if (_tmp17_) {
+					GString* _tmp18_ = NULL;
+					_tmp18_ = builder;
+					g_string_erase (_tmp18_, (gssize) 0, (gssize) 1);
+				}
+				_tmp19_ = builder;
+				_tmp20_ = _tmp19_->str;
+				_tmp21_ = string_strip (_tmp20_);
+				msg = _tmp21_;
+				_tmp22_ = self->server;
+				_tmp23_ = args;
+				_tmp23__length1 = args_length1;
+				_tmp24_ = _tmp23_[1];
+				_tmp25_ = yrcd_yrcd_server_get_channel_by_name (_tmp22_, _tmp24_);
+				chan = _tmp25_;
+				_tmp26_ = chan;
+				_tmp27_ = user;
+				_tmp28_ = msg;
+				yrcd_yrcd_channel_privmsg (_tmp26_, _tmp27_, _tmp28_);
+				_g_object_unref0 (chan);
+				_g_free0 (msg);
+				_g_string_free0 (builder);
 			}
-			_tmp7_ = self->server;
+			_tmp29_ = self->server;
 			if (yrcd_yrcd_server_get_user_by_nick == NULL) {
 			}
 			return;
@@ -783,6 +883,143 @@ static gboolean yrcd_yrcd_router_process_user_co (YrcdYrcdRouterProcessUserData*
 	}
 	g_object_unref (_data_->_async_result);
 	return FALSE;
+}
+
+
+static const gchar* string_to_string (const gchar* self) {
+	const gchar* result = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	result = self;
+	return result;
+}
+
+
+static gboolean string_contains (const gchar* self, const gchar* needle) {
+	gboolean result = FALSE;
+	const gchar* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	g_return_val_if_fail (self != NULL, FALSE);
+	g_return_val_if_fail (needle != NULL, FALSE);
+	_tmp0_ = needle;
+	_tmp1_ = strstr ((gchar*) self, (gchar*) _tmp0_);
+	result = _tmp1_ != NULL;
+	return result;
+}
+
+
+gboolean yrcd_yrcd_router_valid_chan_name (yrcdyrcd_router* self, const gchar* chan) {
+	gboolean result = FALSE;
+	gboolean valid = FALSE;
+	gboolean has_prefix = FALSE;
+	gboolean _tmp22_ = FALSE;
+	gboolean _tmp23_ = FALSE;
+	g_return_val_if_fail (self != NULL, FALSE);
+	g_return_val_if_fail (chan != NULL, FALSE);
+	valid = TRUE;
+	has_prefix = FALSE;
+	{
+		const gchar** k_collection = NULL;
+		gint k_collection_length1 = 0;
+		gint _k_collection_size_ = 0;
+		gint k_it = 0;
+		k_collection = YRCD_YRCD_CONSTANTS_chan_prefixes;
+		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes);
+		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_prefixes); k_it = k_it + 1) {
+			gchar* _tmp0_ = NULL;
+			gchar* k = NULL;
+			_tmp0_ = g_strdup (k_collection[k_it]);
+			k = _tmp0_;
+			{
+				const gchar* _tmp1_ = NULL;
+				const gchar* _tmp2_ = NULL;
+				gboolean _tmp3_ = FALSE;
+				_tmp1_ = chan;
+				_tmp2_ = k;
+				_tmp3_ = g_str_has_prefix (_tmp1_, _tmp2_);
+				if (_tmp3_) {
+					yrcdyrcd_server* _tmp4_ = NULL;
+					const gchar* _tmp5_ = NULL;
+					const gchar* _tmp6_ = NULL;
+					const gchar* _tmp7_ = NULL;
+					const gchar* _tmp8_ = NULL;
+					gchar* _tmp9_ = NULL;
+					gchar* _tmp10_ = NULL;
+					_tmp4_ = self->server;
+					_tmp5_ = chan;
+					_tmp6_ = string_to_string (_tmp5_);
+					_tmp7_ = k;
+					_tmp8_ = string_to_string (_tmp7_);
+					_tmp9_ = g_strconcat ("channel name ", _tmp6_, " has valid prefix ", _tmp8_, NULL);
+					_tmp10_ = _tmp9_;
+					yrcd_yrcd_server_log (_tmp4_, _tmp10_);
+					_g_free0 (_tmp10_);
+					has_prefix = TRUE;
+					_g_free0 (k);
+					break;
+				}
+				_g_free0 (k);
+			}
+		}
+	}
+	{
+		const gchar** k_collection = NULL;
+		gint k_collection_length1 = 0;
+		gint _k_collection_size_ = 0;
+		gint k_it = 0;
+		k_collection = YRCD_YRCD_CONSTANTS_chan_forbidden;
+		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_forbidden);
+		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_chan_forbidden); k_it = k_it + 1) {
+			gchar* _tmp11_ = NULL;
+			gchar* k = NULL;
+			_tmp11_ = g_strdup (k_collection[k_it]);
+			k = _tmp11_;
+			{
+				const gchar* _tmp12_ = NULL;
+				const gchar* _tmp13_ = NULL;
+				gboolean _tmp14_ = FALSE;
+				_tmp12_ = chan;
+				_tmp13_ = k;
+				_tmp14_ = string_contains (_tmp12_, _tmp13_);
+				if (_tmp14_) {
+					yrcdyrcd_server* _tmp15_ = NULL;
+					const gchar* _tmp16_ = NULL;
+					const gchar* _tmp17_ = NULL;
+					const gchar* _tmp18_ = NULL;
+					const gchar* _tmp19_ = NULL;
+					gchar* _tmp20_ = NULL;
+					gchar* _tmp21_ = NULL;
+					_tmp15_ = self->server;
+					_tmp16_ = chan;
+					_tmp17_ = string_to_string (_tmp16_);
+					_tmp18_ = k;
+					_tmp19_ = string_to_string (_tmp18_);
+					_tmp20_ = g_strconcat ("channel name ", _tmp17_, " has invalid char ", _tmp19_, NULL);
+					_tmp21_ = _tmp20_;
+					yrcd_yrcd_server_log (_tmp15_, _tmp21_);
+					_g_free0 (_tmp21_);
+					valid = FALSE;
+					_g_free0 (k);
+					break;
+				}
+				_g_free0 (k);
+			}
+		}
+	}
+	_tmp23_ = has_prefix;
+	if (_tmp23_) {
+		gboolean _tmp24_ = FALSE;
+		_tmp24_ = valid;
+		_tmp22_ = _tmp24_;
+	} else {
+		_tmp22_ = FALSE;
+	}
+	if (_tmp22_) {
+		result = TRUE;
+		return result;
+	} else {
+		result = FALSE;
+		return result;
+	}
 }
 
 

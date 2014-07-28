@@ -100,6 +100,7 @@ struct _yrcdyrcd_userPrivate {
 	gchar* _ident;
 	gchar* _realname;
 	gboolean _user_set;
+	gboolean _nick_set;
 };
 
 struct _yrcdyrcd_server {
@@ -208,7 +209,8 @@ enum  {
 	YRCD_YRCD_USER_NICK,
 	YRCD_YRCD_USER_IDENT,
 	YRCD_YRCD_USER_REALNAME,
-	YRCD_YRCD_USER_USER_SET
+	YRCD_YRCD_USER_USER_SET,
+	YRCD_YRCD_USER_NICK_SET
 };
 yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server);
 yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server);
@@ -231,15 +233,15 @@ gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 static gboolean __lambda3_ (yrcdyrcd_user* self);
 static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self);
 static gboolean ___lambda3__gsource_func (gpointer self);
-gboolean yrcd_yrcd_user_isnickset (yrcdyrcd_user* self);
-const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 const gchar* yrcd_yrcd_config_get_sname (yrcdyrcd_config* self);
+void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
 void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
 void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan);
 gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
+const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_ERR_NONICKNAMEGIVEN 431
@@ -247,6 +249,8 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 #define YRCD_ERR_NICKNAMEINUSE 433
 #define YRCD_ERR_ERRONEOUSNICKNAME 432
 void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
+gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
+void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value);
 gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self);
 void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
@@ -260,7 +264,7 @@ const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
 #define YRCD_RPL_YOURHOST 002
 #define YRCD_YRCD_CONSTANTS_software "yrcd"
-#define YRCD_YRCD_CONSTANTS_version "0.1"
+#define YRCD_YRCD_CONSTANTS_version "0.2"
 #define YRCD_RPL_CREATED 003
 gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
 #define YRCD_RPL_MYINFO 004
@@ -419,32 +423,6 @@ static guint yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self) {
 }
 
 
-gboolean yrcd_yrcd_user_isnickset (yrcdyrcd_user* self) {
-	gboolean result = FALSE;
-	const gchar* _tmp0_ = NULL;
-	g_return_val_if_fail (self != NULL, FALSE);
-	_tmp0_ = self->priv->_nick;
-	if (_tmp0_ == NULL) {
-		result = FALSE;
-		return result;
-	} else {
-		const gchar* _tmp1_ = NULL;
-		gint _tmp2_ = 0;
-		gint _tmp3_ = 0;
-		_tmp1_ = self->priv->_nick;
-		_tmp2_ = strlen (_tmp1_);
-		_tmp3_ = _tmp2_;
-		if (_tmp3_ > 0) {
-			result = TRUE;
-			return result;
-		} else {
-			result = FALSE;
-			return result;
-		}
-	}
-}
-
-
 static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
 	yrcdyrcd_server* _tmp0_ = NULL;
 	gint _tmp1_ = 0;
@@ -481,40 +459,51 @@ static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
 	if (_tmp10_ > _tmp11_) {
 		gint64 _tmp12_ = 0LL;
 		gint64 _tmp13_ = 0LL;
-		gint64 _tmp21_ = 0LL;
-		yrcdyrcd_server* _tmp22_ = NULL;
-		yrcdyrcd_config* _tmp23_ = NULL;
-		gint _tmp24_ = 0;
+		gint64 _tmp26_ = 0LL;
+		yrcdyrcd_server* _tmp27_ = NULL;
+		yrcdyrcd_config* _tmp28_ = NULL;
+		gint _tmp29_ = 0;
 		_tmp12_ = self->priv->check_ping_at;
 		_tmp13_ = last;
 		if (_tmp12_ > _tmp13_) {
 			gboolean _tmp14_ = FALSE;
 			_tmp14_ = self->priv->awaiting_response;
 			if (_tmp14_) {
-				yrcd_yrcd_user_quit (self, NULL);
-			} else {
 				yrcdyrcd_server* _tmp15_ = NULL;
 				yrcdyrcd_config* _tmp16_ = NULL;
-				const gchar* _tmp17_ = NULL;
-				const gchar* _tmp18_ = NULL;
+				gint _tmp17_ = 0;
+				gchar* _tmp18_ = NULL;
 				gchar* _tmp19_ = NULL;
-				gchar* _tmp20_ = NULL;
 				_tmp15_ = self->priv->_server;
 				_tmp16_ = _tmp15_->config;
-				_tmp17_ = yrcd_yrcd_config_get_sname (_tmp16_);
-				_tmp18_ = _tmp17_;
-				_tmp19_ = g_strconcat ("PING :", _tmp18_, NULL);
-				_tmp20_ = _tmp19_;
-				yrcd_yrcd_user_send_line (self, _tmp20_);
-				_g_free0 (_tmp20_);
+				_tmp17_ = _tmp16_->ping_invertal;
+				_tmp18_ = g_strdup_printf ("Ping timeout: %d seconds", _tmp17_);
+				_tmp19_ = _tmp18_;
+				yrcd_yrcd_user_quit (self, _tmp19_);
+				_g_free0 (_tmp19_);
+			} else {
+				yrcdyrcd_server* _tmp20_ = NULL;
+				yrcdyrcd_config* _tmp21_ = NULL;
+				const gchar* _tmp22_ = NULL;
+				const gchar* _tmp23_ = NULL;
+				gchar* _tmp24_ = NULL;
+				gchar* _tmp25_ = NULL;
+				_tmp20_ = self->priv->_server;
+				_tmp21_ = _tmp20_->config;
+				_tmp22_ = yrcd_yrcd_config_get_sname (_tmp21_);
+				_tmp23_ = _tmp22_;
+				_tmp24_ = g_strconcat ("PING :", _tmp23_, NULL);
+				_tmp25_ = _tmp24_;
+				yrcd_yrcd_user_send_line (self, _tmp25_);
+				_g_free0 (_tmp25_);
 				self->priv->awaiting_response = TRUE;
 			}
 		}
-		_tmp21_ = now;
-		_tmp22_ = self->priv->_server;
-		_tmp23_ = _tmp22_->config;
-		_tmp24_ = _tmp23_->ping_invertal;
-		self->priv->check_ping_at = _tmp21_ + _tmp24_;
+		_tmp26_ = now;
+		_tmp27_ = self->priv->_server;
+		_tmp28_ = _tmp27_->config;
+		_tmp29_ = _tmp28_->ping_invertal;
+		self->priv->check_ping_at = _tmp26_ + _tmp29_;
 	}
 }
 
@@ -591,41 +580,85 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
 	{
-		guint _tmp0_ = 0U;
-		GSocketConnection* _tmp1_ = NULL;
-		GSocket* _tmp2_ = NULL;
-		yrcdyrcd_server* _tmp3_ = NULL;
-		gint _tmp4_ = 0;
-		_tmp0_ = self->priv->ping_timer;
-		g_source_remove (_tmp0_);
-		_tmp1_ = self->priv->_sock;
-		_tmp2_ = g_socket_connection_get_socket (_tmp1_);
-		g_socket_close (_tmp2_, &_inner_error_);
+		const gchar* _tmp0_ = NULL;
+		guint _tmp13_ = 0U;
+		GSocketConnection* _tmp14_ = NULL;
+		GSocket* _tmp15_ = NULL;
+		yrcdyrcd_server* _tmp16_ = NULL;
+		gint _tmp17_ = 0;
+		_tmp0_ = msg;
+		if (_tmp0_ == NULL) {
+			msg = "Quit";
+		}
+		{
+			GeeIterator* _k_it = NULL;
+			GeeHashMap* _tmp1_ = NULL;
+			GeeCollection* _tmp2_ = NULL;
+			GeeCollection* _tmp3_ = NULL;
+			GeeCollection* _tmp4_ = NULL;
+			GeeIterator* _tmp5_ = NULL;
+			GeeIterator* _tmp6_ = NULL;
+			_tmp1_ = self->user_chanels;
+			_tmp2_ = gee_abstract_map_get_values ((GeeMap*) _tmp1_);
+			_tmp3_ = _tmp2_;
+			_tmp4_ = _tmp3_;
+			_tmp5_ = gee_iterable_iterator ((GeeIterable*) _tmp4_);
+			_tmp6_ = _tmp5_;
+			_g_object_unref0 (_tmp4_);
+			_k_it = _tmp6_;
+			while (TRUE) {
+				GeeIterator* _tmp7_ = NULL;
+				gboolean _tmp8_ = FALSE;
+				yrcdyrcd_channel* k = NULL;
+				GeeIterator* _tmp9_ = NULL;
+				gpointer _tmp10_ = NULL;
+				yrcdyrcd_channel* _tmp11_ = NULL;
+				const gchar* _tmp12_ = NULL;
+				_tmp7_ = _k_it;
+				_tmp8_ = gee_iterator_next (_tmp7_);
+				if (!_tmp8_) {
+					break;
+				}
+				_tmp9_ = _k_it;
+				_tmp10_ = gee_iterator_get (_tmp9_);
+				k = (yrcdyrcd_channel*) _tmp10_;
+				_tmp11_ = k;
+				_tmp12_ = msg;
+				yrcd_yrcd_channel_quit (_tmp11_, self, _tmp12_);
+				_g_object_unref0 (k);
+			}
+			_g_object_unref0 (_k_it);
+		}
+		_tmp13_ = self->priv->ping_timer;
+		g_source_remove (_tmp13_);
+		_tmp14_ = self->priv->_sock;
+		_tmp15_ = g_socket_connection_get_socket (_tmp14_);
+		g_socket_close (_tmp15_, &_inner_error_);
 		if (_inner_error_ != NULL) {
 			goto __catch4_g_error;
 		}
-		_tmp3_ = self->priv->_server;
-		_tmp4_ = self->priv->_id;
-		yrcd_yrcd_server_remove_user (_tmp3_, _tmp4_);
+		_tmp16_ = self->priv->_server;
+		_tmp17_ = self->priv->_id;
+		yrcd_yrcd_server_remove_user (_tmp16_, _tmp17_);
 	}
 	goto __finally4;
 	__catch4_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp5_ = NULL;
-		GError* _tmp6_ = NULL;
-		const gchar* _tmp7_ = NULL;
-		gchar* _tmp8_ = NULL;
-		gchar* _tmp9_ = NULL;
+		yrcdyrcd_server* _tmp18_ = NULL;
+		GError* _tmp19_ = NULL;
+		const gchar* _tmp20_ = NULL;
+		gchar* _tmp21_ = NULL;
+		gchar* _tmp22_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp5_ = self->priv->_server;
-		_tmp6_ = e;
-		_tmp7_ = _tmp6_->message;
-		_tmp8_ = g_strdup_printf ("Error closing socket: %s", _tmp7_);
-		_tmp9_ = _tmp8_;
-		yrcd_yrcd_server_log (_tmp5_, _tmp9_);
-		_g_free0 (_tmp9_);
+		_tmp18_ = self->priv->_server;
+		_tmp19_ = e;
+		_tmp20_ = _tmp19_->message;
+		_tmp21_ = g_strdup_printf ("Error closing socket: %s", _tmp20_);
+		_tmp22_ = _tmp21_;
+		yrcd_yrcd_server_log (_tmp18_, _tmp22_);
+		_g_free0 (_tmp22_);
 		_g_error_free0 (e);
 	}
 	__finally4:
@@ -805,7 +838,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 	_tmp22__length1 = args_length1;
 	_tmp23_ = _tmp22_[1];
 	yrcd_yrcd_user_set_nick (self, _tmp23_);
-	_tmp24_ = yrcd_yrcd_user_isnickset (self);
+	_tmp24_ = self->priv->_nick_set;
 	if (!_tmp24_) {
 		yrcdyrcd_server* _tmp25_ = NULL;
 		gint _tmp26_ = 0;
@@ -820,6 +853,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		_tmp29_ = _tmp28_;
 		yrcd_yrcd_server_log (_tmp25_, _tmp29_);
 		_g_free0 (_tmp29_);
+		yrcd_yrcd_user_set_nick_set (self, TRUE);
 		_tmp30_ = self->priv->_user_set;
 		if (_tmp30_) {
 			yrcd_yrcd_user_reg_finished (self);
@@ -1030,7 +1064,7 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 		yrcd_yrcd_user_set_realname (self, _tmp25_);
 		_g_free0 (_tmp25_);
 		yrcd_yrcd_user_set_user_set (self, TRUE);
-		_tmp26_ = yrcd_yrcd_user_isnickset (self);
+		_tmp26_ = self->priv->_nick_set;
 		if (_tmp26_) {
 			yrcd_yrcd_user_reg_finished (self);
 		}
@@ -1791,6 +1825,25 @@ void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value) {
 }
 
 
+gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self) {
+	gboolean result;
+	gboolean _tmp0_ = FALSE;
+	g_return_val_if_fail (self != NULL, FALSE);
+	_tmp0_ = self->priv->_nick_set;
+	result = _tmp0_;
+	return result;
+}
+
+
+void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value) {
+	gboolean _tmp0_ = FALSE;
+	g_return_if_fail (self != NULL);
+	_tmp0_ = value;
+	self->priv->_nick_set = _tmp0_;
+	g_object_notify ((GObject *) self, "nick-set");
+}
+
+
 static void yrcd_yrcd_user_class_init (yrcdyrcd_userClass * klass) {
 	yrcd_yrcd_user_parent_class = g_type_class_peek_parent (klass);
 	g_type_class_add_private (klass, sizeof (yrcdyrcd_userPrivate));
@@ -1806,6 +1859,7 @@ static void yrcd_yrcd_user_class_init (yrcdyrcd_userClass * klass) {
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_IDENT, g_param_spec_string ("ident", "ident", "ident", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_REALNAME, g_param_spec_string ("realname", "realname", "realname", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_USER_SET, g_param_spec_boolean ("user-set", "user-set", "user-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_NICK_SET, g_param_spec_boolean ("nick-set", "nick-set", "nick-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 }
 
 
@@ -1876,6 +1930,9 @@ static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_
 		case YRCD_YRCD_USER_USER_SET:
 		g_value_set_boolean (value, yrcd_yrcd_user_get_user_set (self));
 		break;
+		case YRCD_YRCD_USER_NICK_SET:
+		g_value_set_boolean (value, yrcd_yrcd_user_get_nick_set (self));
+		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 		break;
@@ -1913,6 +1970,9 @@ static void _vala_yrcd_yrcd_user_set_property (GObject * object, guint property_
 		break;
 		case YRCD_YRCD_USER_USER_SET:
 		yrcd_yrcd_user_set_user_set (self, g_value_get_boolean (value));
+		break;
+		case YRCD_YRCD_USER_NICK_SET:
+		yrcd_yrcd_user_set_nick_set (self, g_value_get_boolean (value));
 		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);

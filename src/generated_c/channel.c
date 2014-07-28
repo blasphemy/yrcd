@@ -133,8 +133,10 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_RPL_TOPIC 332
 #define YRCD_RPL_TOPICWHOTIME 333
 void yrcd_yrcd_channel_fire_names (yrcdyrcd_channel* self, yrcdyrcd_user* user);
+void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
 #define YRCD_RPL_NAMEPLY 353
 #define YRCD_RPL_ENDOFNAMES 366
+void yrcd_yrcd_channel_privmsg (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
 static void yrcd_yrcd_channel_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_channel_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
 static void _vala_yrcd_yrcd_channel_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
@@ -327,6 +329,49 @@ gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user
 }
 
 
+void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg) {
+	GList* _tmp0_ = NULL;
+	yrcdyrcd_user* _tmp9_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	g_return_if_fail (msg != NULL);
+	_tmp0_ = self->users;
+	{
+		GList* k_collection = NULL;
+		GList* k_it = NULL;
+		k_collection = _tmp0_;
+		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
+			yrcdyrcd_user* _tmp1_ = NULL;
+			yrcdyrcd_user* k = NULL;
+			_tmp1_ = _g_object_ref0 ((yrcdyrcd_user*) k_it->data);
+			k = _tmp1_;
+			{
+				yrcdyrcd_user* _tmp2_ = NULL;
+				yrcdyrcd_user* _tmp3_ = NULL;
+				gchar* _tmp4_ = NULL;
+				gchar* _tmp5_ = NULL;
+				const gchar* _tmp6_ = NULL;
+				gchar* _tmp7_ = NULL;
+				gchar* _tmp8_ = NULL;
+				_tmp2_ = k;
+				_tmp3_ = user;
+				_tmp4_ = yrcd_yrcd_user_get_hostmask (_tmp3_);
+				_tmp5_ = _tmp4_;
+				_tmp6_ = msg;
+				_tmp7_ = g_strdup_printf (":%s QUIT :%s", _tmp5_, _tmp6_);
+				_tmp8_ = _tmp7_;
+				yrcd_yrcd_user_send_line (_tmp2_, _tmp8_);
+				_g_free0 (_tmp8_);
+				_g_free0 (_tmp5_);
+				_g_object_unref0 (k);
+			}
+		}
+	}
+	_tmp9_ = user;
+	self->users = g_list_remove (self->users, _tmp9_);
+}
+
+
 void yrcd_yrcd_channel_set_topic (yrcdyrcd_channel* self, const gchar* newtopic, const gchar* hostmask) {
 	const gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
@@ -416,6 +461,74 @@ void yrcd_yrcd_channel_fire_names (yrcdyrcd_channel* self, yrcdyrcd_user* user) 
 	yrcd_yrcd_user_fire_numeric (_tmp13_, YRCD_RPL_ENDOFNAMES, _tmp14_, NULL);
 	_g_free0 (resp);
 	_g_string_free0 (builder);
+}
+
+
+void yrcd_yrcd_channel_privmsg (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg) {
+	gchar* to_send = NULL;
+	yrcdyrcd_user* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	const gchar* _tmp3_ = NULL;
+	const gchar* _tmp4_ = NULL;
+	gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
+	yrcdyrcd_server* _tmp7_ = NULL;
+	const gchar* _tmp8_ = NULL;
+	const gchar* _tmp9_ = NULL;
+	const gchar* _tmp10_ = NULL;
+	const gchar* _tmp11_ = NULL;
+	gchar* _tmp12_ = NULL;
+	gchar* _tmp13_ = NULL;
+	GList* _tmp14_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	g_return_if_fail (msg != NULL);
+	_tmp0_ = user;
+	_tmp1_ = yrcd_yrcd_user_get_hostmask (_tmp0_);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = self->priv->_name;
+	_tmp4_ = msg;
+	_tmp5_ = g_strdup_printf (":%s PRIVMSG %s :%s", _tmp2_, _tmp3_, _tmp4_);
+	_tmp6_ = _tmp5_;
+	_g_free0 (_tmp2_);
+	to_send = _tmp6_;
+	_tmp7_ = self->server;
+	_tmp8_ = self->priv->_name;
+	_tmp9_ = string_to_string (_tmp8_);
+	_tmp10_ = msg;
+	_tmp11_ = string_to_string (_tmp10_);
+	_tmp12_ = g_strconcat ("channel ", _tmp9_, " sending message ", _tmp11_, NULL);
+	_tmp13_ = _tmp12_;
+	yrcd_yrcd_server_log (_tmp7_, _tmp13_);
+	_g_free0 (_tmp13_);
+	_tmp14_ = self->users;
+	{
+		GList* k_collection = NULL;
+		GList* k_it = NULL;
+		k_collection = _tmp14_;
+		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
+			yrcdyrcd_user* _tmp15_ = NULL;
+			yrcdyrcd_user* k = NULL;
+			_tmp15_ = _g_object_ref0 ((yrcdyrcd_user*) k_it->data);
+			k = _tmp15_;
+			{
+				yrcdyrcd_user* _tmp16_ = NULL;
+				yrcdyrcd_user* _tmp17_ = NULL;
+				_tmp16_ = k;
+				_tmp17_ = user;
+				if (_tmp16_ != _tmp17_) {
+					yrcdyrcd_user* _tmp18_ = NULL;
+					const gchar* _tmp19_ = NULL;
+					_tmp18_ = k;
+					_tmp19_ = to_send;
+					yrcd_yrcd_user_send_line (_tmp18_, _tmp19_);
+				}
+				_g_object_unref0 (k);
+			}
+		}
+	}
+	_g_free0 (to_send);
 }
 
 

@@ -51,6 +51,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 #define YRCD_RPL_MOTD 372
 #define YRCD_RPL_MOTDSTART 375
 #define YRCD_RPL_ENDOFMOTD 376
+#define YRCD_ERR_NOSUCHCHANNEL 403
 #define YRCD_ERR_UNKNOWNCOMMAND 421
 #define YRCD_ERR_NONICKNAMEGIVEN 431
 #define YRCD_ERR_NICKNAMEINUSE 433
@@ -79,6 +80,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	GeeHashMap* _tmp14_ = NULL;
 	GeeHashMap* _tmp15_ = NULL;
 	GeeHashMap* _tmp16_ = NULL;
+	GeeHashMap* _tmp17_ = NULL;
 	self = (yrcdyrcd_numeric_wrapper*) g_object_new (object_type, NULL);
 	_tmp0_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) YRCD_RPL_WELCOME), "Welcome to the Internet Relay Network %s!%s@%s");
@@ -103,17 +105,19 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	_tmp10_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp10_, (gpointer) ((gintptr) YRCD_RPL_ENDOFMOTD), ":End of /MOTD command.");
 	_tmp11_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp11_, (gpointer) ((gintptr) YRCD_ERR_UNKNOWNCOMMAND), "%s :Unkown command");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp11_, (gpointer) ((gintptr) YRCD_ERR_NOSUCHCHANNEL), "%s :No such channel");
 	_tmp12_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp12_, (gpointer) ((gintptr) YRCD_ERR_NONICKNAMEGIVEN), "No nickname given");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp12_, (gpointer) ((gintptr) YRCD_ERR_UNKNOWNCOMMAND), "%s :Unkown command");
 	_tmp13_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp13_, (gpointer) ((gintptr) YRCD_ERR_NICKNAMEINUSE), "%s :Nickname is already in use");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp13_, (gpointer) ((gintptr) YRCD_ERR_NONICKNAMEGIVEN), "No nickname given");
 	_tmp14_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp14_, (gpointer) ((gintptr) YRCD_ERR_ERRONEOUSNICKNAME), "%s :Erroneous nickname");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp14_, (gpointer) ((gintptr) YRCD_ERR_NICKNAMEINUSE), "%s :Nickname is already in use");
 	_tmp15_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp15_, (gpointer) ((gintptr) YRCD_ERR_NEEDMOREPARAMS), "%s :Not enough parameters");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp15_, (gpointer) ((gintptr) YRCD_ERR_ERRONEOUSNICKNAME), "%s :Erroneous nickname");
 	_tmp16_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp16_, (gpointer) ((gintptr) YRCD_ERR_ALREADYREGISTRED), "You may not reregister");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp16_, (gpointer) ((gintptr) YRCD_ERR_NEEDMOREPARAMS), "%s :Not enough parameters");
+	_tmp17_ = self->numerics;
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp17_, (gpointer) ((gintptr) YRCD_ERR_ALREADYREGISTRED), "You may not reregister");
 	return self;
 }
 
