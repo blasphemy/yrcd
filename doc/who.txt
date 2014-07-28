@@ -1,0 +1,45 @@
+Trying 2604:180:2::fdac:ef2f...
+Connected to irc.notroll.net.
+Escape character is '^]'.
+:presentday.notroll.me NOTICE * :*** Checking ident...
+:presentday.notroll.me NOTICE * :*** Looking up your hostname...
+:presentday.notroll.me NOTICE * :*** No ident response
+:presentday.notroll.me NOTICE * :*** Found your hostname
+:presentday.notroll.me 001 test Welcome to the NoTrollPlzNet IRC Network test!~test@ipv6.atlanta.the-beach.co
+:presentday.notroll.me 002 test :Your host is presentday.notroll.me, running version kylie-8.97
+:presentday.notroll.me 003 test :This server was created Mon Jun 30 2014 at 14:24:35 EDT
+:presentday.notroll.me 004 test presentday.notroll.me juno-kylie-8.97 iorz AIabehimnoqtv
+:presentday.notroll.me 005 test MODES=5 RFC2812 AWAYLEN=100 CHANNELLEN=50 FNC TOPICLEN=1000 NICKLEN=32 MAXLIST=AIabehikloqv:1000 CHANLIMIT=#:100 MAXTARGETS=1 CASEMAPPING=rfc1459 :are supported by this server
+:presentday.notroll.me 005 test PREFIX=(qaohv)~&@%+ KICKLEN=300 CHANTYPES=# NETWORK=NoTrollPlzNet EXCEPTS=e CHANMODES=AIbe,i,,mnt INVEX=I :are supported by this server
+:presentday.notroll.me 251 test :There are 0 users and 16 invisible on 4 servers
+:presentday.notroll.me 252 test 1 :operators online
+:presentday.notroll.me 254 test 2 :channels formed
+:presentday.notroll.me 255 test I have 5 clients and 1 servers
+:presentday.notroll.me 265 test 5 9 :Current local users 5, max 9
+:presentday.notroll.me 266 test 16 24 :Current global users 16, max 24
+:presentday.notroll.me 250 test :Highest connection count: 10 (9 clients) (155 connections received)
+:presentday.notroll.me 422 test :MOTD file is missing
+:test MODE test :+i
+:test!~test@ipv6.atlanta.the-beach.co JOIN #k
+:presentday.notroll.me 332 test #k :where's ruin | rip brenden 1996-2014 | powered by dcwi® public access | Looking for someone to make atheme support for juno ($10 budget) | Welcome to NoTrollPlzNet :3 | http://notroll.net | Join us on TeamSpeak: ts.notroll.net | Mon-Fri: 10 PM – 5 AM CET | Wknd: 6 PM – 9 AM CET | http://github.com/cooper/agnie | [04:15pm] -Global- [Network Notice] Alice (nenolod) - We will be upgrading to "juno-ircd" in 5 seconds. | why dont you communist linux users just shove all this open source bullshit up your own ass. no one cares about compiling or configuring or any of the bullshit you constantly jack off about. we normal people just care about chatting and sending email to our friends and viewing the www so please shut the fuck up about foxfire or whatever the fuck tangent you're going off on. | ＴＨＥ　ＰＬＥＡＳＵＲＥ　ＯＦ　ＢＥＩＮＧ　ＣＵＭＭＥＤ　ＩＮＳＩＤＥ | <Hakkin> can you not do things like that anymore mitch? I have high functioning autism and I can't tell when people are joking around | why dont you communist UTAU users just shove all this text to speech bullshit up your own ass. no one cares about vocaloid or configuring TTS libraries or any of the bullshit you constantly jack off about. we normal people just care about chatting and sending email to our friends and viewing the www so please shut the fuck up about microsoft sam or whatever the fuck tangent you're going off on.
+:presentday.notroll.me 333 test #k mitch!~mitchell@localhost 1405386141
+:presentday.notroll.me 353 test = #k :@kyle &clayfreeman Tyrone &Hakkin FRESH tfa_ daniel ruin ~mitch &Guest GL beyond np OoO test 
+:presentday.notroll.me 366 test #k :End of NAMES list
+:presentday.notroll.me 352 test #k ~mitchell c-69-246-242-207.hsd1.in.comcast.net k.notroll.net mitch H~ :0 Mitchell Cooper
+:presentday.notroll.me 352 test #k ~beyond 198.52.200.31 presentday.notroll.me beyond H :0 Brandon
+:presentday.notroll.me 352 test #k ~GL sunrise.overdrive.pw presentday.notroll.me GL G :0 move along, nothing to see here!
+:presentday.notroll.me 352 test #k ~test ipv6.atlanta.the-beach.co presentday.notroll.me test H :0 test
+:presentday.notroll.me 352 test #k ~ruin vocaloid.eu k.notroll.net ruin H :0 ruin
+:presentday.notroll.me 352 test #k ~tfa omghex.com k.notroll.net tfa_ H :0 tfa
+:presentday.notroll.me 352 test #k ~thermocrat littlegreenmen.armory.com sterling.notroll.me FRESH H :0 The Gayest
+:presentday.notroll.me 352 test #k ~clay clayfreeman.com sterling.notroll.me clayfreeman H& :0 Clay Freeman
+:presentday.notroll.me 352 test #k ~OoO 173.216.255.211 k.notroll.net OoO H :0 OoO
+:presentday.notroll.me 352 test #k ~Hakkin 192.73.237.200 sterling.notroll.me Hakkin H& :0 Hakkin
+:presentday.notroll.me 352 test #k ~np c1105158-4066.cloud-ip-15.rlygd.net k.notroll.net np H :0 now playing
+:presentday.notroll.me 352 test #k ~tyrone atlanta.the-beach.co k.notroll.net Tyrone H :0 Tyrone B. Stoned
+:presentday.notroll.me 352 test #k ~kyle nj.fed.bz presentday.notroll.me kyle H@* :0 kyle
+:presentday.notroll.me 352 test #k ~daniel ipv6.atlanta.the-beach.co presentday.notroll.me daniel H :0 daniel
+:presentday.notroll.me 352 test #k ~textual cpe-071-071-233-245.carolina.res.rr.com sterling.notroll.me Guest H& :0 Textual User
+:presentday.notroll.me 315 test #k :End of WHO list
+:test!~test@ipv6.atlanta.the-beach.co QUIT :~ leaving
+ERROR :Closing Link: ipv6.atlanta.the-beach.co (~ leaving)
