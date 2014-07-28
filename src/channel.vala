@@ -49,5 +49,14 @@ namespace yrcd {
       user.fire_numeric(RPL_NAMEPLY, name, resp);
       user.fire_numeric(RPL_ENDOFNAMES, name);
     }
+    public void privmsg(yrcd_user user, string msg) {
+      string to_send = ":%s PRIVMSG %s :%s".printf(user.get_hostmask(), name, msg);
+      foreach (yrcd_user k in users) {
+        if (k != user) {
+          k.send_line(to_send);
+        }
+      }
+    }
+
   }
 }

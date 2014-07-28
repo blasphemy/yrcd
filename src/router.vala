@@ -77,11 +77,17 @@ namespace yrcd {
       } else if (args.length < 3) {
         //todo ERR_NOTEXTTOSEND
       } else {
-        foreach(string k in yrcd_constants.chan_prefixes) {
-          if (k in args[1]) {
-            //presumably targeting a channel...
-            return;
+        if (valid_chan_name(args[1])) {
+          //looks like we're targetting a channel.
+          StringBuilder builder = new StringBuilder();
+          int i;
+          for (i=2;i<args.length;i++) {
+            builder.append(args[i]);
+            builder.append(" ");
           }
+          string msg = builder.str.strip();
+          yrcd_channel chan = server.get_channel_by_name(args[1]);
+          chan.privmsg(user, msg);
         }
         //if we've reached this point, it's possible it could be a user
         if (server.get_user_by_nick == null) {
