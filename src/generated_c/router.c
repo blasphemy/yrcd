@@ -42,6 +42,7 @@ typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
 typedef struct _yrcdyrcd_user yrcdyrcd_user;
 typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 #define _g_free0(var) (var = (g_free (var), NULL))
+#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
 #define YRCD_TYPE_YRCD_CHANNEL (yrcd_yrcd_channel_get_type ())
 #define YRCD_YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channel))
@@ -52,7 +53,6 @@ typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 
 typedef struct _yrcdyrcd_channel yrcdyrcd_channel;
 typedef struct _yrcdyrcd_channelClass yrcdyrcd_channelClass;
-#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
 #define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
@@ -170,6 +170,7 @@ void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
 void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
+void yrcd_yrcd_router_quit_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_router_privmsg_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
@@ -177,6 +178,7 @@ void yrcd_yrcd_router_join_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, 
 void yrcd_yrcd_user_fire_motd (yrcdyrcd_user* self);
 void yrcd_yrcd_router_ping_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
 void yrcd_yrcd_router_unknown_command_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1);
+gchar* yrcd_yrcd_router_assemble (yrcdyrcd_router* self, gint position, gchar** args, int args_length1);
 void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_ERR_UNKNOWNCOMMAND 421
@@ -348,19 +350,30 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 				default:
 				{
 					yrcdyrcd_user* _tmp33_ = NULL;
-					yrcdyrcd_server* _tmp34_ = NULL;
-					yrcdyrcd_server* _tmp35_ = NULL;
-					yrcdyrcd_user* _tmp36_ = NULL;
+					gchar** _tmp34_ = NULL;
+					gint _tmp34__length1 = 0;
 					_tmp33_ = user;
-					_tmp34_ = yrcd_yrcd_user_get_server (_tmp33_);
-					_tmp35_ = _tmp34_;
-					yrcd_yrcd_server_log (_tmp35_, "Received QUIT");
-					_tmp36_ = user;
-					yrcd_yrcd_user_quit (_tmp36_, NULL);
+					_tmp34_ = args;
+					_tmp34__length1 = args_length1;
+					yrcd_yrcd_router_quit_handler (self, _tmp33_, _tmp34_, _tmp34__length1);
 					break;
 				}
 			}
 		} else if (_tmp32_ == ((0 != _tmp31_label1) ? _tmp31_label1 : (_tmp31_label1 = g_quark_from_static_string ("nick")))) {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp35_ = NULL;
+					gchar** _tmp36_ = NULL;
+					gint _tmp36__length1 = 0;
+					_tmp35_ = user;
+					_tmp36_ = args;
+					_tmp36__length1 = args_length1;
+					yrcd_yrcd_user_change_nick (_tmp35_, _tmp36_, _tmp36__length1);
+					break;
+				}
+			}
+		} else if (_tmp32_ == ((0 != _tmp31_label2) ? _tmp31_label2 : (_tmp31_label2 = g_quark_from_static_string ("user")))) {
 			switch (0) {
 				default:
 				{
@@ -370,11 +383,11 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					_tmp37_ = user;
 					_tmp38_ = args;
 					_tmp38__length1 = args_length1;
-					yrcd_yrcd_user_change_nick (_tmp37_, _tmp38_, _tmp38__length1);
+					yrcd_yrcd_user_user_reg (_tmp37_, _tmp38_, _tmp38__length1);
 					break;
 				}
 			}
-		} else if (_tmp32_ == ((0 != _tmp31_label2) ? _tmp31_label2 : (_tmp31_label2 = g_quark_from_static_string ("user")))) {
+		} else if (_tmp32_ == ((0 != _tmp31_label3) ? _tmp31_label3 : (_tmp31_label3 = g_quark_from_static_string ("privmsg")))) {
 			switch (0) {
 				default:
 				{
@@ -384,11 +397,11 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					_tmp39_ = user;
 					_tmp40_ = args;
 					_tmp40__length1 = args_length1;
-					yrcd_yrcd_user_user_reg (_tmp39_, _tmp40_, _tmp40__length1);
+					yrcd_yrcd_router_privmsg_handler (self, _tmp39_, _tmp40_, _tmp40__length1);
 					break;
 				}
 			}
-		} else if (_tmp32_ == ((0 != _tmp31_label3) ? _tmp31_label3 : (_tmp31_label3 = g_quark_from_static_string ("privmsg")))) {
+		} else if (_tmp32_ == ((0 != _tmp31_label4) ? _tmp31_label4 : (_tmp31_label4 = g_quark_from_static_string ("join")))) {
 			switch (0) {
 				default:
 				{
@@ -398,21 +411,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					_tmp41_ = user;
 					_tmp42_ = args;
 					_tmp42__length1 = args_length1;
-					yrcd_yrcd_router_privmsg_handler (self, _tmp41_, _tmp42_, _tmp42__length1);
-					break;
-				}
-			}
-		} else if (_tmp32_ == ((0 != _tmp31_label4) ? _tmp31_label4 : (_tmp31_label4 = g_quark_from_static_string ("join")))) {
-			switch (0) {
-				default:
-				{
-					yrcdyrcd_user* _tmp43_ = NULL;
-					gchar** _tmp44_ = NULL;
-					gint _tmp44__length1 = 0;
-					_tmp43_ = user;
-					_tmp44_ = args;
-					_tmp44__length1 = args_length1;
-					yrcd_yrcd_router_join_handler (self, _tmp43_, _tmp44_, _tmp44__length1);
+					yrcd_yrcd_router_join_handler (self, _tmp41_, _tmp42_, _tmp42__length1);
 					break;
 				}
 			}
@@ -427,13 +426,27 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 			switch (0) {
 				default:
 				{
-					yrcdyrcd_user* _tmp45_ = NULL;
-					_tmp45_ = user;
-					yrcd_yrcd_user_fire_motd (_tmp45_);
+					yrcdyrcd_user* _tmp43_ = NULL;
+					_tmp43_ = user;
+					yrcd_yrcd_user_fire_motd (_tmp43_);
 					break;
 				}
 			}
 		} else if (_tmp32_ == ((0 != _tmp31_label7) ? _tmp31_label7 : (_tmp31_label7 = g_quark_from_static_string ("ping")))) {
+			switch (0) {
+				default:
+				{
+					yrcdyrcd_user* _tmp44_ = NULL;
+					gchar** _tmp45_ = NULL;
+					gint _tmp45__length1 = 0;
+					_tmp44_ = user;
+					_tmp45_ = args;
+					_tmp45__length1 = args_length1;
+					yrcd_yrcd_router_ping_handler (self, _tmp44_, _tmp45_, _tmp45__length1);
+					break;
+				}
+			}
+		} else {
 			switch (0) {
 				default:
 				{
@@ -443,21 +456,7 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 					_tmp46_ = user;
 					_tmp47_ = args;
 					_tmp47__length1 = args_length1;
-					yrcd_yrcd_router_ping_handler (self, _tmp46_, _tmp47_, _tmp47__length1);
-					break;
-				}
-			}
-		} else {
-			switch (0) {
-				default:
-				{
-					yrcdyrcd_user* _tmp48_ = NULL;
-					gchar** _tmp49_ = NULL;
-					gint _tmp49__length1 = 0;
-					_tmp48_ = user;
-					_tmp49_ = args;
-					_tmp49__length1 = args_length1;
-					yrcd_yrcd_router_unknown_command_handler (self, _tmp48_, _tmp49_, _tmp49__length1);
+					yrcd_yrcd_router_unknown_command_handler (self, _tmp46_, _tmp47_, _tmp47__length1);
 					break;
 				}
 			}
@@ -465,6 +464,115 @@ void yrcd_yrcd_router_route (yrcdyrcd_router* self, yrcdyrcd_user* user, const g
 	}
 	args = (_vala_array_free (args, args_length1, (GDestroyNotify) g_free), NULL);
 	_g_free0 (stripped);
+}
+
+
+gchar* yrcd_yrcd_router_assemble (yrcdyrcd_router* self, gint position, gchar** args, int args_length1) {
+	gchar* result = NULL;
+	gint i = 0;
+	GString* builder = NULL;
+	GString* _tmp0_ = NULL;
+	GString* _tmp11_ = NULL;
+	const gchar* _tmp12_ = NULL;
+	gchar* _tmp13_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = g_string_new ("");
+	builder = _tmp0_;
+	{
+		gint _tmp1_ = 0;
+		gboolean _tmp2_ = FALSE;
+		_tmp1_ = position;
+		i = _tmp1_;
+		_tmp2_ = TRUE;
+		while (TRUE) {
+			gint _tmp4_ = 0;
+			gchar** _tmp5_ = NULL;
+			gint _tmp5__length1 = 0;
+			GString* _tmp6_ = NULL;
+			gchar** _tmp7_ = NULL;
+			gint _tmp7__length1 = 0;
+			gint _tmp8_ = 0;
+			const gchar* _tmp9_ = NULL;
+			GString* _tmp10_ = NULL;
+			if (!_tmp2_) {
+				gint _tmp3_ = 0;
+				_tmp3_ = i;
+				i = _tmp3_ + 1;
+			}
+			_tmp2_ = FALSE;
+			_tmp4_ = i;
+			_tmp5_ = args;
+			_tmp5__length1 = args_length1;
+			if (!(_tmp4_ < _tmp5__length1)) {
+				break;
+			}
+			_tmp6_ = builder;
+			_tmp7_ = args;
+			_tmp7__length1 = args_length1;
+			_tmp8_ = i;
+			_tmp9_ = _tmp7_[_tmp8_];
+			g_string_append (_tmp6_, _tmp9_);
+			_tmp10_ = builder;
+			g_string_append (_tmp10_, " ");
+		}
+	}
+	_tmp11_ = builder;
+	_tmp12_ = _tmp11_->str;
+	_tmp13_ = string_strip (_tmp12_);
+	result = _tmp13_;
+	_g_string_free0 (builder);
+	return result;
+}
+
+
+void yrcd_yrcd_router_quit_handler (yrcdyrcd_router* self, yrcdyrcd_user* user, gchar** args, int args_length1) {
+	gchar** _tmp0_ = NULL;
+	gint _tmp0__length1 = 0;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	_tmp0_ = args;
+	_tmp0__length1 = args_length1;
+	if (_tmp0__length1 < 2) {
+		yrcdyrcd_user* _tmp1_ = NULL;
+		_tmp1_ = user;
+		yrcd_yrcd_user_quit (_tmp1_, NULL);
+	} else {
+		GString* builder = NULL;
+		GString* _tmp2_ = NULL;
+		GString* _tmp3_ = NULL;
+		gchar** _tmp4_ = NULL;
+		gint _tmp4__length1 = 0;
+		gchar* _tmp5_ = NULL;
+		gchar* _tmp6_ = NULL;
+		GString* _tmp7_ = NULL;
+		const gchar* _tmp8_ = NULL;
+		gboolean _tmp9_ = FALSE;
+		yrcdyrcd_user* _tmp11_ = NULL;
+		GString* _tmp12_ = NULL;
+		const gchar* _tmp13_ = NULL;
+		_tmp2_ = g_string_new ("");
+		builder = _tmp2_;
+		_tmp3_ = builder;
+		_tmp4_ = args;
+		_tmp4__length1 = args_length1;
+		_tmp5_ = yrcd_yrcd_router_assemble (self, 1, _tmp4_, _tmp4__length1);
+		_tmp6_ = _tmp5_;
+		g_string_append (_tmp3_, _tmp6_);
+		_g_free0 (_tmp6_);
+		_tmp7_ = builder;
+		_tmp8_ = _tmp7_->str;
+		_tmp9_ = g_str_has_prefix (_tmp8_, ":");
+		if (_tmp9_) {
+			GString* _tmp10_ = NULL;
+			_tmp10_ = builder;
+			g_string_erase (_tmp10_, (gssize) 0, (gssize) 1);
+		}
+		_tmp11_ = user;
+		_tmp12_ = builder;
+		_tmp13_ = _tmp12_->str;
+		yrcd_yrcd_user_quit (_tmp11_, _tmp13_);
+		_g_string_free0 (builder);
+	}
 }
 
 
