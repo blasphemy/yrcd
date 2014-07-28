@@ -85,6 +85,9 @@ namespace yrcd {
             builder.append(args[i]);
             builder.append(" ");
           }
+          if (builder.str.has_prefix(":")) {
+            builder.erase(0,1);
+          }
           string msg = builder.str.strip();
           yrcd_channel chan = server.get_channel_by_name(args[1]);
           chan.privmsg(user, msg);
