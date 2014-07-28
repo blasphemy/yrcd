@@ -15,6 +15,7 @@ namespace yrcd {
       numerics[RPL_MOTD] = ":- %s";
       numerics[RPL_MOTDSTART] = ":- %s Message of the day -";
       numerics[RPL_ENDOFMOTD] = ":End of /MOTD command.";
+      numerics[ERR_NOSUCHCHANNEL] = "%s :No such channel";
       numerics[ERR_UNKNOWNCOMMAND] = "%s :Unkown command";
       numerics[ERR_NONICKNAMEGIVEN] = "No nickname given";
       numerics[ERR_NICKNAMEINUSE] = "%s :Nickname is already in use";
@@ -40,6 +41,7 @@ namespace yrcd {
   public const int RPL_MOTD = 372;
   public const int RPL_MOTDSTART = 375;
   public const int RPL_ENDOFMOTD = 376;
+  public const int ERR_NOSUCHCHANNEL = 403;
   public const int ERR_UNKNOWNCOMMAND = 421;
   public const int ERR_NONICKNAMEGIVEN = 431;
   public const int ERR_ERRONEOUSNICKNAME = 432;

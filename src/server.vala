@@ -82,34 +82,6 @@ namespace yrcd {
       channellist[chan.name.down()] = chan;
       return chan;
     }
-    public bool valid_chan_name (string chan) {
-      bool valid = true;
-      bool has_prefix = false;
-      /*
-         Checking if a channel is valid:
-         1. check if it has a valid prefix as defined in constants.vala
-         2. check if it has any forbidden characters as in constants.vala
-         3. combine the previous factors, along with checking if there's already a channel by the name.
-      */
-      foreach (string k in yrcd_constants.chan_prefixes) { //step 1
-        if (chan.has_prefix(k)) {
-          has_prefix = true;
-          break;
-        }
-      }
-      foreach (string k in yrcd_constants.chan_forbidden) { //step 2
-        if (k in chan) {
-          valid = false;
-          break;
-        } 
-      }
-      if (has_prefix && valid && get_channel_by_name(chan) == null) { //step 3
-        valid = true;
-      } else {
-        valid = false;
-      }
-      return valid;
-    }
     public string secure_hash (string in) {
       StringBuilder builder = new StringBuilder();
       //hash the input data with salt
