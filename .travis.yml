@@ -30,3 +30,4 @@ script:
   - make
 notifications:
   irc: "sterling.notroll.me#yrcd"
+  irc: "atlanta.the-beach.co#yrcd"
