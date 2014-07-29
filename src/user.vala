@@ -21,6 +21,7 @@ namespace yrcd {
     public string ip; 
     public string host;
     public HashMap<string,yrcd_channel> user_chanels;
+    public GLib.List<uint> asources;
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
       user_chanels = new HashMap<string,yrcd_channel>();
       sock = conn;
@@ -35,7 +36,8 @@ namespace yrcd {
       hostname_lookup.begin();
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + server.config.ping_invertal;
-      ping_timer = setup_ping_timer();
+      asources = new GLib.List<uint>();
+      asources.append(setup_ping_timer());
       registered = false;
       server.log("User connected from %s with ID %d".printf(host,id));
     }
@@ -81,10 +83,11 @@ namespace yrcd {
         foreach (yrcd_channel k in user_chanels.values) {
           k.quit(this, msg);
         }
-        if (ping_timer > 0) {
-          Source.remove(ping_timer);
+        send_line("Error :Closing Link: %s (%s)".printf(host,msg));
+        foreach (uint k in asources) {
+          Source.remove(k);
+          asources.remove(k);
         }
-        send_line("ERROR :Closing Link: %s (%s)".printf(host,msg));
         sock.get_socket().close();
         server.remove_user(id);
       } catch (Error e) {
@@ -185,16 +188,33 @@ namespace yrcd {
       string hm = nick + "!" + ident + "@" + k;
       return hm;
     }
-    public void send_line(string msg) {
+    private void send_to_socket (string msg) {
       try {
         if (sock.get_socket().is_connected()) {
-          dos.put_string("%s\n".printf(msg));
-          server.log("sending to %s: %s".printf(nick, msg));
-        }
+          dos.put_string(msg);
+          server.log("Send to %s: %s".printf(nick,msg));
+        } 
       } catch (Error e) {
-        server.log("Error sending message to UID %d : %s".printf(id,e.message));
-        quit("Error");
+        server.log("Error sending data to socket %s".printf(e.message));
       }
+
+    }
+    public void send_line(string msg, int p = Priority.DEFAULT) {
+      asources.append(Idle.add(() => {
+          send_to_socket("%s\n".printf(msg));
+          return false;
+          }, p));
+      /*
+         try {
+         if (sock.get_socket().is_connected()) {
+         dos.put_string("%s\n".printf(msg));
+         server.log("sending to %s: %s".printf(nick, msg));
+         }
+         } catch (Error e) {
+         server.log("Error sending message to UID %d : %s".printf(id,e.message));
+         quit("Error");
+         }
+       */
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
