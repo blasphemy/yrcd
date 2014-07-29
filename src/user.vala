@@ -80,6 +80,7 @@ namespace yrcd {
           k.quit(this, msg);
         }
         Source.remove(ping_timer);
+        send_line("ERROR :Closing Link: %s (%s)".printf(host,msg));
         sock.get_socket().close();
         server.remove_user(id);
       } catch (Error e) {

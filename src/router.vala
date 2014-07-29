@@ -43,9 +43,21 @@ namespace yrcd {
           case "ping" :
             ping_handler(user, args);
             break;
+          case "who" :
+            who_handler(user, args);
+            break;
           default :
             unknown_command_handler(user, args);
             break;
+        }
+      }
+    }
+    public void who_handler(yrcd_user user, string[] args) {
+      int i;
+      for (i = 1; i < args.length; i++) {
+        yrcd_channel chan = server.get_channel_by_name(args[i]);
+        if (chan.users.length() > 0) {
+          chan.who_response(user);
         }
       }
     }
