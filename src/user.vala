@@ -88,6 +88,9 @@ namespace yrcd {
       }
     }
     public void part (yrcd_channel chan, string? msg) {
+      if (user_chanels[chan.name] == null) {
+        return;
+      }
       if (msg == null) {
         msg = "Leaving";
       }
