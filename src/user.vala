@@ -174,7 +174,7 @@ namespace yrcd {
       awaiting_response = false;
     }
     public string get_hostmask() { //TODO Implement cloaking here.
-      string hm = nick + "!" + ident + "@" + host;
+      string hm = nick + "!" + ident + "@" + cloaked_host();
       return hm;
     }
     public void send_line(string msg) {
@@ -237,6 +237,20 @@ namespace yrcd {
         fire_numeric(RPL_MOTD, line);
       }
       fire_numeric(RPL_ENDOFMOTD);
+    }
+    public string cloaked_host() {
+      StringBuilder builder = new StringBuilder();
+      int i;
+      string[] j = host.split(".");
+      builder.append(server.secure_hash(j[0]));
+      builder.append(".");
+      for (i=1;i<j.length;i++) {
+        builder.append(j[i]);
+        if (i<j.length -1) {
+          builder.append(".");
+        }
+      }
+      return builder.str;
     }
   }
 }

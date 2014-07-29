@@ -7,3 +7,4 @@ server_name=test.net.local
 ping_invertal=45
 motd_path=motd.txt
 host_salt=s3krit
+cloaking=true
