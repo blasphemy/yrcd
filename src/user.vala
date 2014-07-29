@@ -91,8 +91,8 @@ namespace yrcd {
       if (msg == null) {
         msg = "Leaving";
       }
+      user_chanels.unset(chan.name);
       chan.part(this,msg);
-      user_chanels.remove(chan);
     }
     public void join (yrcd_channel chan) {
       if (chan.add_user(this)) {
