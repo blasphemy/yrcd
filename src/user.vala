@@ -87,6 +87,13 @@ namespace yrcd {
         server.log("Error closing socket: %s".printf(e.message));
       }
     }
+    public void part (yrcd_channel chan, string? msg) {
+      if (msg == null) {
+        msg = "Leaving";
+      }
+      chan.part(this,msg);
+      user_chanels.remove(chan);
+    }
     public void join (yrcd_channel chan) {
       if (chan.add_user(this)) {
         string name = chan.name;
