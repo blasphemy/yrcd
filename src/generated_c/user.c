@@ -582,10 +582,14 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 	{
 		const gchar* _tmp0_ = NULL;
 		guint _tmp13_ = 0U;
-		GSocketConnection* _tmp14_ = NULL;
-		GSocket* _tmp15_ = NULL;
-		yrcdyrcd_server* _tmp16_ = NULL;
-		gint _tmp17_ = 0;
+		const gchar* _tmp14_ = NULL;
+		const gchar* _tmp15_ = NULL;
+		gchar* _tmp16_ = NULL;
+		gchar* _tmp17_ = NULL;
+		GSocketConnection* _tmp18_ = NULL;
+		GSocket* _tmp19_ = NULL;
+		yrcdyrcd_server* _tmp20_ = NULL;
+		gint _tmp21_ = 0;
 		_tmp0_ = msg;
 		if (_tmp0_ == NULL) {
 			msg = "Quit";
@@ -631,34 +635,40 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		}
 		_tmp13_ = self->priv->ping_timer;
 		g_source_remove (_tmp13_);
-		_tmp14_ = self->priv->_sock;
-		_tmp15_ = g_socket_connection_get_socket (_tmp14_);
-		g_socket_close (_tmp15_, &_inner_error_);
+		_tmp14_ = self->host;
+		_tmp15_ = msg;
+		_tmp16_ = g_strdup_printf ("ERROR :Closing Link: %s (%s)", _tmp14_, _tmp15_);
+		_tmp17_ = _tmp16_;
+		yrcd_yrcd_user_send_line (self, _tmp17_);
+		_g_free0 (_tmp17_);
+		_tmp18_ = self->priv->_sock;
+		_tmp19_ = g_socket_connection_get_socket (_tmp18_);
+		g_socket_close (_tmp19_, &_inner_error_);
 		if (_inner_error_ != NULL) {
 			goto __catch4_g_error;
 		}
-		_tmp16_ = self->priv->_server;
-		_tmp17_ = self->priv->_id;
-		yrcd_yrcd_server_remove_user (_tmp16_, _tmp17_);
+		_tmp20_ = self->priv->_server;
+		_tmp21_ = self->priv->_id;
+		yrcd_yrcd_server_remove_user (_tmp20_, _tmp21_);
 	}
 	goto __finally4;
 	__catch4_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp18_ = NULL;
-		GError* _tmp19_ = NULL;
-		const gchar* _tmp20_ = NULL;
-		gchar* _tmp21_ = NULL;
-		gchar* _tmp22_ = NULL;
+		yrcdyrcd_server* _tmp22_ = NULL;
+		GError* _tmp23_ = NULL;
+		const gchar* _tmp24_ = NULL;
+		gchar* _tmp25_ = NULL;
+		gchar* _tmp26_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp18_ = self->priv->_server;
-		_tmp19_ = e;
-		_tmp20_ = _tmp19_->message;
-		_tmp21_ = g_strdup_printf ("Error closing socket: %s", _tmp20_);
-		_tmp22_ = _tmp21_;
-		yrcd_yrcd_server_log (_tmp18_, _tmp22_);
-		_g_free0 (_tmp22_);
+		_tmp22_ = self->priv->_server;
+		_tmp23_ = e;
+		_tmp24_ = _tmp23_->message;
+		_tmp25_ = g_strdup_printf ("Error closing socket: %s", _tmp24_);
+		_tmp26_ = _tmp25_;
+		yrcd_yrcd_server_log (_tmp22_, _tmp26_);
+		_g_free0 (_tmp26_);
 		_g_error_free0 (e);
 	}
 	__finally4:

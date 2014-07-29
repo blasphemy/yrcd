@@ -65,6 +65,7 @@ typedef struct _yrcdyrcd_config yrcdyrcd_config;
 typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
+typedef struct _yrcdyrcd_userPrivate yrcdyrcd_userPrivate;
 
 struct _yrcdyrcd_channel {
 	GObject parent_instance;
@@ -101,6 +102,18 @@ struct _yrcdyrcd_server {
 };
 
 struct _yrcdyrcd_serverClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdyrcd_user {
+	GObject parent_instance;
+	yrcdyrcd_userPrivate * priv;
+	gchar* ip;
+	gchar* host;
+	GeeHashMap* user_chanels;
+};
+
+struct _yrcdyrcd_userClass {
 	GObjectClass parent_class;
 };
 
@@ -142,6 +155,11 @@ void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const 
 #define YRCD_RPL_NAMEPLY 353
 #define YRCD_RPL_ENDOFNAMES 366
 void yrcd_yrcd_channel_privmsg (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
+void yrcd_yrcd_channel_who_response (yrcdyrcd_channel* self, yrcdyrcd_user* user);
+#define YRCD_RPL_WHOREPLY 352
+const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
+#define YRCD_RPL_ENDOFWHO 315
 static void yrcd_yrcd_channel_finalize (GObject* obj);
 static void _vala_yrcd_yrcd_channel_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
 static void _vala_yrcd_yrcd_channel_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
@@ -258,20 +276,6 @@ static gboolean __lambda4_ (yrcdyrcd_channel* self) {
 		result = FALSE;
 		return result;
 	} else {
-		yrcdyrcd_server* _tmp10_ = NULL;
-		const gchar* _tmp11_ = NULL;
-		GList* _tmp12_ = NULL;
-		guint _tmp13_ = 0U;
-		gchar* _tmp14_ = NULL;
-		gchar* _tmp15_ = NULL;
-		_tmp10_ = self->server;
-		_tmp11_ = self->priv->_name;
-		_tmp12_ = self->users;
-		_tmp13_ = g_list_length (_tmp12_);
-		_tmp14_ = g_strdup_printf ("channel %s has %u users, all good here..", _tmp11_, _tmp13_);
-		_tmp15_ = _tmp14_;
-		yrcd_yrcd_server_log (_tmp10_, _tmp15_);
-		_g_free0 (_tmp15_);
 		result = TRUE;
 		return result;
 	}
@@ -600,6 +604,68 @@ void yrcd_yrcd_channel_privmsg (yrcdyrcd_channel* self, yrcdyrcd_user* user, con
 		}
 	}
 	_g_free0 (to_send);
+}
+
+
+void yrcd_yrcd_channel_who_response (yrcdyrcd_channel* self, yrcdyrcd_user* user) {
+	GList* _tmp0_ = NULL;
+	yrcdyrcd_user* _tmp19_ = NULL;
+	const gchar* _tmp20_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	_tmp0_ = self->users;
+	{
+		GList* k_collection = NULL;
+		GList* k_it = NULL;
+		k_collection = _tmp0_;
+		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
+			yrcdyrcd_user* _tmp1_ = NULL;
+			yrcdyrcd_user* k = NULL;
+			_tmp1_ = _g_object_ref0 ((yrcdyrcd_user*) k_it->data);
+			k = _tmp1_;
+			{
+				yrcdyrcd_user* _tmp2_ = NULL;
+				const gchar* _tmp3_ = NULL;
+				yrcdyrcd_user* _tmp4_ = NULL;
+				const gchar* _tmp5_ = NULL;
+				const gchar* _tmp6_ = NULL;
+				yrcdyrcd_user* _tmp7_ = NULL;
+				const gchar* _tmp8_ = NULL;
+				yrcdyrcd_server* _tmp9_ = NULL;
+				yrcdyrcd_config* _tmp10_ = NULL;
+				const gchar* _tmp11_ = NULL;
+				const gchar* _tmp12_ = NULL;
+				yrcdyrcd_user* _tmp13_ = NULL;
+				const gchar* _tmp14_ = NULL;
+				const gchar* _tmp15_ = NULL;
+				yrcdyrcd_user* _tmp16_ = NULL;
+				const gchar* _tmp17_ = NULL;
+				const gchar* _tmp18_ = NULL;
+				_tmp2_ = user;
+				_tmp3_ = self->priv->_name;
+				_tmp4_ = k;
+				_tmp5_ = yrcd_yrcd_user_get_ident (_tmp4_);
+				_tmp6_ = _tmp5_;
+				_tmp7_ = k;
+				_tmp8_ = _tmp7_->host;
+				_tmp9_ = self->server;
+				_tmp10_ = _tmp9_->config;
+				_tmp11_ = yrcd_yrcd_config_get_sname (_tmp10_);
+				_tmp12_ = _tmp11_;
+				_tmp13_ = k;
+				_tmp14_ = yrcd_yrcd_user_get_nick (_tmp13_);
+				_tmp15_ = _tmp14_;
+				_tmp16_ = k;
+				_tmp17_ = yrcd_yrcd_user_get_realname (_tmp16_);
+				_tmp18_ = _tmp17_;
+				yrcd_yrcd_user_fire_numeric (_tmp2_, YRCD_RPL_WHOREPLY, _tmp3_, _tmp6_, _tmp8_, _tmp12_, _tmp15_, "H", ":0", _tmp18_, NULL);
+				_g_object_unref0 (k);
+			}
+		}
+	}
+	_tmp19_ = user;
+	_tmp20_ = self->priv->_name;
+	yrcd_yrcd_user_fire_numeric (_tmp19_, YRCD_RPL_ENDOFWHO, _tmp20_, NULL);
 }
 
 
