@@ -176,10 +176,11 @@ namespace yrcd {
       }
       while (user.sock.get_socket().is_connected()) {
         try {
+          string msg;
           if (user.registered) {
-            string msg = yield user.dis.read_line_async (Priority.DEFAULT);
+            msg = yield user.dis.read_line_async (Priority.DEFAULT);
           } else {
-            string msg = yield user.read_line_async (Priority.LOW);
+            msg = yield user.dis.read_line_async (Priority.LOW);
           }
           route(user, msg);
         } catch (Error e) {
