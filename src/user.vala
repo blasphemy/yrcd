@@ -81,7 +81,9 @@ namespace yrcd {
         foreach (yrcd_channel k in user_chanels.values) {
           k.quit(this, msg);
         }
-        Source.remove(ping_timer);
+        if (ping_timer > 0) {
+          Source.remove(ping_timer);
+        }
         send_line("ERROR :Closing Link: %s (%s)".printf(host,msg));
         sock.get_socket().close();
         server.remove_user(id);
@@ -185,7 +187,9 @@ namespace yrcd {
     }
     public void send_line(string msg) {
       try {
-        dos.put_string("%s\n".printf(msg));
+        if (sock.get_socket().is_connected()) {
+          dos.put_string("%s\n".printf(msg));
+        }
         server.log("sending to %s: %s".printf(nick,msg));
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
