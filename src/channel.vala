@@ -9,7 +9,7 @@ namespace yrcd {
     public int64 topictime;
     public string topic_host;
     public yrcd_server server;
-    public GLib.List<yrcd_user> users;
+    public GLib.List<weak yrcd_user> users;
     public uint timer;
     public yrcd_channel(yrcd_server _server, string _name) {
       server = _server;
