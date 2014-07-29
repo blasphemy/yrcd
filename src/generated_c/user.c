@@ -238,9 +238,11 @@ void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
 const gchar* yrcd_yrcd_config_get_sname (yrcdyrcd_config* self);
 void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
 void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
+void yrcd_yrcd_user_part (yrcdyrcd_user* self, yrcdyrcd_channel* chan, const gchar* msg);
+const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
+void yrcd_yrcd_channel_part (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
 void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan);
 gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
-const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
@@ -677,6 +679,31 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		g_clear_error (&_inner_error_);
 		return;
 	}
+}
+
+
+void yrcd_yrcd_user_part (yrcdyrcd_user* self, yrcdyrcd_channel* chan, const gchar* msg) {
+	const gchar* _tmp0_ = NULL;
+	GeeHashMap* _tmp1_ = NULL;
+	yrcdyrcd_channel* _tmp2_ = NULL;
+	const gchar* _tmp3_ = NULL;
+	const gchar* _tmp4_ = NULL;
+	yrcdyrcd_channel* _tmp5_ = NULL;
+	const gchar* _tmp6_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (chan != NULL);
+	_tmp0_ = msg;
+	if (_tmp0_ == NULL) {
+		msg = "Leaving";
+	}
+	_tmp1_ = self->user_chanels;
+	_tmp2_ = chan;
+	_tmp3_ = yrcd_yrcd_channel_get_name (_tmp2_);
+	_tmp4_ = _tmp3_;
+	gee_abstract_map_unset ((GeeAbstractMap*) _tmp1_, _tmp4_, NULL);
+	_tmp5_ = chan;
+	_tmp6_ = msg;
+	yrcd_yrcd_channel_part (_tmp5_, self, _tmp6_);
 }
 
 

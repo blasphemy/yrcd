@@ -152,6 +152,7 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_RPL_TOPICWHOTIME 333
 void yrcd_yrcd_channel_fire_names (yrcdyrcd_channel* self, yrcdyrcd_user* user);
 void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
+void yrcd_yrcd_channel_part (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
 #define YRCD_RPL_NAMEPLY 353
 #define YRCD_RPL_ENDOFNAMES 366
 void yrcd_yrcd_channel_privmsg (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
@@ -444,6 +445,51 @@ void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const 
 	}
 	_tmp9_ = user;
 	self->users = g_list_remove (self->users, _tmp9_);
+}
+
+
+void yrcd_yrcd_channel_part (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg) {
+	GList* _tmp0_ = NULL;
+	yrcdyrcd_user* _tmp10_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (user != NULL);
+	g_return_if_fail (msg != NULL);
+	_tmp0_ = self->users;
+	{
+		GList* k_collection = NULL;
+		GList* k_it = NULL;
+		k_collection = _tmp0_;
+		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
+			yrcdyrcd_user* _tmp1_ = NULL;
+			yrcdyrcd_user* k = NULL;
+			_tmp1_ = _g_object_ref0 ((yrcdyrcd_user*) k_it->data);
+			k = _tmp1_;
+			{
+				yrcdyrcd_user* _tmp2_ = NULL;
+				yrcdyrcd_user* _tmp3_ = NULL;
+				gchar* _tmp4_ = NULL;
+				gchar* _tmp5_ = NULL;
+				const gchar* _tmp6_ = NULL;
+				const gchar* _tmp7_ = NULL;
+				gchar* _tmp8_ = NULL;
+				gchar* _tmp9_ = NULL;
+				_tmp2_ = k;
+				_tmp3_ = user;
+				_tmp4_ = yrcd_yrcd_user_get_hostmask (_tmp3_);
+				_tmp5_ = _tmp4_;
+				_tmp6_ = self->priv->_name;
+				_tmp7_ = msg;
+				_tmp8_ = g_strdup_printf (":%s PART %s :%s", _tmp5_, _tmp6_, _tmp7_);
+				_tmp9_ = _tmp8_;
+				yrcd_yrcd_user_send_line (_tmp2_, _tmp9_);
+				_g_free0 (_tmp9_);
+				_g_free0 (_tmp5_);
+				_g_object_unref0 (k);
+			}
+		}
+	}
+	_tmp10_ = user;
+	self->users = g_list_remove (self->users, _tmp10_);
 }
 
 
