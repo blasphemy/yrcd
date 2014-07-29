@@ -191,7 +191,7 @@ namespace yrcd {
     private void send_to_socket (string msg) {
       try {
         if (sock.get_socket().is_connected()) {
-          dos.put_string("%s\n");
+          dos.put_string("%s\n".printf(msg));
           server.log("Send to %s: %s".printf(nick,msg));
         } 
       } catch (Error e) {
@@ -257,7 +257,7 @@ namespace yrcd {
       string msg = ":%s %.3d %s ".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
-      send_line(msg);
+      send_line(msg, Priority.LOW);
     }
     public void send_notice (string msg) {
       send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));
