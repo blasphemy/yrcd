@@ -191,7 +191,7 @@ namespace yrcd {
     private void send_to_socket (string msg) {
       try {
         if (sock.get_socket().is_connected()) {
-          dos.put_string(msg);
+          dos.put_string("%s\n");
           server.log("Send to %s: %s".printf(nick,msg));
         } 
       } catch (Error e) {
@@ -201,7 +201,7 @@ namespace yrcd {
     }
     public void send_line(string msg, int p = Priority.DEFAULT) {
       asources.append(Idle.add(() => {
-          send_to_socket("%s\n".printf(msg));
+          send_to_socket(msg);
           return false;
           }, p));
       /*
