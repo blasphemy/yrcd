@@ -46,11 +46,29 @@ namespace yrcd {
           case "who" :
             who_handler(user, args);
             break;
+          case "part" :
+            part_handler(user, args);
+            break;
           default :
             unknown_command_handler(user, args);
             break;
         }
       }
+    }
+    public void part_handler(yrcd_user user, string[] args) {
+      StringBuilder builder = new StringBuilder();
+      string msg;
+      if (args.length > 2) {
+        builder.append(assemble(2,args));
+        if (builder.str.has_prefix(":")) {
+          builder.erase(0,1);
+        }
+        msg = builder.str;
+      } else {
+        msg = null;
+      }
+      yrcd_channel chan = server.get_channel_by_name(args[1]);
+      user.part(chan, msg);
     }
     public void who_handler(yrcd_user user, string[] args) {
       int i;

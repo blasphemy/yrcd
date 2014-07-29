@@ -55,6 +55,12 @@ namespace yrcd {
       }
       users.remove(user);
     }
+    public void part(yrcd_user user, string msg) {
+      foreach(yrcd_user k in users) {
+        k.send_line(":%s PART %s :%s".printf(user.get_hostmask(),name,msg));
+      }
+      users.remove(user);
+    }
     public void set_topic(string newtopic, string hostmask) {
       topic = newtopic;
       topic_host = hostmask;
