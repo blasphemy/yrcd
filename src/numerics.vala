@@ -22,6 +22,7 @@ namespace yrcd {
       numerics[ERR_NONICKNAMEGIVEN] = "No nickname given";
       numerics[ERR_NICKNAMEINUSE] = "%s :Nickname is already in use";
       numerics[ERR_ERRONEOUSNICKNAME] = "%s :Erroneous nickname";
+      numerics[ERR_NOTREGISTERED] = ":You have not registered";
       numerics[ERR_NEEDMOREPARAMS] = "%s :Not enough parameters";
       numerics[ERR_ALREADYREGISTRED] = "You may not reregister";
     }
@@ -50,6 +51,7 @@ Easy.
   public const int ERR_NONICKNAMEGIVEN = 431;
   public const int ERR_ERRONEOUSNICKNAME = 432;
   public const int ERR_NICKNAMEINUSE = 433;
+  public const int ERR_NOTREGISTERED = 451;
   public const int ERR_NEEDMOREPARAMS = 461;
   public const int ERR_ALREADYREGISTRED = 462;
 

@@ -17,6 +17,7 @@ namespace yrcd {
     public string realname { get; set; }
     public bool user_set { get; set; }
     public bool nick_set { get; set; }
+    public bool registered { get; set; }
     public string ip; 
     public string host;
     public HashMap<string,yrcd_channel> user_chanels;
@@ -35,6 +36,7 @@ namespace yrcd {
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + server.config.ping_invertal;
       ping_timer = setup_ping_timer();
+      registered = false;
       server.log("User connected from %s with ID %d".printf(host,id));
     }
     private uint setup_ping_timer() {
@@ -159,6 +161,7 @@ namespace yrcd {
       }
     }
     public void reg_finished () {
+      registered = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(RPL_WELCOME, nick, ident, host);
       fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);

@@ -56,6 +56,10 @@ namespace yrcd {
       }
     }
     public void part_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       StringBuilder builder = new StringBuilder();
       string msg;
       if (args.length > 2) {
@@ -71,6 +75,10 @@ namespace yrcd {
       user.part(chan, msg);
     }
     public void who_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       int i;
       for (i = 1; i < args.length; i++) {
         yrcd_channel chan = server.get_channel_by_name(args[i]);
@@ -107,6 +115,10 @@ namespace yrcd {
       user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
     }
     public void join_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       if (args.length < 2) {
         user.fire_numeric(ERR_NEEDMOREPARAMS, "JOIN");
         return;
@@ -119,6 +131,10 @@ namespace yrcd {
       user.join(chan);
     }
     public void privmsg_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       /*
        * No plans to support sending to hostmasks for now.
        */
