@@ -174,7 +174,13 @@ namespace yrcd {
       awaiting_response = false;
     }
     public string get_hostmask() { //TODO Implement cloaking here.
-      string hm = nick + "!" + ident + "@" + cloaked_host();
+      string k;
+      if (server.config.cloaking) {
+        k = cloaked_host();
+      } else {
+        k = host;
+      }
+      string hm = nick + "!" + ident + "@" + k;
       return hm;
     }
     public void send_line(string msg) {
