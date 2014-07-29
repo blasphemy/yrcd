@@ -189,7 +189,7 @@ namespace yrcd {
         server.log("sending to %s: %s".printf(nick,msg));
       } catch (Error e) {
         server.log("Error sending message to UID %d : %s".printf(id,e.message));
-        quit("Error: %s".printf(e.message));
+        quit("Error");
       }
     }
     public async void hostname_lookup() {
