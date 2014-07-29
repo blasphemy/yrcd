@@ -57,12 +57,18 @@ namespace yrcd {
     }
     public void part_handler(yrcd_user user, string[] args) {
       StringBuilder builder = new StringBuilder();
-      builder.append(assemble(2,args));
-      if (builder.str.has_prefix(":")) {
-        builder.erase(0,1);
+      string msg;
+      if (args.length > 2) {
+        builder.append(assemble(2,args));
+        if (builder.str.has_prefix(":")) {
+          builder.erase(0,1);
+        }
+        msg = builder.str;
+      } else {
+        msg = null;
       }
       yrcd_channel chan = server.get_channel_by_name(args[1]);
-      user.part(chan, builder.str);
+      user.part(chan, msg);
     }
     public void who_handler(yrcd_user user, string[] args) {
       int i;

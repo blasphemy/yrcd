@@ -57,7 +57,7 @@ namespace yrcd {
     }
     public void part(yrcd_user user, string msg) {
       foreach(yrcd_user k in users) {
-        k.send_line(":%s PART :%s".printf(user.get_hostmask(),msg));
+        k.send_line(":%s PART %s :%s".printf(user.get_hostmask(),name,msg));
       }
       users.remove(user);
     }
