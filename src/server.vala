@@ -7,15 +7,10 @@ namespace yrcd {
     public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
     public HashMap<string, yrcd_channel> channellist;
     private int user_counter = 0;
-    private int cid_counter = 0;
     public int64 epoch;
     public int max_users = 0;
     public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
     public yrcd_config config;
-    public int new_cid() {
-      cid_counter++;
-      return cid_counter;
-    }
     public int new_userid() {
       user_counter++;
       return user_counter;
