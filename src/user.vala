@@ -204,17 +204,6 @@ namespace yrcd {
           send_to_socket(msg);
           return false;
           }, p));
-      /*
-         try {
-         if (sock.get_socket().is_connected()) {
-         dos.put_string("%s\n".printf(msg));
-         server.log("sending to %s: %s".printf(nick, msg));
-         }
-         } catch (Error e) {
-         server.log("Error sending message to UID %d : %s".printf(id,e.message));
-         quit("Error");
-         }
-       */
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
