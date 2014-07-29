@@ -58,7 +58,7 @@ namespace yrcd {
           if (awaiting_response) {
             quit("Ping timeout: %d seconds".printf(server.config.ping_invertal));
           } else {
-            send_line("PING :" + server.config.sname);
+            send_line("PING :" + server.config.sname, Priority.HIGH);
             awaiting_response = true;
           }
         }
