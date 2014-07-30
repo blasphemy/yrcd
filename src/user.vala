@@ -18,7 +18,7 @@ namespace yrcd {
     public bool nick_set { get; set; }
     public bool registered { get; set; }
     public string ip; 
-    public string host;
+    private string host;
     public HashMap<string,Channel> user_chanels;
     public GLib.List<uint> asources;
     public User (SocketConnection conn, Server _server) {
@@ -190,14 +190,9 @@ namespace yrcd {
       time_last_rcv = new DateTime.now_utc();
       awaiting_response = false;
     }
-    public string get_hostmask() { //TODO Implement cloaking here.
+    public string get_hostmask() {
       string k;
-      if (server.config.cloaking) {
-        k = cloaked_host();
-      } else {
-        k = host;
-      }
-      string hm = nick + "!" + ident + "@" + k;
+      string hm = nick + "!" + ident + "@" + get_host();
       return hm;
     }
     private void send_to_socket (string msg) {
@@ -269,6 +264,13 @@ namespace yrcd {
         fire_numeric(RPL_MOTD, line);
       }
       fire_numeric(RPL_ENDOFMOTD);
+    }
+    public string get_host() {
+      if (server.config.cloaking) {
+        return cloaked_host();
+      } else {
+        return host;
+      }
     }
     public string cloaked_host() {
       StringBuilder builder = new StringBuilder();

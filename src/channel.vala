@@ -89,7 +89,7 @@ namespace yrcd {
     public void who_response (User user) {
       foreach (User k in users) {
         //:presentday.notroll.me 352 test #k ~tyrone atlanta.the-beach.co k.notroll.net Tyrone H :0 Tyrone B. Stoned
-        user.fire_numeric(RPL_WHOREPLY, name, k.ident, k.host, server.config.sname, k.nick, "H", ":0", k.realname);
+        user.fire_numeric(RPL_WHOREPLY, name, k.ident, k.get_host(), server.config.sname, k.nick, "H", ":0", k.realname);
       }
       user.fire_numeric(RPL_ENDOFWHO, name);
     }
