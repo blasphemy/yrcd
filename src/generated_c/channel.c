@@ -41,7 +41,7 @@ typedef struct _yrcdyrcd_user yrcdyrcd_user;
 typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
-#define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
+#define _g_list_free0(var) ((var == NULL) ? NULL : (var = (g_list_free (var), NULL)))
 typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
 
 #define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
@@ -111,6 +111,7 @@ struct _yrcdyrcd_user {
 	gchar* ip;
 	gchar* host;
 	GeeHashMap* user_chanels;
+	GList* asources;
 };
 
 struct _yrcdyrcd_userClass {
@@ -128,8 +129,6 @@ enum  {
 	YRCD_YRCD_CHANNEL_DUMMY_PROPERTY,
 	YRCD_YRCD_CHANNEL_NAME
 };
-static void _g_object_unref0_ (gpointer var);
-static void _g_list_free__g_object_unref0_ (GList* self);
 yrcdyrcd_channel* yrcd_yrcd_channel_new (yrcdyrcd_server* _server, const gchar* _name);
 yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, yrcdyrcd_server* _server, const gchar* _name);
 void yrcd_yrcd_channel_set_topic (yrcdyrcd_channel* self, const gchar* newtopic, const gchar* hostmask);
@@ -140,13 +139,13 @@ void yrcd_yrcd_channel_set_name (yrcdyrcd_channel* self, const gchar* value);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
 void yrcd_yrcd_channel_check_users (yrcdyrcd_channel* self);
-static gboolean __lambda4_ (yrcdyrcd_channel* self);
+static gboolean __lambda5_ (yrcdyrcd_channel* self);
 void yrcd_yrcd_server_remove_channel (yrcdyrcd_server* self, const gchar* name);
-static gboolean ___lambda4__gsource_func (gpointer self);
+static gboolean ___lambda5__gsource_func (gpointer self);
 gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
-void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg);
+void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg, gint p);
 void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
 #define YRCD_RPL_TOPIC 332
 #define YRCD_RPL_TOPICWHOTIME 333
@@ -166,17 +165,6 @@ static void _vala_yrcd_yrcd_channel_get_property (GObject * object, guint proper
 static void _vala_yrcd_yrcd_channel_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
-
-
-static void _g_object_unref0_ (gpointer var) {
-	(var == NULL) ? NULL : (var = (g_object_unref (var), NULL));
-}
-
-
-static void _g_list_free__g_object_unref0_ (GList* self) {
-	g_list_foreach (self, (GFunc) _g_object_unref0_, NULL);
-	g_list_free (self);
-}
 
 
 static gpointer _g_object_ref0 (gpointer self) {
@@ -235,7 +223,7 @@ yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, yrcdyrcd_serve
 	_tmp14_ = _tmp13_;
 	yrcd_yrcd_server_log (_tmp10_, _tmp14_);
 	_g_free0 (_tmp14_);
-	__g_list_free__g_object_unref0_0 (self->users);
+	_g_list_free0 (self->users);
 	self->users = NULL;
 	yrcd_yrcd_channel_check_users (self);
 	return self;
@@ -247,7 +235,7 @@ yrcdyrcd_channel* yrcd_yrcd_channel_new (yrcdyrcd_server* _server, const gchar* 
 }
 
 
-static gboolean __lambda4_ (yrcdyrcd_channel* self) {
+static gboolean __lambda5_ (yrcdyrcd_channel* self) {
 	gboolean result = FALSE;
 	GList* _tmp0_ = NULL;
 	guint _tmp1_ = 0U;
@@ -283,9 +271,9 @@ static gboolean __lambda4_ (yrcdyrcd_channel* self) {
 }
 
 
-static gboolean ___lambda4__gsource_func (gpointer self) {
+static gboolean ___lambda5__gsource_func (gpointer self) {
 	gboolean result;
-	result = __lambda4_ ((yrcdyrcd_channel*) self);
+	result = __lambda5_ ((yrcdyrcd_channel*) self);
 	return result;
 }
 
@@ -293,7 +281,7 @@ static gboolean ___lambda4__gsource_func (gpointer self) {
 void yrcd_yrcd_channel_check_users (yrcdyrcd_channel* self) {
 	guint _tmp0_ = 0U;
 	g_return_if_fail (self != NULL);
-	_tmp0_ = g_timeout_add_seconds_full (G_PRIORITY_DEFAULT, (guint) 30, ___lambda4__gsource_func, g_object_ref (self), g_object_unref);
+	_tmp0_ = g_timeout_add_seconds_full (G_PRIORITY_DEFAULT, (guint) 30, ___lambda5__gsource_func, g_object_ref (self), g_object_unref);
 	self->timer = _tmp0_;
 }
 
@@ -304,16 +292,15 @@ gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user
 	yrcdyrcd_user* _tmp1_ = NULL;
 	GList* _tmp2_ = NULL;
 	yrcdyrcd_user* _tmp14_ = NULL;
-	yrcdyrcd_user* _tmp15_ = NULL;
-	GList* _tmp16_ = NULL;
-	yrcdyrcd_user* _tmp26_ = NULL;
+	GList* _tmp15_ = NULL;
+	yrcdyrcd_user* _tmp25_ = NULL;
+	const gchar* _tmp26_ = NULL;
 	const gchar* _tmp27_ = NULL;
-	const gchar* _tmp28_ = NULL;
-	yrcdyrcd_user* _tmp29_ = NULL;
+	yrcdyrcd_user* _tmp28_ = NULL;
+	const gchar* _tmp29_ = NULL;
 	const gchar* _tmp30_ = NULL;
-	const gchar* _tmp31_ = NULL;
-	gint64 _tmp32_ = 0LL;
-	yrcdyrcd_user* _tmp33_ = NULL;
+	gint64 _tmp31_ = 0LL;
+	yrcdyrcd_user* _tmp32_ = NULL;
 	g_return_val_if_fail (self != NULL, FALSE);
 	g_return_val_if_fail (user != NULL, FALSE);
 	_tmp0_ = self->users;
@@ -351,55 +338,54 @@ gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user
 		return result;
 	}
 	_tmp14_ = user;
-	_tmp15_ = _g_object_ref0 (_tmp14_);
-	self->users = g_list_append (self->users, _tmp15_);
-	_tmp16_ = self->users;
+	self->users = g_list_append (self->users, _tmp14_);
+	_tmp15_ = self->users;
 	{
 		GList* k_collection = NULL;
 		GList* k_it = NULL;
-		k_collection = _tmp16_;
+		k_collection = _tmp15_;
 		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
-			yrcdyrcd_user* _tmp17_ = NULL;
+			yrcdyrcd_user* _tmp16_ = NULL;
 			yrcdyrcd_user* k = NULL;
-			_tmp17_ = _g_object_ref0 ((yrcdyrcd_user*) k_it->data);
-			k = _tmp17_;
+			_tmp16_ = _g_object_ref0 ((yrcdyrcd_user*) k_it->data);
+			k = _tmp16_;
 			{
 				gchar* msg = NULL;
-				yrcdyrcd_user* _tmp18_ = NULL;
+				yrcdyrcd_user* _tmp17_ = NULL;
+				gchar* _tmp18_ = NULL;
 				gchar* _tmp19_ = NULL;
-				gchar* _tmp20_ = NULL;
-				const gchar* _tmp21_ = NULL;
+				const gchar* _tmp20_ = NULL;
+				gchar* _tmp21_ = NULL;
 				gchar* _tmp22_ = NULL;
-				gchar* _tmp23_ = NULL;
-				yrcdyrcd_user* _tmp24_ = NULL;
-				const gchar* _tmp25_ = NULL;
-				_tmp18_ = user;
-				_tmp19_ = yrcd_yrcd_user_get_hostmask (_tmp18_);
-				_tmp20_ = _tmp19_;
-				_tmp21_ = self->priv->_name;
-				_tmp22_ = g_strdup_printf (":%s JOIN %s", _tmp20_, _tmp21_);
-				_tmp23_ = _tmp22_;
-				_g_free0 (_tmp20_);
-				msg = _tmp23_;
-				_tmp24_ = k;
-				_tmp25_ = msg;
-				yrcd_yrcd_user_send_line (_tmp24_, _tmp25_);
+				yrcdyrcd_user* _tmp23_ = NULL;
+				const gchar* _tmp24_ = NULL;
+				_tmp17_ = user;
+				_tmp18_ = yrcd_yrcd_user_get_hostmask (_tmp17_);
+				_tmp19_ = _tmp18_;
+				_tmp20_ = self->priv->_name;
+				_tmp21_ = g_strdup_printf (":%s JOIN %s", _tmp19_, _tmp20_);
+				_tmp22_ = _tmp21_;
+				_g_free0 (_tmp19_);
+				msg = _tmp22_;
+				_tmp23_ = k;
+				_tmp24_ = msg;
+				yrcd_yrcd_user_send_line (_tmp23_, _tmp24_, G_PRIORITY_LOW);
 				_g_free0 (msg);
 				_g_object_unref0 (k);
 			}
 		}
 	}
-	_tmp26_ = user;
-	_tmp27_ = self->priv->_name;
-	_tmp28_ = self->topic;
-	yrcd_yrcd_user_fire_numeric (_tmp26_, YRCD_RPL_TOPIC, _tmp27_, _tmp28_, NULL);
-	_tmp29_ = user;
-	_tmp30_ = self->priv->_name;
-	_tmp31_ = self->topic_host;
-	_tmp32_ = self->topictime;
-	yrcd_yrcd_user_fire_numeric (_tmp29_, YRCD_RPL_TOPICWHOTIME, _tmp30_, _tmp31_, _tmp32_, NULL);
-	_tmp33_ = user;
-	yrcd_yrcd_channel_fire_names (self, _tmp33_);
+	_tmp25_ = user;
+	_tmp26_ = self->priv->_name;
+	_tmp27_ = self->topic;
+	yrcd_yrcd_user_fire_numeric (_tmp25_, YRCD_RPL_TOPIC, _tmp26_, _tmp27_, NULL);
+	_tmp28_ = user;
+	_tmp29_ = self->priv->_name;
+	_tmp30_ = self->topic_host;
+	_tmp31_ = self->topictime;
+	yrcd_yrcd_user_fire_numeric (_tmp28_, YRCD_RPL_TOPICWHOTIME, _tmp29_, _tmp30_, _tmp31_, NULL);
+	_tmp32_ = user;
+	yrcd_yrcd_channel_fire_names (self, _tmp32_);
 	result = TRUE;
 	return result;
 }
@@ -436,7 +422,7 @@ void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const 
 				_tmp6_ = msg;
 				_tmp7_ = g_strdup_printf (":%s QUIT :%s", _tmp5_, _tmp6_);
 				_tmp8_ = _tmp7_;
-				yrcd_yrcd_user_send_line (_tmp2_, _tmp8_);
+				yrcd_yrcd_user_send_line (_tmp2_, _tmp8_, G_PRIORITY_LOW);
 				_g_free0 (_tmp8_);
 				_g_free0 (_tmp5_);
 				_g_object_unref0 (k);
@@ -481,7 +467,7 @@ void yrcd_yrcd_channel_part (yrcdyrcd_channel* self, yrcdyrcd_user* user, const 
 				_tmp7_ = msg;
 				_tmp8_ = g_strdup_printf (":%s PART %s :%s", _tmp5_, _tmp6_, _tmp7_);
 				_tmp9_ = _tmp8_;
-				yrcd_yrcd_user_send_line (_tmp2_, _tmp9_);
+				yrcd_yrcd_user_send_line (_tmp2_, _tmp9_, G_PRIORITY_LOW);
 				_g_free0 (_tmp9_);
 				_g_free0 (_tmp5_);
 				_g_object_unref0 (k);
@@ -643,7 +629,7 @@ void yrcd_yrcd_channel_privmsg (yrcdyrcd_channel* self, yrcdyrcd_user* user, con
 					const gchar* _tmp19_ = NULL;
 					_tmp18_ = k;
 					_tmp19_ = to_send;
-					yrcd_yrcd_user_send_line (_tmp18_, _tmp19_);
+					yrcd_yrcd_user_send_line (_tmp18_, _tmp19_, G_PRIORITY_HIGH);
 				}
 				_g_object_unref0 (k);
 			}
@@ -760,7 +746,7 @@ static void yrcd_yrcd_channel_finalize (GObject* obj) {
 	_g_free0 (self->topic);
 	_g_free0 (self->topic_host);
 	_g_object_unref0 (self->server);
-	__g_list_free__g_object_unref0_0 (self->users);
+	_g_list_free0 (self->users);
 	G_OBJECT_CLASS (yrcd_yrcd_channel_parent_class)->finalize (obj);
 }
 

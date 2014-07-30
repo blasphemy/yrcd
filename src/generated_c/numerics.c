@@ -58,6 +58,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 #define YRCD_ERR_NONICKNAMEGIVEN 431
 #define YRCD_ERR_NICKNAMEINUSE 433
 #define YRCD_ERR_ERRONEOUSNICKNAME 432
+#define YRCD_ERR_NOTREGISTERED 451
 #define YRCD_ERR_NEEDMOREPARAMS 461
 #define YRCD_ERR_ALREADYREGISTRED 462
 static void yrcd_yrcd_numeric_wrapper_finalize (GObject* obj);
@@ -85,6 +86,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	GeeHashMap* _tmp17_ = NULL;
 	GeeHashMap* _tmp18_ = NULL;
 	GeeHashMap* _tmp19_ = NULL;
+	GeeHashMap* _tmp20_ = NULL;
 	self = (yrcdyrcd_numeric_wrapper*) g_object_new (object_type, NULL);
 	_tmp0_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) YRCD_RPL_WELCOME), "Welcome to the Internet Relay Network %s!%s@%s");
@@ -123,9 +125,11 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	_tmp17_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp17_, (gpointer) ((gintptr) YRCD_ERR_ERRONEOUSNICKNAME), "%s :Erroneous nickname");
 	_tmp18_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp18_, (gpointer) ((gintptr) YRCD_ERR_NEEDMOREPARAMS), "%s :Not enough parameters");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp18_, (gpointer) ((gintptr) YRCD_ERR_NOTREGISTERED), ":You have not registered");
 	_tmp19_ = self->numerics;
-	gee_abstract_map_set ((GeeAbstractMap*) _tmp19_, (gpointer) ((gintptr) YRCD_ERR_ALREADYREGISTRED), "You may not reregister");
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp19_, (gpointer) ((gintptr) YRCD_ERR_NEEDMOREPARAMS), "%s :Not enough parameters");
+	_tmp20_ = self->numerics;
+	gee_abstract_map_set ((GeeAbstractMap*) _tmp20_, (gpointer) ((gintptr) YRCD_ERR_ALREADYREGISTRED), "You may not reregister");
 	return self;
 }
 

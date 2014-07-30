@@ -35,7 +35,9 @@ struct _yrcdyrcd_config {
 	gint listen_ips_length1;
 	GList* motd;
 	gint ping_invertal;
+	gint max_users;
 	gboolean config_error;
+	gboolean cloaking;
 	gchar* salt;
 };
 
@@ -128,6 +130,12 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 		GKeyFile* _tmp35_ = NULL;
 		gchar* _tmp36_ = NULL;
 		gchar* _tmp37_ = NULL;
+		gboolean _tmp38_ = FALSE;
+		GKeyFile* _tmp39_ = NULL;
+		gboolean _tmp40_ = FALSE;
+		gint _tmp41_ = 0;
+		GKeyFile* _tmp42_ = NULL;
+		gint _tmp43_ = 0;
 		_tmp0_ = self->priv->file;
 		_tmp1_ = filepath;
 		g_key_file_load_from_file (_tmp0_, _tmp1_, G_KEY_FILE_NONE, &_inner_error_);
@@ -282,6 +290,38 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 		_tmp34_ = NULL;
 		_g_free0 (self->salt);
 		self->salt = _tmp37_;
+		_tmp39_ = self->priv->file;
+		_tmp40_ = g_key_file_get_boolean (_tmp39_, "ServerVariables", "cloaking", &_inner_error_);
+		_tmp38_ = _tmp40_;
+		if (_inner_error_ != NULL) {
+			_g_free0 (_tmp34_);
+			_g_free0 (motd_line);
+			_g_object_unref0 (dis);
+			_g_object_unref0 (_tmp20_);
+			_g_object_unref0 (motdfile);
+			_g_free0 (motdpath);
+			_tmp11_ = (_vala_array_free (_tmp11_, _tmp11__length1, (GDestroyNotify) g_free), NULL);
+			tmplist = (g_free (tmplist), NULL);
+			_g_free0 (_tmp3_);
+			goto __catch0_g_error;
+		}
+		self->cloaking = _tmp38_;
+		_tmp42_ = self->priv->file;
+		_tmp43_ = g_key_file_get_integer (_tmp42_, "ServerVariables", "max_connections", &_inner_error_);
+		_tmp41_ = _tmp43_;
+		if (_inner_error_ != NULL) {
+			_g_free0 (_tmp34_);
+			_g_free0 (motd_line);
+			_g_object_unref0 (dis);
+			_g_object_unref0 (_tmp20_);
+			_g_object_unref0 (motdfile);
+			_g_free0 (motdpath);
+			_tmp11_ = (_vala_array_free (_tmp11_, _tmp11__length1, (GDestroyNotify) g_free), NULL);
+			tmplist = (g_free (tmplist), NULL);
+			_g_free0 (_tmp3_);
+			goto __catch0_g_error;
+		}
+		self->max_users = _tmp41_;
 		_g_free0 (_tmp34_);
 		_g_free0 (motd_line);
 		_g_object_unref0 (dis);
@@ -296,20 +336,20 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 	__catch0_g_error:
 	{
 		GError* e = NULL;
-		FILE* _tmp38_ = NULL;
-		GError* _tmp39_ = NULL;
-		const gchar* _tmp40_ = NULL;
-		gchar* _tmp41_ = NULL;
-		gchar* _tmp42_ = NULL;
+		FILE* _tmp44_ = NULL;
+		GError* _tmp45_ = NULL;
+		const gchar* _tmp46_ = NULL;
+		gchar* _tmp47_ = NULL;
+		gchar* _tmp48_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp38_ = stdout;
-		_tmp39_ = e;
-		_tmp40_ = _tmp39_->message;
-		_tmp41_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp40_);
-		_tmp42_ = _tmp41_;
-		fprintf (_tmp38_, "%s", _tmp42_);
-		_g_free0 (_tmp42_);
+		_tmp44_ = stdout;
+		_tmp45_ = e;
+		_tmp46_ = _tmp45_->message;
+		_tmp47_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp46_);
+		_tmp48_ = _tmp47_;
+		fprintf (_tmp44_, "%s", _tmp48_);
+		_g_free0 (_tmp48_);
 		self->config_error = TRUE;
 		_g_error_free0 (e);
 	}

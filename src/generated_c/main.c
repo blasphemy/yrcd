@@ -39,7 +39,9 @@ struct _yrcdyrcd_config {
 	gint listen_ips_length1;
 	GList* motd;
 	gint ping_invertal;
+	gint max_users;
 	gboolean config_error;
+	gboolean cloaking;
 	gchar* salt;
 };
 

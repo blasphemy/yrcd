@@ -97,7 +97,6 @@ struct _yrcdyrcd_serverPrivate {
 	GSocketService* ss;
 	yrcdyrcd_router* router;
 	gint user_counter;
-	gint cid_counter;
 };
 
 struct _yrcdyrcd_config {
@@ -108,7 +107,9 @@ struct _yrcdyrcd_config {
 	gint listen_ips_length1;
 	GList* motd;
 	gint ping_invertal;
+	gint max_users;
 	gboolean config_error;
+	gboolean cloaking;
 	gchar* salt;
 };
 
@@ -131,7 +132,6 @@ enum  {
 };
 yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_new (void);
 yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type);
-gint yrcd_yrcd_server_new_cid (yrcdyrcd_server* self);
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
 void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
 yrcdyrcd_server* yrcd_yrcd_server_new (yrcdyrcd_config* _config);
@@ -149,7 +149,6 @@ void yrcd_yrcd_router_process_user (yrcdyrcd_router* self, GSocketConnection* co
 void yrcd_yrcd_router_process_user_finish (yrcdyrcd_router* self, GAsyncResult* _res_);
 gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
 yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
-gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
 const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
 yrcdyrcd_channel* yrcd_yrcd_server_get_channel_by_name (yrcdyrcd_server* self, const gchar* nametocheck);
 yrcdyrcd_channel* yrcd_yrcd_channel_new (yrcdyrcd_server* _server, const gchar* _name);
@@ -157,19 +156,6 @@ yrcdyrcd_channel* yrcd_yrcd_channel_construct (GType object_type, yrcdyrcd_serve
 const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
 gchar* yrcd_yrcd_server_secure_hash (yrcdyrcd_server* self, const gchar* in);
 static void yrcd_yrcd_server_finalize (GObject* obj);
-
-
-gint yrcd_yrcd_server_new_cid (yrcdyrcd_server* self) {
-	gint result = 0;
-	gint _tmp0_ = 0;
-	gint _tmp1_ = 0;
-	g_return_val_if_fail (self != NULL, 0);
-	_tmp0_ = self->priv->cid_counter;
-	self->priv->cid_counter = _tmp0_ + 1;
-	_tmp1_ = self->priv->cid_counter;
-	result = _tmp1_;
-	return result;
-}
 
 
 gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self) {
@@ -464,8 +450,14 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 			gint _tmp9_ = 0;
 			gpointer _tmp10_ = NULL;
 			yrcdyrcd_user* _tmp11_ = NULL;
-			gboolean _tmp12_ = FALSE;
-			gboolean _tmp13_ = FALSE;
+			const gchar* _tmp12_ = NULL;
+			const gchar* _tmp13_ = NULL;
+			gchar* _tmp14_ = NULL;
+			gchar* _tmp15_ = NULL;
+			const gchar* _tmp16_ = NULL;
+			gchar* _tmp17_ = NULL;
+			gchar* _tmp18_ = NULL;
+			gboolean _tmp19_ = FALSE;
 			_tmp5_ = _k_index;
 			_k_index = _tmp5_ + 1;
 			_tmp6_ = _k_index;
@@ -478,34 +470,20 @@ yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const g
 			_tmp10_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp8_, (gpointer) ((gintptr) _tmp9_));
 			k = (yrcdyrcd_user*) _tmp10_;
 			_tmp11_ = k;
-			_tmp12_ = yrcd_yrcd_user_get_nick_set (_tmp11_);
+			_tmp12_ = yrcd_yrcd_user_get_nick (_tmp11_);
 			_tmp13_ = _tmp12_;
-			if (_tmp13_) {
-				yrcdyrcd_user* _tmp14_ = NULL;
-				const gchar* _tmp15_ = NULL;
-				const gchar* _tmp16_ = NULL;
-				gchar* _tmp17_ = NULL;
-				gchar* _tmp18_ = NULL;
-				const gchar* _tmp19_ = NULL;
-				gchar* _tmp20_ = NULL;
-				gchar* _tmp21_ = NULL;
-				gboolean _tmp22_ = FALSE;
-				_tmp14_ = k;
-				_tmp15_ = yrcd_yrcd_user_get_nick (_tmp14_);
-				_tmp16_ = _tmp15_;
-				_tmp17_ = g_utf8_strdown (_tmp16_, (gssize) (-1));
-				_tmp18_ = _tmp17_;
-				_tmp19_ = nicktocheck;
-				_tmp20_ = g_utf8_strdown (_tmp19_, (gssize) (-1));
-				_tmp21_ = _tmp20_;
-				_tmp22_ = g_strcmp0 (_tmp18_, _tmp21_) == 0;
-				_g_free0 (_tmp21_);
-				_g_free0 (_tmp18_);
-				if (_tmp22_) {
-					result = k;
-					_g_object_unref0 (_k_list);
-					return result;
-				}
+			_tmp14_ = g_utf8_strdown (_tmp13_, (gssize) (-1));
+			_tmp15_ = _tmp14_;
+			_tmp16_ = nicktocheck;
+			_tmp17_ = g_utf8_strdown (_tmp16_, (gssize) (-1));
+			_tmp18_ = _tmp17_;
+			_tmp19_ = g_strcmp0 (_tmp15_, _tmp18_) == 0;
+			_g_free0 (_tmp18_);
+			_g_free0 (_tmp15_);
+			if (_tmp19_) {
+				result = k;
+				_g_object_unref0 (_k_list);
+				return result;
 			}
 			_g_object_unref0 (k);
 		}
@@ -693,7 +671,6 @@ static void yrcd_yrcd_server_instance_init (yrcdyrcd_server * self) {
 	_tmp1_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, YRCD_TYPE_YRCD_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
 	self->userlist = _tmp1_;
 	self->priv->user_counter = 0;
-	self->priv->cid_counter = 0;
 	self->max_users = 0;
 	_tmp2_ = yrcd_yrcd_numeric_wrapper_new ();
 	self->numeric_wrapper = _tmp2_;
