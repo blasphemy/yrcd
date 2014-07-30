@@ -78,18 +78,6 @@ namespace yrcd {
       channellist[chan.name.down()] = chan;
       return chan;
     }
-    public string secure_hash (string in) {
-      StringBuilder builder = new StringBuilder();
-      //hash the input data with salt
-      builder.append(GLib.Checksum.compute_for_string(ChecksumType.MD5,in));
-      //make it longer if needed
-      while (builder.str.length < in.length) {
-        builder.append(GLib.Checksum.compute_for_string(ChecksumType.MD5,builder.str));
-      }
-      //and shorten it to the original length.
-      builder.truncate(in.length);
-      return builder.str;
-    }
     public void send_to_many(GLib.List<User> users,string msg, int p = Priority.DEFAULT) {
       GLib.List<User> final = new GLib.List<User>();
       foreach (User k in users) {

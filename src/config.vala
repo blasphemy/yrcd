@@ -29,8 +29,16 @@ namespace yrcd {
         }
         ping_invertal = file.get_integer("ServerVariables", "ping_invertal");
         salt = file.get_string("ServerVariables","host_salt");
-        cloaking = file.get_boolean("ServerVariables","cloaking");
-        max_users = file.get_integer("ServerVariables", "max_connections");
+        if (file.has_key("ServerVariables", "cloaking")) {
+            cloaking = file.get_boolean("ServerVariables", "cloaking");
+        } else {
+            cloaking = false;
+        }
+        if (file.has_key("ServerVariables", "max_connections")) {
+            max_users = file.get_integer("ServerVariables", "max_connections");
+        } else {
+            max_users = 0;
+        }
       } catch (Error e) {
         stdout.printf("Error Loading config file: %s\n".printf(e.message));
         config_error = true;
