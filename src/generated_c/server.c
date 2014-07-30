@@ -77,6 +77,7 @@ typedef struct _yrcdRouterClass yrcdRouterClass;
 typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
+#define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 
 struct _yrcdServer {
 	GObject parent_instance;
@@ -155,6 +156,10 @@ yrcdChannel* yrcd_channel_new (yrcdServer* _server, const gchar* _name);
 yrcdChannel* yrcd_channel_construct (GType object_type, yrcdServer* _server, const gchar* _name);
 const gchar* yrcd_channel_get_name (yrcdChannel* self);
 gchar* yrcd_server_secure_hash (yrcdServer* self, const gchar* in);
+void yrcd_server_send_to_many (yrcdServer* self, GList* users, const gchar* msg, gint p);
+void yrcd_user_send_line (yrcdUser* self, const gchar* msg, gint p);
+static void _g_object_unref0_ (gpointer var);
+static void _g_list_free__g_object_unref0_ (GList* self);
 static void yrcd_server_finalize (GObject* obj);
 
 
@@ -335,11 +340,11 @@ void yrcd_server_add_listeners (yrcdServer* self) {
 								_g_object_unref0 (serversock);
 								serversock = _tmp17_;
 								if (_inner_error_ != NULL) {
-									goto __catch2_g_error;
+									goto __catch3_g_error;
 								}
 							}
-							goto __finally2;
-							__catch2_g_error:
+							goto __finally3;
+							__catch3_g_error:
 							{
 								GError* e = NULL;
 								GError* _tmp18_ = NULL;
@@ -356,7 +361,7 @@ void yrcd_server_add_listeners (yrcdServer* self) {
 								_g_free0 (_tmp21_);
 								_g_error_free0 (e);
 							}
-							__finally2:
+							__finally3:
 							if (_inner_error_ != NULL) {
 								_g_object_unref0 (sockaddr);
 								_g_object_unref0 (inetaddr);
@@ -651,6 +656,99 @@ gchar* yrcd_server_secure_hash (yrcdServer* self, const gchar* in) {
 	result = _tmp23_;
 	_g_string_free0 (builder);
 	return result;
+}
+
+
+static void _g_object_unref0_ (gpointer var) {
+	(var == NULL) ? NULL : (var = (g_object_unref (var), NULL));
+}
+
+
+static void _g_list_free__g_object_unref0_ (GList* self) {
+	g_list_foreach (self, (GFunc) _g_object_unref0_, NULL);
+	g_list_free (self);
+}
+
+
+void yrcd_server_send_to_many (yrcdServer* self, GList* users, const gchar* msg, gint p) {
+	GList* final = NULL;
+	GList* _tmp0_ = NULL;
+	GList* _tmp9_ = NULL;
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (msg != NULL);
+	final = NULL;
+	_tmp0_ = users;
+	{
+		GList* k_collection = NULL;
+		GList* k_it = NULL;
+		k_collection = _tmp0_;
+		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
+			yrcdUser* _tmp1_ = NULL;
+			yrcdUser* k = NULL;
+			_tmp1_ = _g_object_ref0 ((yrcdUser*) k_it->data);
+			k = _tmp1_;
+			{
+				gboolean dup = FALSE;
+				GList* _tmp2_ = NULL;
+				gboolean _tmp6_ = FALSE;
+				dup = FALSE;
+				_tmp2_ = final;
+				{
+					GList* j_collection = NULL;
+					GList* j_it = NULL;
+					j_collection = _tmp2_;
+					for (j_it = j_collection; j_it != NULL; j_it = j_it->next) {
+						yrcdUser* _tmp3_ = NULL;
+						yrcdUser* j = NULL;
+						_tmp3_ = _g_object_ref0 ((yrcdUser*) j_it->data);
+						j = _tmp3_;
+						{
+							yrcdUser* _tmp4_ = NULL;
+							yrcdUser* _tmp5_ = NULL;
+							_tmp4_ = k;
+							_tmp5_ = j;
+							if (_tmp4_ == _tmp5_) {
+								dup = TRUE;
+							}
+							_g_object_unref0 (j);
+						}
+					}
+				}
+				_tmp6_ = dup;
+				if (!_tmp6_) {
+					yrcdUser* _tmp7_ = NULL;
+					yrcdUser* _tmp8_ = NULL;
+					_tmp7_ = k;
+					_tmp8_ = _g_object_ref0 (_tmp7_);
+					final = g_list_append (final, _tmp8_);
+				}
+				_g_object_unref0 (k);
+			}
+		}
+	}
+	_tmp9_ = final;
+	{
+		GList* k_collection = NULL;
+		GList* k_it = NULL;
+		k_collection = _tmp9_;
+		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
+			yrcdUser* _tmp10_ = NULL;
+			yrcdUser* k = NULL;
+			_tmp10_ = _g_object_ref0 ((yrcdUser*) k_it->data);
+			k = _tmp10_;
+			{
+				yrcdUser* _tmp11_ = NULL;
+				const gchar* _tmp12_ = NULL;
+				gint _tmp13_ = 0;
+				_tmp11_ = k;
+				_tmp12_ = msg;
+				_tmp13_ = p;
+				yrcd_user_send_line (_tmp11_, _tmp12_, _tmp13_);
+				_g_object_unref0 (k);
+			}
+		}
+	}
+	__g_list_free__g_object_unref0_0 (final);
 }
 
 

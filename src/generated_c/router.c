@@ -148,70 +148,81 @@ struct _YrcdRouterProcessUserData {
 	GSimpleAsyncResult* _async_result;
 	yrcdRouter* self;
 	GSocketConnection* conn;
-	yrcdUser* user;
-	GSocketConnection* _tmp0_;
+	gboolean _tmp0_;
 	yrcdServer* _tmp1_;
-	yrcdUser* _tmp2_;
-	yrcdServer* _tmp3_;
-	GeeHashMap* _tmp4_;
-	yrcdUser* _tmp5_;
-	gint _tmp6_;
+	GeeHashMap* _tmp2_;
+	gint _tmp3_;
+	gint _tmp4_;
+	yrcdServer* _tmp5_;
+	yrcdConfig* _tmp6_;
 	gint _tmp7_;
-	yrcdUser* _tmp8_;
-	gboolean _tmp9_;
-	yrcdServer* _tmp10_;
-	GeeHashMap* _tmp11_;
-	gint _tmp12_;
-	gint _tmp13_;
-	yrcdServer* _tmp14_;
-	yrcdConfig* _tmp15_;
-	gint _tmp16_;
+	yrcdServer* _tmp8_;
+	yrcdConfig* _tmp9_;
+	gint _tmp10_;
+	GSocketConnection* _tmp11_;
+	GSocket* _tmp12_;
+	GError* e;
+	yrcdServer* _tmp13_;
+	GError* _tmp14_;
+	const gchar* _tmp15_;
+	yrcdServer* _tmp16_;
 	yrcdServer* _tmp17_;
 	yrcdConfig* _tmp18_;
 	gint _tmp19_;
-	yrcdUser* _tmp20_;
-	yrcdServer* _tmp21_;
-	GeeHashMap* _tmp22_;
-	gint _tmp23_;
-	gint _tmp24_;
+	gchar* _tmp20_;
+	gchar* _tmp21_;
+	yrcdUser* user;
+	GSocketConnection* _tmp22_;
+	yrcdServer* _tmp23_;
+	yrcdUser* _tmp24_;
 	yrcdServer* _tmp25_;
-	gint _tmp26_;
-	yrcdServer* _tmp27_;
-	yrcdServer* _tmp28_;
-	GeeHashMap* _tmp29_;
-	gint _tmp30_;
-	gint _tmp31_;
-	yrcdServer* _tmp32_;
-	yrcdServer* _tmp33_;
+	GeeHashMap* _tmp26_;
+	yrcdUser* _tmp27_;
+	gint _tmp28_;
+	gint _tmp29_;
+	yrcdUser* _tmp30_;
+	yrcdServer* _tmp31_;
+	GeeHashMap* _tmp32_;
+	gint _tmp33_;
 	gint _tmp34_;
-	gchar* _tmp35_;
-	gchar* _tmp36_;
-	yrcdUser* _tmp37_;
-	GSocketConnection* _tmp38_;
-	GSocketConnection* _tmp39_;
-	GSocket* _tmp40_;
-	gboolean _tmp41_;
-	gchar* msg;
-	yrcdUser* _tmp42_;
-	gboolean _tmp43_;
-	gboolean _tmp44_;
+	yrcdServer* _tmp35_;
+	gint _tmp36_;
+	yrcdServer* _tmp37_;
+	yrcdServer* _tmp38_;
+	GeeHashMap* _tmp39_;
+	gint _tmp40_;
+	gint _tmp41_;
+	yrcdServer* _tmp42_;
+	yrcdServer* _tmp43_;
+	gint _tmp44_;
 	gchar* _tmp45_;
-	yrcdUser* _tmp46_;
-	GDataInputStream* _tmp47_;
-	GDataInputStream* _tmp48_;
-	gchar* _tmp49_;
-	gchar* _tmp50_;
-	gchar* _tmp51_;
+	gchar* _tmp46_;
+	yrcdUser* _tmp47_;
+	GSocketConnection* _tmp48_;
+	GSocketConnection* _tmp49_;
+	GSocket* _tmp50_;
+	gboolean _tmp51_;
+	gchar* msg;
 	yrcdUser* _tmp52_;
-	GDataInputStream* _tmp53_;
-	GDataInputStream* _tmp54_;
+	gboolean _tmp53_;
+	gboolean _tmp54_;
 	gchar* _tmp55_;
-	gchar* _tmp56_;
-	yrcdUser* _tmp57_;
-	const gchar* _tmp58_;
-	GError* e;
-	yrcdServer* _tmp59_;
-	yrcdUser* _tmp60_;
+	yrcdUser* _tmp56_;
+	GDataInputStream* _tmp57_;
+	GDataInputStream* _tmp58_;
+	gchar* _tmp59_;
+	gchar* _tmp60_;
+	gchar* _tmp61_;
+	yrcdUser* _tmp62_;
+	GDataInputStream* _tmp63_;
+	GDataInputStream* _tmp64_;
+	gchar* _tmp65_;
+	gchar* _tmp66_;
+	yrcdUser* _tmp67_;
+	const gchar* _tmp68_;
+	GError* _vala1_e;
+	yrcdServer* _tmp69_;
+	yrcdUser* _tmp70_;
 	GError * _inner_error_;
 };
 
@@ -262,10 +273,10 @@ static void yrcd_router_process_user_data_free (gpointer _data);
 void yrcd_router_process_user (yrcdRouter* self, GSocketConnection* conn, GAsyncReadyCallback _callback_, gpointer _user_data_);
 void yrcd_router_process_user_finish (yrcdRouter* self, GAsyncResult* _res_);
 static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_);
-yrcdUser* yrcd_user_new (GSocketConnection* conn, yrcdServer* _server);
-yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdServer* _server);
 GType yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 GType yrcd_config_get_type (void) G_GNUC_CONST;
+yrcdUser* yrcd_user_new (GSocketConnection* conn, yrcdServer* _server);
+yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdServer* _server);
 GSocketConnection* yrcd_user_get_sock (yrcdUser* self);
 GDataInputStream* yrcd_user_get_dis (yrcdUser* self);
 static void yrcd_router_process_user_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
@@ -1112,182 +1123,230 @@ static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_) 
 		g_assert_not_reached ();
 	}
 	_state_0:
-	_data_->_tmp0_ = NULL;
-	_data_->_tmp0_ = _data_->conn;
 	_data_->_tmp1_ = NULL;
 	_data_->_tmp1_ = _data_->self->server;
 	_data_->_tmp2_ = NULL;
-	_data_->_tmp2_ = yrcd_user_new (_data_->_tmp0_, _data_->_tmp1_);
-	_data_->user = _data_->_tmp2_;
-	_data_->_tmp3_ = NULL;
-	_data_->_tmp3_ = _data_->self->server;
-	_data_->_tmp4_ = NULL;
-	_data_->_tmp4_ = _data_->_tmp3_->userlist;
+	_data_->_tmp2_ = _data_->_tmp1_->userlist;
+	_data_->_tmp3_ = 0;
+	_data_->_tmp3_ = gee_abstract_map_get_size ((GeeMap*) _data_->_tmp2_);
+	_data_->_tmp4_ = 0;
+	_data_->_tmp4_ = _data_->_tmp3_;
 	_data_->_tmp5_ = NULL;
-	_data_->_tmp5_ = _data_->user;
-	_data_->_tmp6_ = 0;
-	_data_->_tmp6_ = yrcd_user_get_id (_data_->_tmp5_);
+	_data_->_tmp5_ = _data_->self->server;
+	_data_->_tmp6_ = NULL;
+	_data_->_tmp6_ = _data_->_tmp5_->config;
 	_data_->_tmp7_ = 0;
-	_data_->_tmp7_ = _data_->_tmp6_;
-	_data_->_tmp8_ = NULL;
-	_data_->_tmp8_ = _data_->user;
-	gee_abstract_map_set ((GeeAbstractMap*) _data_->_tmp4_, (gpointer) ((gintptr) _data_->_tmp7_), _data_->_tmp8_);
-	_data_->_tmp10_ = NULL;
-	_data_->_tmp10_ = _data_->self->server;
-	_data_->_tmp11_ = NULL;
-	_data_->_tmp11_ = _data_->_tmp10_->userlist;
-	_data_->_tmp12_ = 0;
-	_data_->_tmp12_ = gee_abstract_map_get_size ((GeeMap*) _data_->_tmp11_);
-	_data_->_tmp13_ = 0;
-	_data_->_tmp13_ = _data_->_tmp12_;
-	_data_->_tmp14_ = NULL;
-	_data_->_tmp14_ = _data_->self->server;
-	_data_->_tmp15_ = NULL;
-	_data_->_tmp15_ = _data_->_tmp14_->config;
-	_data_->_tmp16_ = 0;
-	_data_->_tmp16_ = _data_->_tmp15_->max_users;
-	if (_data_->_tmp13_ > _data_->_tmp16_) {
-		_data_->_tmp17_ = NULL;
-		_data_->_tmp17_ = _data_->self->server;
-		_data_->_tmp18_ = NULL;
-		_data_->_tmp18_ = _data_->_tmp17_->config;
-		_data_->_tmp19_ = 0;
-		_data_->_tmp19_ = _data_->_tmp18_->max_users;
-		_data_->_tmp9_ = _data_->_tmp19_ > 0;
+	_data_->_tmp7_ = _data_->_tmp6_->max_users;
+	if (_data_->_tmp4_ > _data_->_tmp7_) {
+		_data_->_tmp8_ = NULL;
+		_data_->_tmp8_ = _data_->self->server;
+		_data_->_tmp9_ = NULL;
+		_data_->_tmp9_ = _data_->_tmp8_->config;
+		_data_->_tmp10_ = 0;
+		_data_->_tmp10_ = _data_->_tmp9_->max_users;
+		_data_->_tmp0_ = _data_->_tmp10_ > 0;
 	} else {
-		_data_->_tmp9_ = FALSE;
+		_data_->_tmp0_ = FALSE;
 	}
-	if (_data_->_tmp9_) {
-		_data_->_tmp20_ = NULL;
-		_data_->_tmp20_ = _data_->user;
-		yrcd_user_quit (_data_->_tmp20_, "Max users met");
-	}
-	_data_->_tmp21_ = NULL;
-	_data_->_tmp21_ = _data_->self->server;
-	_data_->_tmp22_ = NULL;
-	_data_->_tmp22_ = _data_->_tmp21_->userlist;
-	_data_->_tmp23_ = 0;
-	_data_->_tmp23_ = gee_abstract_map_get_size ((GeeMap*) _data_->_tmp22_);
-	_data_->_tmp24_ = 0;
-	_data_->_tmp24_ = _data_->_tmp23_;
-	_data_->_tmp25_ = NULL;
-	_data_->_tmp25_ = _data_->self->server;
-	_data_->_tmp26_ = 0;
-	_data_->_tmp26_ = _data_->_tmp25_->max_users;
-	if (_data_->_tmp24_ > _data_->_tmp26_) {
-		_data_->_tmp27_ = NULL;
-		_data_->_tmp27_ = _data_->self->server;
-		_data_->_tmp28_ = NULL;
-		_data_->_tmp28_ = _data_->self->server;
-		_data_->_tmp29_ = NULL;
-		_data_->_tmp29_ = _data_->_tmp28_->userlist;
-		_data_->_tmp30_ = 0;
-		_data_->_tmp30_ = gee_abstract_map_get_size ((GeeMap*) _data_->_tmp29_);
-		_data_->_tmp31_ = 0;
-		_data_->_tmp31_ = _data_->_tmp30_;
-		_data_->_tmp27_->max_users = _data_->_tmp31_;
-		_data_->_tmp32_ = NULL;
-		_data_->_tmp32_ = _data_->self->server;
-		_data_->_tmp33_ = NULL;
-		_data_->_tmp33_ = _data_->self->server;
-		_data_->_tmp34_ = 0;
-		_data_->_tmp34_ = _data_->_tmp33_->max_users;
-		_data_->_tmp35_ = NULL;
-		_data_->_tmp35_ = g_strdup_printf ("New max amount of users: %d", _data_->_tmp34_);
-		_data_->_tmp36_ = NULL;
-		_data_->_tmp36_ = _data_->_tmp35_;
-		yrcd_server_log (_data_->_tmp32_, _data_->_tmp36_);
-		_g_free0 (_data_->_tmp36_);
-	}
-	while (TRUE) {
-		_data_->_tmp37_ = NULL;
-		_data_->_tmp37_ = _data_->user;
-		_data_->_tmp38_ = NULL;
-		_data_->_tmp38_ = yrcd_user_get_sock (_data_->_tmp37_);
-		_data_->_tmp39_ = NULL;
-		_data_->_tmp39_ = _data_->_tmp38_;
-		_data_->_tmp40_ = NULL;
-		_data_->_tmp40_ = g_socket_connection_get_socket (_data_->_tmp39_);
-		_data_->_tmp41_ = FALSE;
-		_data_->_tmp41_ = g_socket_is_connected (_data_->_tmp40_);
-		if (!_data_->_tmp41_) {
-			break;
-		}
+	if (_data_->_tmp0_) {
 		{
-			_data_->_tmp42_ = NULL;
-			_data_->_tmp42_ = _data_->user;
-			_data_->_tmp43_ = FALSE;
-			_data_->_tmp43_ = yrcd_user_get_registered (_data_->_tmp42_);
-			_data_->_tmp44_ = FALSE;
-			_data_->_tmp44_ = _data_->_tmp43_;
-			if (_data_->_tmp44_) {
-				_data_->_tmp46_ = NULL;
-				_data_->_tmp46_ = _data_->user;
-				_data_->_tmp47_ = NULL;
-				_data_->_tmp47_ = yrcd_user_get_dis (_data_->_tmp46_);
-				_data_->_tmp48_ = NULL;
-				_data_->_tmp48_ = _data_->_tmp47_;
-				_data_->_state_ = 1;
-				g_data_input_stream_read_line_async (_data_->_tmp48_, G_PRIORITY_DEFAULT, NULL, yrcd_router_process_user_ready, _data_);
-				return FALSE;
-				_state_1:
-				_data_->_tmp49_ = NULL;
-				_data_->_tmp49_ = g_data_input_stream_read_line_finish (_data_->_tmp48_, _data_->_res_, NULL, &_data_->_inner_error_);
-				_data_->_tmp45_ = _data_->_tmp49_;
-				if (_data_->_inner_error_ != NULL) {
-					_g_free0 (_data_->msg);
-					goto __catch1_g_error;
-				}
-				_data_->_tmp50_ = NULL;
-				_data_->_tmp50_ = _data_->_tmp45_;
-				_data_->_tmp45_ = NULL;
-				_g_free0 (_data_->msg);
-				_data_->msg = _data_->_tmp50_;
-				_g_free0 (_data_->_tmp45_);
-			} else {
-				_data_->_tmp52_ = NULL;
-				_data_->_tmp52_ = _data_->user;
-				_data_->_tmp53_ = NULL;
-				_data_->_tmp53_ = yrcd_user_get_dis (_data_->_tmp52_);
-				_data_->_tmp54_ = NULL;
-				_data_->_tmp54_ = _data_->_tmp53_;
-				_data_->_state_ = 2;
-				g_data_input_stream_read_line_async (_data_->_tmp54_, G_PRIORITY_LOW, NULL, yrcd_router_process_user_ready, _data_);
-				return FALSE;
-				_state_2:
-				_data_->_tmp55_ = NULL;
-				_data_->_tmp55_ = g_data_input_stream_read_line_finish (_data_->_tmp54_, _data_->_res_, NULL, &_data_->_inner_error_);
-				_data_->_tmp51_ = _data_->_tmp55_;
-				if (_data_->_inner_error_ != NULL) {
-					_g_free0 (_data_->msg);
-					goto __catch1_g_error;
-				}
-				_data_->_tmp56_ = NULL;
-				_data_->_tmp56_ = _data_->_tmp51_;
-				_data_->_tmp51_ = NULL;
-				_g_free0 (_data_->msg);
-				_data_->msg = _data_->_tmp56_;
-				_g_free0 (_data_->_tmp51_);
+			_data_->_tmp11_ = NULL;
+			_data_->_tmp11_ = _data_->conn;
+			_data_->_tmp12_ = NULL;
+			_data_->_tmp12_ = g_socket_connection_get_socket (_data_->_tmp11_);
+			g_socket_close (_data_->_tmp12_, &_data_->_inner_error_);
+			if (_data_->_inner_error_ != NULL) {
+				goto __catch1_g_error;
 			}
-			_data_->_tmp57_ = NULL;
-			_data_->_tmp57_ = _data_->user;
-			_data_->_tmp58_ = NULL;
-			_data_->_tmp58_ = _data_->msg;
-			yrcd_router_route (_data_->self, _data_->_tmp57_, _data_->_tmp58_);
-			_g_free0 (_data_->msg);
 		}
 		goto __finally1;
 		__catch1_g_error:
 		{
 			_data_->e = _data_->_inner_error_;
 			_data_->_inner_error_ = NULL;
-			_data_->_tmp59_ = NULL;
-			_data_->_tmp59_ = _data_->self->server;
-			yrcd_server_log (_data_->_tmp59_, "Encountered error reading %s (%d) socket...");
-			_data_->_tmp60_ = NULL;
-			_data_->_tmp60_ = _data_->user;
-			yrcd_user_quit (_data_->_tmp60_, NULL);
+			_data_->_tmp13_ = NULL;
+			_data_->_tmp13_ = _data_->self->server;
+			_data_->_tmp14_ = NULL;
+			_data_->_tmp14_ = _data_->e;
+			_data_->_tmp15_ = NULL;
+			_data_->_tmp15_ = _data_->_tmp14_->message;
+			yrcd_server_log (_data_->_tmp13_, _data_->_tmp15_);
 			_g_error_free0 (_data_->e);
+		}
+		__finally1:
+		if (_data_->_inner_error_ != NULL) {
+			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _data_->_inner_error_->message, g_quark_to_string (_data_->_inner_error_->domain), _data_->_inner_error_->code);
+			g_clear_error (&_data_->_inner_error_);
+			return FALSE;
+		}
+		_data_->_tmp16_ = NULL;
+		_data_->_tmp16_ = _data_->self->server;
+		_data_->_tmp17_ = NULL;
+		_data_->_tmp17_ = _data_->self->server;
+		_data_->_tmp18_ = NULL;
+		_data_->_tmp18_ = _data_->_tmp17_->config;
+		_data_->_tmp19_ = 0;
+		_data_->_tmp19_ = _data_->_tmp18_->max_users;
+		_data_->_tmp20_ = NULL;
+		_data_->_tmp20_ = g_strdup_printf ("Max amount of connections %d reached, closing socket", _data_->_tmp19_);
+		_data_->_tmp21_ = NULL;
+		_data_->_tmp21_ = _data_->_tmp20_;
+		yrcd_server_log (_data_->_tmp16_, _data_->_tmp21_);
+		_g_free0 (_data_->_tmp21_);
+		if (_data_->_state_ == 0) {
+			g_simple_async_result_complete_in_idle (_data_->_async_result);
+		} else {
+			g_simple_async_result_complete (_data_->_async_result);
+		}
+		g_object_unref (_data_->_async_result);
+		return FALSE;
+	}
+	_data_->_tmp22_ = NULL;
+	_data_->_tmp22_ = _data_->conn;
+	_data_->_tmp23_ = NULL;
+	_data_->_tmp23_ = _data_->self->server;
+	_data_->_tmp24_ = NULL;
+	_data_->_tmp24_ = yrcd_user_new (_data_->_tmp22_, _data_->_tmp23_);
+	_data_->user = _data_->_tmp24_;
+	_data_->_tmp25_ = NULL;
+	_data_->_tmp25_ = _data_->self->server;
+	_data_->_tmp26_ = NULL;
+	_data_->_tmp26_ = _data_->_tmp25_->userlist;
+	_data_->_tmp27_ = NULL;
+	_data_->_tmp27_ = _data_->user;
+	_data_->_tmp28_ = 0;
+	_data_->_tmp28_ = yrcd_user_get_id (_data_->_tmp27_);
+	_data_->_tmp29_ = 0;
+	_data_->_tmp29_ = _data_->_tmp28_;
+	_data_->_tmp30_ = NULL;
+	_data_->_tmp30_ = _data_->user;
+	gee_abstract_map_set ((GeeAbstractMap*) _data_->_tmp26_, (gpointer) ((gintptr) _data_->_tmp29_), _data_->_tmp30_);
+	_data_->_tmp31_ = NULL;
+	_data_->_tmp31_ = _data_->self->server;
+	_data_->_tmp32_ = NULL;
+	_data_->_tmp32_ = _data_->_tmp31_->userlist;
+	_data_->_tmp33_ = 0;
+	_data_->_tmp33_ = gee_abstract_map_get_size ((GeeMap*) _data_->_tmp32_);
+	_data_->_tmp34_ = 0;
+	_data_->_tmp34_ = _data_->_tmp33_;
+	_data_->_tmp35_ = NULL;
+	_data_->_tmp35_ = _data_->self->server;
+	_data_->_tmp36_ = 0;
+	_data_->_tmp36_ = _data_->_tmp35_->max_users;
+	if (_data_->_tmp34_ > _data_->_tmp36_) {
+		_data_->_tmp37_ = NULL;
+		_data_->_tmp37_ = _data_->self->server;
+		_data_->_tmp38_ = NULL;
+		_data_->_tmp38_ = _data_->self->server;
+		_data_->_tmp39_ = NULL;
+		_data_->_tmp39_ = _data_->_tmp38_->userlist;
+		_data_->_tmp40_ = 0;
+		_data_->_tmp40_ = gee_abstract_map_get_size ((GeeMap*) _data_->_tmp39_);
+		_data_->_tmp41_ = 0;
+		_data_->_tmp41_ = _data_->_tmp40_;
+		_data_->_tmp37_->max_users = _data_->_tmp41_;
+		_data_->_tmp42_ = NULL;
+		_data_->_tmp42_ = _data_->self->server;
+		_data_->_tmp43_ = NULL;
+		_data_->_tmp43_ = _data_->self->server;
+		_data_->_tmp44_ = 0;
+		_data_->_tmp44_ = _data_->_tmp43_->max_users;
+		_data_->_tmp45_ = NULL;
+		_data_->_tmp45_ = g_strdup_printf ("New max amount of users: %d", _data_->_tmp44_);
+		_data_->_tmp46_ = NULL;
+		_data_->_tmp46_ = _data_->_tmp45_;
+		yrcd_server_log (_data_->_tmp42_, _data_->_tmp46_);
+		_g_free0 (_data_->_tmp46_);
+	}
+	while (TRUE) {
+		_data_->_tmp47_ = NULL;
+		_data_->_tmp47_ = _data_->user;
+		_data_->_tmp48_ = NULL;
+		_data_->_tmp48_ = yrcd_user_get_sock (_data_->_tmp47_);
+		_data_->_tmp49_ = NULL;
+		_data_->_tmp49_ = _data_->_tmp48_;
+		_data_->_tmp50_ = NULL;
+		_data_->_tmp50_ = g_socket_connection_get_socket (_data_->_tmp49_);
+		_data_->_tmp51_ = FALSE;
+		_data_->_tmp51_ = g_socket_is_connected (_data_->_tmp50_);
+		if (!_data_->_tmp51_) {
+			break;
+		}
+		{
+			_data_->_tmp52_ = NULL;
+			_data_->_tmp52_ = _data_->user;
+			_data_->_tmp53_ = FALSE;
+			_data_->_tmp53_ = yrcd_user_get_registered (_data_->_tmp52_);
+			_data_->_tmp54_ = FALSE;
+			_data_->_tmp54_ = _data_->_tmp53_;
+			if (_data_->_tmp54_) {
+				_data_->_tmp56_ = NULL;
+				_data_->_tmp56_ = _data_->user;
+				_data_->_tmp57_ = NULL;
+				_data_->_tmp57_ = yrcd_user_get_dis (_data_->_tmp56_);
+				_data_->_tmp58_ = NULL;
+				_data_->_tmp58_ = _data_->_tmp57_;
+				_data_->_state_ = 1;
+				g_data_input_stream_read_line_async (_data_->_tmp58_, G_PRIORITY_DEFAULT, NULL, yrcd_router_process_user_ready, _data_);
+				return FALSE;
+				_state_1:
+				_data_->_tmp59_ = NULL;
+				_data_->_tmp59_ = g_data_input_stream_read_line_finish (_data_->_tmp58_, _data_->_res_, NULL, &_data_->_inner_error_);
+				_data_->_tmp55_ = _data_->_tmp59_;
+				if (_data_->_inner_error_ != NULL) {
+					_g_free0 (_data_->msg);
+					goto __catch2_g_error;
+				}
+				_data_->_tmp60_ = NULL;
+				_data_->_tmp60_ = _data_->_tmp55_;
+				_data_->_tmp55_ = NULL;
+				_g_free0 (_data_->msg);
+				_data_->msg = _data_->_tmp60_;
+				_g_free0 (_data_->_tmp55_);
+			} else {
+				_data_->_tmp62_ = NULL;
+				_data_->_tmp62_ = _data_->user;
+				_data_->_tmp63_ = NULL;
+				_data_->_tmp63_ = yrcd_user_get_dis (_data_->_tmp62_);
+				_data_->_tmp64_ = NULL;
+				_data_->_tmp64_ = _data_->_tmp63_;
+				_data_->_state_ = 2;
+				g_data_input_stream_read_line_async (_data_->_tmp64_, G_PRIORITY_LOW, NULL, yrcd_router_process_user_ready, _data_);
+				return FALSE;
+				_state_2:
+				_data_->_tmp65_ = NULL;
+				_data_->_tmp65_ = g_data_input_stream_read_line_finish (_data_->_tmp64_, _data_->_res_, NULL, &_data_->_inner_error_);
+				_data_->_tmp61_ = _data_->_tmp65_;
+				if (_data_->_inner_error_ != NULL) {
+					_g_free0 (_data_->msg);
+					goto __catch2_g_error;
+				}
+				_data_->_tmp66_ = NULL;
+				_data_->_tmp66_ = _data_->_tmp61_;
+				_data_->_tmp61_ = NULL;
+				_g_free0 (_data_->msg);
+				_data_->msg = _data_->_tmp66_;
+				_g_free0 (_data_->_tmp61_);
+			}
+			_data_->_tmp67_ = NULL;
+			_data_->_tmp67_ = _data_->user;
+			_data_->_tmp68_ = NULL;
+			_data_->_tmp68_ = _data_->msg;
+			yrcd_router_route (_data_->self, _data_->_tmp67_, _data_->_tmp68_);
+			_g_free0 (_data_->msg);
+		}
+		goto __finally2;
+		__catch2_g_error:
+		{
+			_data_->_vala1_e = _data_->_inner_error_;
+			_data_->_inner_error_ = NULL;
+			_data_->_tmp69_ = NULL;
+			_data_->_tmp69_ = _data_->self->server;
+			yrcd_server_log (_data_->_tmp69_, "Encountered error reading %s (%d) socket...");
+			_data_->_tmp70_ = NULL;
+			_data_->_tmp70_ = _data_->user;
+			yrcd_user_quit (_data_->_tmp70_, NULL);
+			_g_error_free0 (_data_->_vala1_e);
 			_g_object_unref0 (_data_->user);
 			if (_data_->_state_ == 0) {
 				g_simple_async_result_complete_in_idle (_data_->_async_result);
@@ -1297,7 +1356,7 @@ static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_) 
 			g_object_unref (_data_->_async_result);
 			return FALSE;
 		}
-		__finally1:
+		__finally2:
 		if (_data_->_inner_error_ != NULL) {
 			_g_object_unref0 (_data_->user);
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _data_->_inner_error_->message, g_quark_to_string (_data_->_inner_error_->domain), _data_->_inner_error_->code);

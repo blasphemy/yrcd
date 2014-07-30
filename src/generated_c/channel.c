@@ -64,6 +64,7 @@ typedef struct _yrcdNumericWrapperClass yrcdNumericWrapperClass;
 typedef struct _yrcdConfig yrcdConfig;
 typedef struct _yrcdConfigClass yrcdConfigClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
+#define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 typedef struct _yrcdUserPrivate yrcdUserPrivate;
 
@@ -150,11 +151,15 @@ void yrcd_user_fire_numeric (yrcdUser* self, gint numeric, ...);
 #define YRCD_RPL_TOPIC 332
 #define YRCD_RPL_TOPICWHOTIME 333
 void yrcd_channel_fire_names (yrcdChannel* self, yrcdUser* user);
-void yrcd_channel_quit (yrcdChannel* self, yrcdUser* user, const gchar* msg);
+void yrcd_channel_remove_user (yrcdChannel* self, yrcdUser* user);
+GList* yrcd_channel_get_users (yrcdChannel* self);
+static void _g_object_unref0_ (gpointer var);
+static void _g_list_free__g_object_unref0_ (GList* self);
 void yrcd_channel_part (yrcdChannel* self, yrcdUser* user, const gchar* msg);
 #define YRCD_RPL_NAMEPLY 353
 #define YRCD_RPL_ENDOFNAMES 366
 void yrcd_channel_privmsg (yrcdChannel* self, yrcdUser* user, const gchar* msg);
+void yrcd_server_send_to_many (yrcdServer* self, GList* users, const gchar* msg, gint p);
 void yrcd_channel_who_response (yrcdChannel* self, yrcdUser* user);
 #define YRCD_RPL_WHOREPLY 352
 const gchar* yrcd_user_get_ident (yrcdUser* self);
@@ -391,12 +396,32 @@ gboolean yrcd_channel_add_user (yrcdChannel* self, yrcdUser* user) {
 }
 
 
-void yrcd_channel_quit (yrcdChannel* self, yrcdUser* user, const gchar* msg) {
-	GList* _tmp0_ = NULL;
-	yrcdUser* _tmp9_ = NULL;
+void yrcd_channel_remove_user (yrcdChannel* self, yrcdUser* user) {
+	yrcdUser* _tmp0_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (user != NULL);
-	g_return_if_fail (msg != NULL);
+	_tmp0_ = user;
+	self->users = g_list_remove (self->users, _tmp0_);
+}
+
+
+static void _g_object_unref0_ (gpointer var) {
+	(var == NULL) ? NULL : (var = (g_object_unref (var), NULL));
+}
+
+
+static void _g_list_free__g_object_unref0_ (GList* self) {
+	g_list_foreach (self, (GFunc) _g_object_unref0_, NULL);
+	g_list_free (self);
+}
+
+
+GList* yrcd_channel_get_users (yrcdChannel* self) {
+	GList* result = NULL;
+	GList* response = NULL;
+	GList* _tmp0_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	response = NULL;
 	_tmp0_ = self->users;
 	{
 		GList* k_collection = NULL;
@@ -410,27 +435,15 @@ void yrcd_channel_quit (yrcdChannel* self, yrcdUser* user, const gchar* msg) {
 			{
 				yrcdUser* _tmp2_ = NULL;
 				yrcdUser* _tmp3_ = NULL;
-				gchar* _tmp4_ = NULL;
-				gchar* _tmp5_ = NULL;
-				const gchar* _tmp6_ = NULL;
-				gchar* _tmp7_ = NULL;
-				gchar* _tmp8_ = NULL;
 				_tmp2_ = k;
-				_tmp3_ = user;
-				_tmp4_ = yrcd_user_get_hostmask (_tmp3_);
-				_tmp5_ = _tmp4_;
-				_tmp6_ = msg;
-				_tmp7_ = g_strdup_printf (":%s QUIT :%s", _tmp5_, _tmp6_);
-				_tmp8_ = _tmp7_;
-				yrcd_user_send_line (_tmp2_, _tmp8_, G_PRIORITY_LOW);
-				_g_free0 (_tmp8_);
-				_g_free0 (_tmp5_);
+				_tmp3_ = _g_object_ref0 (_tmp2_);
+				response = g_list_append (response, _tmp3_);
 				_g_object_unref0 (k);
 			}
 		}
 	}
-	_tmp9_ = user;
-	self->users = g_list_remove (self->users, _tmp9_);
+	result = response;
+	return result;
 }
 
 
@@ -587,7 +600,10 @@ void yrcd_channel_privmsg (yrcdChannel* self, yrcdUser* user, const gchar* msg) 
 	const gchar* _tmp11_ = NULL;
 	gchar* _tmp12_ = NULL;
 	gchar* _tmp13_ = NULL;
+	GList* rec = NULL;
 	GList* _tmp14_ = NULL;
+	yrcdUser* _tmp15_ = NULL;
+	yrcdServer* _tmp16_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (user != NULL);
 	g_return_if_fail (msg != NULL);
@@ -609,32 +625,13 @@ void yrcd_channel_privmsg (yrcdChannel* self, yrcdUser* user, const gchar* msg) 
 	_tmp13_ = _tmp12_;
 	yrcd_server_log (_tmp7_, _tmp13_);
 	_g_free0 (_tmp13_);
-	_tmp14_ = self->users;
-	{
-		GList* k_collection = NULL;
-		GList* k_it = NULL;
-		k_collection = _tmp14_;
-		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
-			yrcdUser* _tmp15_ = NULL;
-			yrcdUser* k = NULL;
-			_tmp15_ = _g_object_ref0 ((yrcdUser*) k_it->data);
-			k = _tmp15_;
-			{
-				yrcdUser* _tmp16_ = NULL;
-				yrcdUser* _tmp17_ = NULL;
-				_tmp16_ = k;
-				_tmp17_ = user;
-				if (_tmp16_ != _tmp17_) {
-					yrcdUser* _tmp18_ = NULL;
-					const gchar* _tmp19_ = NULL;
-					_tmp18_ = k;
-					_tmp19_ = to_send;
-					yrcd_user_send_line (_tmp18_, _tmp19_, G_PRIORITY_HIGH);
-				}
-				_g_object_unref0 (k);
-			}
-		}
-	}
+	_tmp14_ = yrcd_channel_get_users (self);
+	rec = _tmp14_;
+	_tmp15_ = user;
+	rec = g_list_remove (rec, _tmp15_);
+	_tmp16_ = self->server;
+	yrcd_server_send_to_many (_tmp16_, rec, to_send, G_PRIORITY_HIGH);
+	__g_list_free__g_object_unref0_0 (rec);
 	_g_free0 (to_send);
 }
 
