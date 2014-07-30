@@ -1,6 +1,6 @@
 namespace yrcd {
   void main() {
-    yrcd_config config  = new yrcd_config("yrcd.config");
+    Config config  = new Config("yrcd.config");
     if (config.config_error) {
       return;
     }
