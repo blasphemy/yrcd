@@ -9,37 +9,37 @@
 #include <string.h>
 
 
-#define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
-#define YRCD_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapper))
-#define YRCD_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
-#define YRCD_IS_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
-#define YRCD_IS_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
-#define YRCD_YRCD_NUMERIC_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+#define YRCD_TYPE_NUMERIC_WRAPPER (yrcd_numeric_wrapper_get_type ())
+#define YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapper))
+#define YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapperClass))
+#define YRCD_IS_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_NUMERIC_WRAPPER))
+#define YRCD_IS_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_NUMERIC_WRAPPER))
+#define YRCD_NUMERIC_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapperClass))
 
-typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
-typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
-typedef struct _yrcdyrcd_numeric_wrapperPrivate yrcdyrcd_numeric_wrapperPrivate;
+typedef struct _yrcdNumericWrapper yrcdNumericWrapper;
+typedef struct _yrcdNumericWrapperClass yrcdNumericWrapperClass;
+typedef struct _yrcdNumericWrapperPrivate yrcdNumericWrapperPrivate;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
-struct _yrcdyrcd_numeric_wrapper {
+struct _yrcdNumericWrapper {
 	GObject parent_instance;
-	yrcdyrcd_numeric_wrapperPrivate * priv;
+	yrcdNumericWrapperPrivate * priv;
 	GeeHashMap* numerics;
 };
 
-struct _yrcdyrcd_numeric_wrapperClass {
+struct _yrcdNumericWrapperClass {
 	GObjectClass parent_class;
 };
 
 
-static gpointer yrcd_yrcd_numeric_wrapper_parent_class = NULL;
+static gpointer yrcd_numeric_wrapper_parent_class = NULL;
 
-GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
+GType yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 enum  {
-	YRCD_YRCD_NUMERIC_WRAPPER_DUMMY_PROPERTY
+	YRCD_NUMERIC_WRAPPER_DUMMY_PROPERTY
 };
-yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_new (void);
-yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type);
+yrcdNumericWrapper* yrcd_numeric_wrapper_new (void);
+yrcdNumericWrapper* yrcd_numeric_wrapper_construct (GType object_type);
 #define YRCD_RPL_WELCOME 001
 #define YRCD_RPL_YOURHOST 002
 #define YRCD_RPL_CREATED 003
@@ -61,11 +61,11 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 #define YRCD_ERR_NOTREGISTERED 451
 #define YRCD_ERR_NEEDMOREPARAMS 461
 #define YRCD_ERR_ALREADYREGISTRED 462
-static void yrcd_yrcd_numeric_wrapper_finalize (GObject* obj);
+static void yrcd_numeric_wrapper_finalize (GObject* obj);
 
 
-yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type) {
-	yrcdyrcd_numeric_wrapper * self = NULL;
+yrcdNumericWrapper* yrcd_numeric_wrapper_construct (GType object_type) {
+	yrcdNumericWrapper * self = NULL;
 	GeeHashMap* _tmp0_ = NULL;
 	GeeHashMap* _tmp1_ = NULL;
 	GeeHashMap* _tmp2_ = NULL;
@@ -87,7 +87,7 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 	GeeHashMap* _tmp18_ = NULL;
 	GeeHashMap* _tmp19_ = NULL;
 	GeeHashMap* _tmp20_ = NULL;
-	self = (yrcdyrcd_numeric_wrapper*) g_object_new (object_type, NULL);
+	self = (yrcdNumericWrapper*) g_object_new (object_type, NULL);
 	_tmp0_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) YRCD_RPL_WELCOME), "Welcome to the Internet Relay Network %s!%s@%s");
 	_tmp1_ = self->numerics;
@@ -134,41 +134,41 @@ yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_construct (GType object_type
 }
 
 
-yrcdyrcd_numeric_wrapper* yrcd_yrcd_numeric_wrapper_new (void) {
-	return yrcd_yrcd_numeric_wrapper_construct (YRCD_TYPE_YRCD_NUMERIC_WRAPPER);
+yrcdNumericWrapper* yrcd_numeric_wrapper_new (void) {
+	return yrcd_numeric_wrapper_construct (YRCD_TYPE_NUMERIC_WRAPPER);
 }
 
 
-static void yrcd_yrcd_numeric_wrapper_class_init (yrcdyrcd_numeric_wrapperClass * klass) {
-	yrcd_yrcd_numeric_wrapper_parent_class = g_type_class_peek_parent (klass);
-	G_OBJECT_CLASS (klass)->finalize = yrcd_yrcd_numeric_wrapper_finalize;
+static void yrcd_numeric_wrapper_class_init (yrcdNumericWrapperClass * klass) {
+	yrcd_numeric_wrapper_parent_class = g_type_class_peek_parent (klass);
+	G_OBJECT_CLASS (klass)->finalize = yrcd_numeric_wrapper_finalize;
 }
 
 
-static void yrcd_yrcd_numeric_wrapper_instance_init (yrcdyrcd_numeric_wrapper * self) {
+static void yrcd_numeric_wrapper_instance_init (yrcdNumericWrapper * self) {
 	GeeHashMap* _tmp0_ = NULL;
 	_tmp0_ = gee_hash_map_new (G_TYPE_INT, NULL, NULL, G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, NULL, NULL, NULL);
 	self->numerics = _tmp0_;
 }
 
 
-static void yrcd_yrcd_numeric_wrapper_finalize (GObject* obj) {
-	yrcdyrcd_numeric_wrapper * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapper);
+static void yrcd_numeric_wrapper_finalize (GObject* obj) {
+	yrcdNumericWrapper * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapper);
 	_g_object_unref0 (self->numerics);
-	G_OBJECT_CLASS (yrcd_yrcd_numeric_wrapper_parent_class)->finalize (obj);
+	G_OBJECT_CLASS (yrcd_numeric_wrapper_parent_class)->finalize (obj);
 }
 
 
-GType yrcd_yrcd_numeric_wrapper_get_type (void) {
-	static volatile gsize yrcd_yrcd_numeric_wrapper_type_id__volatile = 0;
-	if (g_once_init_enter (&yrcd_yrcd_numeric_wrapper_type_id__volatile)) {
-		static const GTypeInfo g_define_type_info = { sizeof (yrcdyrcd_numeric_wrapperClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_yrcd_numeric_wrapper_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdyrcd_numeric_wrapper), 0, (GInstanceInitFunc) yrcd_yrcd_numeric_wrapper_instance_init, NULL };
-		GType yrcd_yrcd_numeric_wrapper_type_id;
-		yrcd_yrcd_numeric_wrapper_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdyrcd_numeric_wrapper", &g_define_type_info, 0);
-		g_once_init_leave (&yrcd_yrcd_numeric_wrapper_type_id__volatile, yrcd_yrcd_numeric_wrapper_type_id);
+GType yrcd_numeric_wrapper_get_type (void) {
+	static volatile gsize yrcd_numeric_wrapper_type_id__volatile = 0;
+	if (g_once_init_enter (&yrcd_numeric_wrapper_type_id__volatile)) {
+		static const GTypeInfo g_define_type_info = { sizeof (yrcdNumericWrapperClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_numeric_wrapper_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdNumericWrapper), 0, (GInstanceInitFunc) yrcd_numeric_wrapper_instance_init, NULL };
+		GType yrcd_numeric_wrapper_type_id;
+		yrcd_numeric_wrapper_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdNumericWrapper", &g_define_type_info, 0);
+		g_once_init_leave (&yrcd_numeric_wrapper_type_id__volatile, yrcd_numeric_wrapper_type_id);
 	}
-	return yrcd_yrcd_numeric_wrapper_type_id__volatile;
+	return yrcd_numeric_wrapper_type_id__volatile;
 }
 
 

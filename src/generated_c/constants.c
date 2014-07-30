@@ -8,74 +8,74 @@
 #include <string.h>
 
 
-#define YRCD_TYPE_YRCD_CONSTANTS (yrcd_yrcd_constants_get_type ())
-#define YRCD_YRCD_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constants))
-#define YRCD_YRCD_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constantsClass))
-#define YRCD_IS_YRCD_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONSTANTS))
-#define YRCD_IS_YRCD_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONSTANTS))
-#define YRCD_YRCD_CONSTANTS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONSTANTS, yrcdyrcd_constantsClass))
+#define YRCD_TYPE_CONSTANTS (yrcd_constants_get_type ())
+#define YRCD_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_CONSTANTS, yrcdConstants))
+#define YRCD_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_CONSTANTS, yrcdConstantsClass))
+#define YRCD_IS_CONSTANTS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_CONSTANTS))
+#define YRCD_IS_CONSTANTS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_CONSTANTS))
+#define YRCD_CONSTANTS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_CONSTANTS, yrcdConstantsClass))
 
-typedef struct _yrcdyrcd_constants yrcdyrcd_constants;
-typedef struct _yrcdyrcd_constantsClass yrcdyrcd_constantsClass;
-typedef struct _yrcdyrcd_constantsPrivate yrcdyrcd_constantsPrivate;
+typedef struct _yrcdConstants yrcdConstants;
+typedef struct _yrcdConstantsClass yrcdConstantsClass;
+typedef struct _yrcdConstantsPrivate yrcdConstantsPrivate;
 
-struct _yrcdyrcd_constants {
+struct _yrcdConstants {
 	GObject parent_instance;
-	yrcdyrcd_constantsPrivate * priv;
+	yrcdConstantsPrivate * priv;
 };
 
-struct _yrcdyrcd_constantsClass {
+struct _yrcdConstantsClass {
 	GObjectClass parent_class;
 };
 
 
-static gpointer yrcd_yrcd_constants_parent_class = NULL;
+static gpointer yrcd_constants_parent_class = NULL;
 
-GType yrcd_yrcd_constants_get_type (void) G_GNUC_CONST;
+GType yrcd_constants_get_type (void) G_GNUC_CONST;
 enum  {
-	YRCD_YRCD_CONSTANTS_DUMMY_PROPERTY
+	YRCD_CONSTANTS_DUMMY_PROPERTY
 };
-#define YRCD_YRCD_CONSTANTS_version "0.2"
-#define YRCD_YRCD_CONSTANTS_software "yrcd"
-yrcdyrcd_constants* yrcd_yrcd_constants_new (void);
-yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type);
+#define YRCD_CONSTANTS_version "0.2"
+#define YRCD_CONSTANTS_software "yrcd"
+yrcdConstants* yrcd_constants_new (void);
+yrcdConstants* yrcd_constants_construct (GType object_type);
 
-const gchar* YRCD_YRCD_CONSTANTS_cmodes[0] = {};
-const gchar* YRCD_YRCD_CONSTANTS_umodes[0] = {};
-const gchar* YRCD_YRCD_CONSTANTS_forbidden_nick_chars[6] = {":", "#", "&", "%", "@", "+"};
-const gchar* YRCD_YRCD_CONSTANTS_chan_prefixes[2] = {"#", "&"};
-const gchar* YRCD_YRCD_CONSTANTS_chan_forbidden[5] = {":", "&", "@", "%", "+"};
+const gchar* YRCD_CONSTANTS_cmodes[0] = {};
+const gchar* YRCD_CONSTANTS_umodes[0] = {};
+const gchar* YRCD_CONSTANTS_forbidden_nick_chars[6] = {":", "#", "&", "%", "@", "+"};
+const gchar* YRCD_CONSTANTS_chan_prefixes[2] = {"#", "&"};
+const gchar* YRCD_CONSTANTS_chan_forbidden[5] = {":", "&", "@", "%", "+"};
 
-yrcdyrcd_constants* yrcd_yrcd_constants_construct (GType object_type) {
-	yrcdyrcd_constants * self = NULL;
-	self = (yrcdyrcd_constants*) g_object_new (object_type, NULL);
+yrcdConstants* yrcd_constants_construct (GType object_type) {
+	yrcdConstants * self = NULL;
+	self = (yrcdConstants*) g_object_new (object_type, NULL);
 	return self;
 }
 
 
-yrcdyrcd_constants* yrcd_yrcd_constants_new (void) {
-	return yrcd_yrcd_constants_construct (YRCD_TYPE_YRCD_CONSTANTS);
+yrcdConstants* yrcd_constants_new (void) {
+	return yrcd_constants_construct (YRCD_TYPE_CONSTANTS);
 }
 
 
-static void yrcd_yrcd_constants_class_init (yrcdyrcd_constantsClass * klass) {
-	yrcd_yrcd_constants_parent_class = g_type_class_peek_parent (klass);
+static void yrcd_constants_class_init (yrcdConstantsClass * klass) {
+	yrcd_constants_parent_class = g_type_class_peek_parent (klass);
 }
 
 
-static void yrcd_yrcd_constants_instance_init (yrcdyrcd_constants * self) {
+static void yrcd_constants_instance_init (yrcdConstants * self) {
 }
 
 
-GType yrcd_yrcd_constants_get_type (void) {
-	static volatile gsize yrcd_yrcd_constants_type_id__volatile = 0;
-	if (g_once_init_enter (&yrcd_yrcd_constants_type_id__volatile)) {
-		static const GTypeInfo g_define_type_info = { sizeof (yrcdyrcd_constantsClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_yrcd_constants_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdyrcd_constants), 0, (GInstanceInitFunc) yrcd_yrcd_constants_instance_init, NULL };
-		GType yrcd_yrcd_constants_type_id;
-		yrcd_yrcd_constants_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdyrcd_constants", &g_define_type_info, 0);
-		g_once_init_leave (&yrcd_yrcd_constants_type_id__volatile, yrcd_yrcd_constants_type_id);
+GType yrcd_constants_get_type (void) {
+	static volatile gsize yrcd_constants_type_id__volatile = 0;
+	if (g_once_init_enter (&yrcd_constants_type_id__volatile)) {
+		static const GTypeInfo g_define_type_info = { sizeof (yrcdConstantsClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_constants_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdConstants), 0, (GInstanceInitFunc) yrcd_constants_instance_init, NULL };
+		GType yrcd_constants_type_id;
+		yrcd_constants_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdConstants", &g_define_type_info, 0);
+		g_once_init_leave (&yrcd_constants_type_id__volatile, yrcd_constants_type_id);
 	}
-	return yrcd_yrcd_constants_type_id__volatile;
+	return yrcd_constants_type_id__volatile;
 }
 
 

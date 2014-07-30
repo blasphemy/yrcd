@@ -10,16 +10,16 @@
 #include <stdio.h>
 
 
-#define YRCD_TYPE_YRCD_CONFIG (yrcd_yrcd_config_get_type ())
-#define YRCD_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config))
-#define YRCD_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
-#define YRCD_IS_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONFIG))
-#define YRCD_IS_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONFIG))
-#define YRCD_YRCD_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+#define YRCD_TYPE_CONFIG (yrcd_config_get_type ())
+#define YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_CONFIG, yrcdConfig))
+#define YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_CONFIG, yrcdConfigClass))
+#define YRCD_IS_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_CONFIG))
+#define YRCD_IS_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_CONFIG))
+#define YRCD_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_CONFIG, yrcdConfigClass))
 
-typedef struct _yrcdyrcd_config yrcdyrcd_config;
-typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
-typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
+typedef struct _yrcdConfig yrcdConfig;
+typedef struct _yrcdConfigClass yrcdConfigClass;
+typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_key_file_free0(var) ((var == NULL) ? NULL : (var = (g_key_file_free (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_list_free0(var) ((var == NULL) ? NULL : (var = (g_list_free (var), NULL)))
@@ -27,9 +27,9 @@ typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 
-struct _yrcdyrcd_config {
+struct _yrcdConfig {
 	GObject parent_instance;
-	yrcdyrcd_configPrivate * priv;
+	yrcdConfigPrivate * priv;
 	GList* listen_ports;
 	gchar** listen_ips;
 	gint listen_ips_length1;
@@ -41,33 +41,33 @@ struct _yrcdyrcd_config {
 	gchar* salt;
 };
 
-struct _yrcdyrcd_configClass {
+struct _yrcdConfigClass {
 	GObjectClass parent_class;
 };
 
-struct _yrcdyrcd_configPrivate {
+struct _yrcdConfigPrivate {
 	GKeyFile* file;
 	gchar* _sname;
 };
 
 
-static gpointer yrcd_yrcd_config_parent_class = NULL;
+static gpointer yrcd_config_parent_class = NULL;
 
-GType yrcd_yrcd_config_get_type (void) G_GNUC_CONST;
-#define YRCD_YRCD_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configPrivate))
+GType yrcd_config_get_type (void) G_GNUC_CONST;
+#define YRCD_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_CONFIG, yrcdConfigPrivate))
 enum  {
-	YRCD_YRCD_CONFIG_DUMMY_PROPERTY,
-	YRCD_YRCD_CONFIG_SNAME
+	YRCD_CONFIG_DUMMY_PROPERTY,
+	YRCD_CONFIG_SNAME
 };
 static void _g_free0_ (gpointer var);
 static void _g_list_free__g_free0_ (GList* self);
-yrcdyrcd_config* yrcd_yrcd_config_new (const gchar* filepath);
-yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* filepath);
-void yrcd_yrcd_config_set_sname (yrcdyrcd_config* self, const gchar* value);
-const gchar* yrcd_yrcd_config_get_sname (yrcdyrcd_config* self);
-static void yrcd_yrcd_config_finalize (GObject* obj);
-static void _vala_yrcd_yrcd_config_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
-static void _vala_yrcd_yrcd_config_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
+yrcdConfig* yrcd_config_new (const gchar* filepath);
+yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath);
+void yrcd_config_set_sname (yrcdConfig* self, const gchar* value);
+const gchar* yrcd_config_get_sname (yrcdConfig* self);
+static void yrcd_config_finalize (GObject* obj);
+static void _vala_yrcd_config_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
+static void _vala_yrcd_config_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 
@@ -83,11 +83,11 @@ static void _g_list_free__g_free0_ (GList* self) {
 }
 
 
-yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* filepath) {
-	yrcdyrcd_config * self = NULL;
+yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
+	yrcdConfig * self = NULL;
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (filepath != NULL, NULL);
-	self = (yrcdyrcd_config*) g_object_new (object_type, NULL);
+	self = (yrcdConfig*) g_object_new (object_type, NULL);
 	{
 		GKeyFile* _tmp0_ = NULL;
 		const gchar* _tmp1_ = NULL;
@@ -150,7 +150,7 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 		if (_inner_error_ != NULL) {
 			goto __catch0_g_error;
 		}
-		yrcd_yrcd_config_set_sname (self, _tmp3_);
+		yrcd_config_set_sname (self, _tmp3_);
 		_tmp6_ = self->priv->file;
 		_tmp8_ = g_key_file_get_integer_list (_tmp6_, "Networking", "listening_ports", &_tmp7_, &_inner_error_);
 		tmplist = _tmp8_;
@@ -363,12 +363,12 @@ yrcdyrcd_config* yrcd_yrcd_config_construct (GType object_type, const gchar* fil
 }
 
 
-yrcdyrcd_config* yrcd_yrcd_config_new (const gchar* filepath) {
-	return yrcd_yrcd_config_construct (YRCD_TYPE_YRCD_CONFIG, filepath);
+yrcdConfig* yrcd_config_new (const gchar* filepath) {
+	return yrcd_config_construct (YRCD_TYPE_CONFIG, filepath);
 }
 
 
-const gchar* yrcd_yrcd_config_get_sname (yrcdyrcd_config* self) {
+const gchar* yrcd_config_get_sname (yrcdConfig* self) {
 	const gchar* result;
 	const gchar* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -378,7 +378,7 @@ const gchar* yrcd_yrcd_config_get_sname (yrcdyrcd_config* self) {
 }
 
 
-void yrcd_yrcd_config_set_sname (yrcdyrcd_config* self, const gchar* value) {
+void yrcd_config_set_sname (yrcdConfig* self, const gchar* value) {
 	const gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -390,56 +390,56 @@ void yrcd_yrcd_config_set_sname (yrcdyrcd_config* self, const gchar* value) {
 }
 
 
-static void yrcd_yrcd_config_class_init (yrcdyrcd_configClass * klass) {
-	yrcd_yrcd_config_parent_class = g_type_class_peek_parent (klass);
-	g_type_class_add_private (klass, sizeof (yrcdyrcd_configPrivate));
-	G_OBJECT_CLASS (klass)->get_property = _vala_yrcd_yrcd_config_get_property;
-	G_OBJECT_CLASS (klass)->set_property = _vala_yrcd_yrcd_config_set_property;
-	G_OBJECT_CLASS (klass)->finalize = yrcd_yrcd_config_finalize;
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_CONFIG_SNAME, g_param_spec_string ("sname", "sname", "sname", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+static void yrcd_config_class_init (yrcdConfigClass * klass) {
+	yrcd_config_parent_class = g_type_class_peek_parent (klass);
+	g_type_class_add_private (klass, sizeof (yrcdConfigPrivate));
+	G_OBJECT_CLASS (klass)->get_property = _vala_yrcd_config_get_property;
+	G_OBJECT_CLASS (klass)->set_property = _vala_yrcd_config_set_property;
+	G_OBJECT_CLASS (klass)->finalize = yrcd_config_finalize;
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_CONFIG_SNAME, g_param_spec_string ("sname", "sname", "sname", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 }
 
 
-static void yrcd_yrcd_config_instance_init (yrcdyrcd_config * self) {
+static void yrcd_config_instance_init (yrcdConfig * self) {
 	GKeyFile* _tmp0_ = NULL;
-	self->priv = YRCD_YRCD_CONFIG_GET_PRIVATE (self);
+	self->priv = YRCD_CONFIG_GET_PRIVATE (self);
 	_tmp0_ = g_key_file_new ();
 	self->priv->file = _tmp0_;
 	self->config_error = FALSE;
 }
 
 
-static void yrcd_yrcd_config_finalize (GObject* obj) {
-	yrcdyrcd_config * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config);
+static void yrcd_config_finalize (GObject* obj) {
+	yrcdConfig * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_CONFIG, yrcdConfig);
 	_g_key_file_free0 (self->priv->file);
 	_g_free0 (self->priv->_sname);
 	_g_list_free0 (self->listen_ports);
 	self->listen_ips = (_vala_array_free (self->listen_ips, self->listen_ips_length1, (GDestroyNotify) g_free), NULL);
 	__g_list_free__g_free0_0 (self->motd);
 	_g_free0 (self->salt);
-	G_OBJECT_CLASS (yrcd_yrcd_config_parent_class)->finalize (obj);
+	G_OBJECT_CLASS (yrcd_config_parent_class)->finalize (obj);
 }
 
 
-GType yrcd_yrcd_config_get_type (void) {
-	static volatile gsize yrcd_yrcd_config_type_id__volatile = 0;
-	if (g_once_init_enter (&yrcd_yrcd_config_type_id__volatile)) {
-		static const GTypeInfo g_define_type_info = { sizeof (yrcdyrcd_configClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_yrcd_config_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdyrcd_config), 0, (GInstanceInitFunc) yrcd_yrcd_config_instance_init, NULL };
-		GType yrcd_yrcd_config_type_id;
-		yrcd_yrcd_config_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdyrcd_config", &g_define_type_info, 0);
-		g_once_init_leave (&yrcd_yrcd_config_type_id__volatile, yrcd_yrcd_config_type_id);
+GType yrcd_config_get_type (void) {
+	static volatile gsize yrcd_config_type_id__volatile = 0;
+	if (g_once_init_enter (&yrcd_config_type_id__volatile)) {
+		static const GTypeInfo g_define_type_info = { sizeof (yrcdConfigClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_config_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdConfig), 0, (GInstanceInitFunc) yrcd_config_instance_init, NULL };
+		GType yrcd_config_type_id;
+		yrcd_config_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdConfig", &g_define_type_info, 0);
+		g_once_init_leave (&yrcd_config_type_id__volatile, yrcd_config_type_id);
 	}
-	return yrcd_yrcd_config_type_id__volatile;
+	return yrcd_config_type_id__volatile;
 }
 
 
-static void _vala_yrcd_yrcd_config_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec) {
-	yrcdyrcd_config * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config);
+static void _vala_yrcd_config_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec) {
+	yrcdConfig * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_CONFIG, yrcdConfig);
 	switch (property_id) {
-		case YRCD_YRCD_CONFIG_SNAME:
-		g_value_set_string (value, yrcd_yrcd_config_get_sname (self));
+		case YRCD_CONFIG_SNAME:
+		g_value_set_string (value, yrcd_config_get_sname (self));
 		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -448,12 +448,12 @@ static void _vala_yrcd_yrcd_config_get_property (GObject * object, guint propert
 }
 
 
-static void _vala_yrcd_yrcd_config_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec) {
-	yrcdyrcd_config * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config);
+static void _vala_yrcd_config_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec) {
+	yrcdConfig * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_CONFIG, yrcdConfig);
 	switch (property_id) {
-		case YRCD_YRCD_CONFIG_SNAME:
-		yrcd_yrcd_config_set_sname (self, g_value_get_string (value));
+		case YRCD_CONFIG_SNAME:
+		yrcd_config_set_sname (self, g_value_get_string (value));
 		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);

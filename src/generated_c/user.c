@@ -11,88 +11,88 @@
 #include <stdarg.h>
 
 
-#define YRCD_TYPE_YRCD_USER (yrcd_yrcd_user_get_type ())
-#define YRCD_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_user))
-#define YRCD_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
-#define YRCD_IS_YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_USER))
-#define YRCD_IS_YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_USER))
-#define YRCD_YRCD_USER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_USER, yrcdyrcd_userClass))
+#define YRCD_TYPE_USER (yrcd_user_get_type ())
+#define YRCD_USER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_USER, yrcdUser))
+#define YRCD_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_USER, yrcdUserClass))
+#define YRCD_IS_USER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_USER))
+#define YRCD_IS_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_USER))
+#define YRCD_USER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_USER, yrcdUserClass))
 
-typedef struct _yrcdyrcd_user yrcdyrcd_user;
-typedef struct _yrcdyrcd_userClass yrcdyrcd_userClass;
-typedef struct _yrcdyrcd_userPrivate yrcdyrcd_userPrivate;
+typedef struct _yrcdUser yrcdUser;
+typedef struct _yrcdUserClass yrcdUserClass;
+typedef struct _yrcdUserPrivate yrcdUserPrivate;
 
-#define YRCD_TYPE_YRCD_CHANNEL (yrcd_yrcd_channel_get_type ())
-#define YRCD_YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channel))
-#define YRCD_YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channelClass))
-#define YRCD_IS_YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CHANNEL))
-#define YRCD_IS_YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CHANNEL))
-#define YRCD_YRCD_CHANNEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CHANNEL, yrcdyrcd_channelClass))
+#define YRCD_TYPE_CHANNEL (yrcd_channel_get_type ())
+#define YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_CHANNEL, yrcdChannel))
+#define YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_CHANNEL, yrcdChannelClass))
+#define YRCD_IS_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_CHANNEL))
+#define YRCD_IS_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_CHANNEL))
+#define YRCD_CHANNEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_CHANNEL, yrcdChannelClass))
 
-typedef struct _yrcdyrcd_channel yrcdyrcd_channel;
-typedef struct _yrcdyrcd_channelClass yrcdyrcd_channelClass;
+typedef struct _yrcdChannel yrcdChannel;
+typedef struct _yrcdChannelClass yrcdChannelClass;
 
-#define YRCD_TYPE_YRCD_SERVER (yrcd_yrcd_server_get_type ())
-#define YRCD_YRCD_SERVER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_server))
-#define YRCD_YRCD_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_serverClass))
-#define YRCD_IS_YRCD_SERVER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_SERVER))
-#define YRCD_IS_YRCD_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_SERVER))
-#define YRCD_YRCD_SERVER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_SERVER, yrcdyrcd_serverClass))
+#define YRCD_TYPE_SERVER (yrcd_server_get_type ())
+#define YRCD_SERVER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_SERVER, yrcdServer))
+#define YRCD_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_SERVER, yrcdServerClass))
+#define YRCD_IS_SERVER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_SERVER))
+#define YRCD_IS_SERVER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_SERVER))
+#define YRCD_SERVER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_SERVER, yrcdServerClass))
 
-typedef struct _yrcdyrcd_server yrcdyrcd_server;
-typedef struct _yrcdyrcd_serverClass yrcdyrcd_serverClass;
+typedef struct _yrcdServer yrcdServer;
+typedef struct _yrcdServerClass yrcdServerClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_list_free0(var) ((var == NULL) ? NULL : (var = (g_list_free (var), NULL)))
-typedef struct _yrcdyrcd_serverPrivate yrcdyrcd_serverPrivate;
+typedef struct _yrcdServerPrivate yrcdServerPrivate;
 
-#define YRCD_TYPE_YRCD_NUMERIC_WRAPPER (yrcd_yrcd_numeric_wrapper_get_type ())
-#define YRCD_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapper))
-#define YRCD_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
-#define YRCD_IS_YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
-#define YRCD_IS_YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_NUMERIC_WRAPPER))
-#define YRCD_YRCD_NUMERIC_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_NUMERIC_WRAPPER, yrcdyrcd_numeric_wrapperClass))
+#define YRCD_TYPE_NUMERIC_WRAPPER (yrcd_numeric_wrapper_get_type ())
+#define YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapper))
+#define YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapperClass))
+#define YRCD_IS_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_NUMERIC_WRAPPER))
+#define YRCD_IS_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_NUMERIC_WRAPPER))
+#define YRCD_NUMERIC_WRAPPER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapperClass))
 
-typedef struct _yrcdyrcd_numeric_wrapper yrcdyrcd_numeric_wrapper;
-typedef struct _yrcdyrcd_numeric_wrapperClass yrcdyrcd_numeric_wrapperClass;
+typedef struct _yrcdNumericWrapper yrcdNumericWrapper;
+typedef struct _yrcdNumericWrapperClass yrcdNumericWrapperClass;
 
-#define YRCD_TYPE_YRCD_CONFIG (yrcd_yrcd_config_get_type ())
-#define YRCD_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_config))
-#define YRCD_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
-#define YRCD_IS_YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_YRCD_CONFIG))
-#define YRCD_IS_YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_YRCD_CONFIG))
-#define YRCD_YRCD_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_YRCD_CONFIG, yrcdyrcd_configClass))
+#define YRCD_TYPE_CONFIG (yrcd_config_get_type ())
+#define YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_CONFIG, yrcdConfig))
+#define YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_CONFIG, yrcdConfigClass))
+#define YRCD_IS_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_CONFIG))
+#define YRCD_IS_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_CONFIG))
+#define YRCD_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_CONFIG, yrcdConfigClass))
 
-typedef struct _yrcdyrcd_config yrcdyrcd_config;
-typedef struct _yrcdyrcd_configClass yrcdyrcd_configClass;
-typedef struct _yrcdyrcd_configPrivate yrcdyrcd_configPrivate;
+typedef struct _yrcdConfig yrcdConfig;
+typedef struct _yrcdConfigClass yrcdConfigClass;
+typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 typedef struct _Block1Data Block1Data;
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
-typedef struct _YrcdYrcdUserHostnameLookupData YrcdYrcdUserHostnameLookupData;
-typedef struct _yrcdyrcd_numeric_wrapperPrivate yrcdyrcd_numeric_wrapperPrivate;
+typedef struct _YrcdUserHostnameLookupData YrcdUserHostnameLookupData;
+typedef struct _yrcdNumericWrapperPrivate yrcdNumericWrapperPrivate;
 
-struct _yrcdyrcd_user {
+struct _yrcdUser {
 	GObject parent_instance;
-	yrcdyrcd_userPrivate * priv;
+	yrcdUserPrivate * priv;
 	gchar* ip;
 	gchar* host;
 	GeeHashMap* user_chanels;
 	GList* asources;
 };
 
-struct _yrcdyrcd_userClass {
+struct _yrcdUserClass {
 	GObjectClass parent_class;
 };
 
-struct _yrcdyrcd_userPrivate {
+struct _yrcdUserPrivate {
 	GSocketConnection* _sock;
 	GDataInputStream* _dis;
 	GDataOutputStream* _dos;
-	yrcdyrcd_server* _server;
+	yrcdServer* _server;
 	gint _id;
 	GDateTime* time_last_rcv;
 	GDateTime* epoch;
@@ -107,24 +107,24 @@ struct _yrcdyrcd_userPrivate {
 	gboolean _registered;
 };
 
-struct _yrcdyrcd_server {
+struct _yrcdServer {
 	GObject parent_instance;
-	yrcdyrcd_serverPrivate * priv;
+	yrcdServerPrivate * priv;
 	GeeHashMap* userlist;
 	GeeHashMap* channellist;
 	gint64 epoch;
 	gint max_users;
-	yrcdyrcd_numeric_wrapper* numeric_wrapper;
-	yrcdyrcd_config* config;
+	yrcdNumericWrapper* numeric_wrapper;
+	yrcdConfig* config;
 };
 
-struct _yrcdyrcd_serverClass {
+struct _yrcdServerClass {
 	GObjectClass parent_class;
 };
 
-struct _yrcdyrcd_config {
+struct _yrcdConfig {
 	GObject parent_instance;
-	yrcdyrcd_configPrivate * priv;
+	yrcdConfigPrivate * priv;
 	GList* listen_ports;
 	gchar** listen_ips;
 	gint listen_ips_length1;
@@ -136,22 +136,22 @@ struct _yrcdyrcd_config {
 	gchar* salt;
 };
 
-struct _yrcdyrcd_configClass {
+struct _yrcdConfigClass {
 	GObjectClass parent_class;
 };
 
 struct _Block1Data {
 	int _ref_count_;
-	yrcdyrcd_user* self;
+	yrcdUser* self;
 	gchar* msg;
 };
 
-struct _YrcdYrcdUserHostnameLookupData {
+struct _YrcdUserHostnameLookupData {
 	int _state_;
 	GObject* _source_object_;
 	GAsyncResult* _res_;
 	GSimpleAsyncResult* _async_result;
-	yrcdyrcd_user* self;
+	yrcdUser* self;
 	GResolver* resolv;
 	GResolver* _tmp0_;
 	GInetAddress* add;
@@ -194,131 +194,131 @@ struct _YrcdYrcdUserHostnameLookupData {
 	GError * _inner_error_;
 };
 
-struct _yrcdyrcd_numeric_wrapper {
+struct _yrcdNumericWrapper {
 	GObject parent_instance;
-	yrcdyrcd_numeric_wrapperPrivate * priv;
+	yrcdNumericWrapperPrivate * priv;
 	GeeHashMap* numerics;
 };
 
-struct _yrcdyrcd_numeric_wrapperClass {
+struct _yrcdNumericWrapperClass {
 	GObjectClass parent_class;
 };
 
 
-static gpointer yrcd_yrcd_user_parent_class = NULL;
+static gpointer yrcd_user_parent_class = NULL;
 
-GType yrcd_yrcd_user_get_type (void) G_GNUC_CONST;
-GType yrcd_yrcd_channel_get_type (void) G_GNUC_CONST;
-GType yrcd_yrcd_server_get_type (void) G_GNUC_CONST;
-#define YRCD_YRCD_USER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_YRCD_USER, yrcdyrcd_userPrivate))
+GType yrcd_user_get_type (void) G_GNUC_CONST;
+GType yrcd_channel_get_type (void) G_GNUC_CONST;
+GType yrcd_server_get_type (void) G_GNUC_CONST;
+#define YRCD_USER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_USER, yrcdUserPrivate))
 enum  {
-	YRCD_YRCD_USER_DUMMY_PROPERTY,
-	YRCD_YRCD_USER_SOCK,
-	YRCD_YRCD_USER_DIS,
-	YRCD_YRCD_USER_DOS,
-	YRCD_YRCD_USER_SERVER,
-	YRCD_YRCD_USER_ID,
-	YRCD_YRCD_USER_NICK,
-	YRCD_YRCD_USER_IDENT,
-	YRCD_YRCD_USER_REALNAME,
-	YRCD_YRCD_USER_USER_SET,
-	YRCD_YRCD_USER_NICK_SET,
-	YRCD_YRCD_USER_REGISTERED
+	YRCD_USER_DUMMY_PROPERTY,
+	YRCD_USER_SOCK,
+	YRCD_USER_DIS,
+	YRCD_USER_DOS,
+	YRCD_USER_SERVER,
+	YRCD_USER_ID,
+	YRCD_USER_NICK,
+	YRCD_USER_IDENT,
+	YRCD_USER_REALNAME,
+	YRCD_USER_USER_SET,
+	YRCD_USER_NICK_SET,
+	YRCD_USER_REGISTERED
 };
-yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server);
-yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server);
-void yrcd_yrcd_user_set_sock (yrcdyrcd_user* self, GSocketConnection* value);
-void yrcd_yrcd_user_set_server (yrcdyrcd_user* self, yrcdyrcd_server* value);
-gchar* yrcd_yrcd_user_get_ip (yrcdyrcd_user* self);
-GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self);
-void yrcd_yrcd_user_set_dis (yrcdyrcd_user* self, GDataInputStream* value);
-void yrcd_yrcd_user_set_dos (yrcdyrcd_user* self, GDataOutputStream* value);
-yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self);
-gint yrcd_yrcd_server_new_userid (yrcdyrcd_server* self);
-void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value);
-void yrcd_yrcd_user_hostname_lookup (yrcdyrcd_user* self, GAsyncReadyCallback _callback_, gpointer _user_data_);
-void yrcd_yrcd_user_hostname_lookup_finish (yrcdyrcd_user* self, GAsyncResult* _res_);
-GType yrcd_yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
-GType yrcd_yrcd_config_get_type (void) G_GNUC_CONST;
-static guint yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self);
-void yrcd_yrcd_user_set_registered (yrcdyrcd_user* self, gboolean value);
-void yrcd_yrcd_server_log (yrcdyrcd_server* self, const gchar* msg);
-gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self);
-static gboolean __lambda4_ (yrcdyrcd_user* self);
-static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self);
+yrcdUser* yrcd_user_new (GSocketConnection* conn, yrcdServer* _server);
+yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdServer* _server);
+void yrcd_user_set_sock (yrcdUser* self, GSocketConnection* value);
+void yrcd_user_set_server (yrcdUser* self, yrcdServer* value);
+gchar* yrcd_user_get_ip (yrcdUser* self);
+GSocketConnection* yrcd_user_get_sock (yrcdUser* self);
+void yrcd_user_set_dis (yrcdUser* self, GDataInputStream* value);
+void yrcd_user_set_dos (yrcdUser* self, GDataOutputStream* value);
+yrcdServer* yrcd_user_get_server (yrcdUser* self);
+gint yrcd_server_new_userid (yrcdServer* self);
+void yrcd_user_set_id (yrcdUser* self, gint value);
+void yrcd_user_hostname_lookup (yrcdUser* self, GAsyncReadyCallback _callback_, gpointer _user_data_);
+void yrcd_user_hostname_lookup_finish (yrcdUser* self, GAsyncResult* _res_);
+GType yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
+GType yrcd_config_get_type (void) G_GNUC_CONST;
+static guint yrcd_user_setup_ping_timer (yrcdUser* self);
+void yrcd_user_set_registered (yrcdUser* self, gboolean value);
+void yrcd_server_log (yrcdServer* self, const gchar* msg);
+gint yrcd_user_get_id (yrcdUser* self);
+static gboolean __lambda4_ (yrcdUser* self);
+static void yrcd_user_check_ping (yrcdUser* self);
 static gboolean ___lambda4__gsource_func (gpointer self);
-void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg);
-void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg, gint p);
-const gchar* yrcd_yrcd_config_get_sname (yrcdyrcd_config* self);
-void yrcd_yrcd_channel_quit (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
-void yrcd_yrcd_server_remove_user (yrcdyrcd_server* self, gint id);
-void yrcd_yrcd_user_part (yrcdyrcd_user* self, yrcdyrcd_channel* chan, const gchar* msg);
-const gchar* yrcd_yrcd_channel_get_name (yrcdyrcd_channel* self);
-void yrcd_yrcd_channel_part (yrcdyrcd_channel* self, yrcdyrcd_user* user, const gchar* msg);
-void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan);
-gboolean yrcd_yrcd_channel_add_user (yrcdyrcd_channel* self, yrcdyrcd_user* user);
-const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self);
-void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1);
-void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...);
+void yrcd_user_quit (yrcdUser* self, const gchar* msg);
+void yrcd_user_send_line (yrcdUser* self, const gchar* msg, gint p);
+const gchar* yrcd_config_get_sname (yrcdConfig* self);
+void yrcd_channel_quit (yrcdChannel* self, yrcdUser* user, const gchar* msg);
+void yrcd_server_remove_user (yrcdServer* self, gint id);
+void yrcd_user_part (yrcdUser* self, yrcdChannel* chan, const gchar* msg);
+const gchar* yrcd_channel_get_name (yrcdChannel* self);
+void yrcd_channel_part (yrcdChannel* self, yrcdUser* user, const gchar* msg);
+void yrcd_user_join (yrcdUser* self, yrcdChannel* chan);
+gboolean yrcd_channel_add_user (yrcdChannel* self, yrcdUser* user);
+const gchar* yrcd_user_get_nick (yrcdUser* self);
+void yrcd_user_change_nick (yrcdUser* self, gchar** args, int args_length1);
+void yrcd_user_fire_numeric (yrcdUser* self, gint numeric, ...);
 #define YRCD_ERR_NONICKNAMEGIVEN 431
-yrcdyrcd_user* yrcd_yrcd_server_get_user_by_nick (yrcdyrcd_server* self, const gchar* nicktocheck);
+yrcdUser* yrcd_server_get_user_by_nick (yrcdServer* self, const gchar* nicktocheck);
 #define YRCD_ERR_NICKNAMEINUSE 433
 #define YRCD_ERR_ERRONEOUSNICKNAME 432
-void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value);
-gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self);
-void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value);
-gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self);
-void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self);
-void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1);
+void yrcd_user_set_nick (yrcdUser* self, const gchar* value);
+gboolean yrcd_user_get_nick_set (yrcdUser* self);
+void yrcd_user_set_nick_set (yrcdUser* self, gboolean value);
+gboolean yrcd_user_get_user_set (yrcdUser* self);
+void yrcd_user_reg_finished (yrcdUser* self);
+void yrcd_user_user_reg (yrcdUser* self, gchar** args, int args_length1);
 #define YRCD_ERR_NEEDMOREPARAMS 461
-void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value);
-void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value);
-void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value);
-gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self);
-const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self);
+void yrcd_user_set_ident (yrcdUser* self, const gchar* value);
+void yrcd_user_set_realname (yrcdUser* self, const gchar* value);
+void yrcd_user_set_user_set (yrcdUser* self, gboolean value);
+gchar* yrcd_user_get_hostmask (yrcdUser* self);
+const gchar* yrcd_user_get_realname (yrcdUser* self);
 #define YRCD_RPL_WELCOME 001
-const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self);
+const gchar* yrcd_user_get_ident (yrcdUser* self);
 #define YRCD_RPL_YOURHOST 002
-#define YRCD_YRCD_CONSTANTS_software "yrcd"
-#define YRCD_YRCD_CONSTANTS_version "0.2"
+#define YRCD_CONSTANTS_software "yrcd"
+#define YRCD_CONSTANTS_version "0.2"
 #define YRCD_RPL_CREATED 003
-gchar* yrcd_yrcd_server_ut_to_utc (yrcdyrcd_server* self, gint64 ut);
+gchar* yrcd_server_ut_to_utc (yrcdServer* self, gint64 ut);
 #define YRCD_RPL_MYINFO 004
-void yrcd_yrcd_user_fire_motd (yrcdyrcd_user* self);
-void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self);
-gchar* yrcd_yrcd_user_cloaked_host (yrcdyrcd_user* self);
-static void yrcd_yrcd_user_send_to_socket (yrcdyrcd_user* self, const gchar* msg);
-GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self);
+void yrcd_user_fire_motd (yrcdUser* self);
+void yrcd_user_update_timestamp (yrcdUser* self);
+gchar* yrcd_user_cloaked_host (yrcdUser* self);
+static void yrcd_user_send_to_socket (yrcdUser* self, const gchar* msg);
+GDataOutputStream* yrcd_user_get_dos (yrcdUser* self);
 static Block1Data* block1_data_ref (Block1Data* _data1_);
 static void block1_data_unref (void * _userdata_);
 static gboolean __lambda3_ (Block1Data* _data1_);
 static gboolean ___lambda3__gsource_func (gpointer self);
-static void yrcd_yrcd_user_hostname_lookup_data_free (gpointer _data);
-static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupData* _data_);
-void yrcd_yrcd_user_send_notice (yrcdyrcd_user* self, const gchar* msg);
-static void yrcd_yrcd_user_hostname_lookup_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
+static void yrcd_user_hostname_lookup_data_free (gpointer _data);
+static gboolean yrcd_user_hostname_lookup_co (YrcdUserHostnameLookupData* _data_);
+void yrcd_user_send_notice (yrcdUser* self, const gchar* msg);
+static void yrcd_user_hostname_lookup_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_);
 static void _g_object_unref0_ (gpointer var);
 static void _g_list_free__g_object_unref0_ (GList* self);
 #define YRCD_RPL_MOTDSTART 375
 #define YRCD_RPL_MOTD 372
 #define YRCD_RPL_ENDOFMOTD 376
-gchar* yrcd_yrcd_server_secure_hash (yrcdyrcd_server* self, const gchar* in);
-GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self);
-gboolean yrcd_yrcd_user_get_registered (yrcdyrcd_user* self);
-static void yrcd_yrcd_user_finalize (GObject* obj);
-static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
-static void _vala_yrcd_yrcd_user_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
+gchar* yrcd_server_secure_hash (yrcdServer* self, const gchar* in);
+GDataInputStream* yrcd_user_get_dis (yrcdUser* self);
+gboolean yrcd_user_get_registered (yrcdUser* self);
+static void yrcd_user_finalize (GObject* obj);
+static void _vala_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
+static void _vala_yrcd_user_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static gint _vala_array_length (gpointer array);
 
-extern const gchar* YRCD_YRCD_CONSTANTS_forbidden_nick_chars[6];
+extern const gchar* YRCD_CONSTANTS_forbidden_nick_chars[6];
 
-yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdyrcd_server* _server) {
-	yrcdyrcd_user * self = NULL;
+yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdServer* _server) {
+	yrcdUser * self = NULL;
 	GeeHashMap* _tmp0_ = NULL;
 	GSocketConnection* _tmp1_ = NULL;
-	yrcdyrcd_server* _tmp2_ = NULL;
+	yrcdServer* _tmp2_ = NULL;
 	gchar* _tmp3_ = NULL;
 	GSocketConnection* _tmp4_ = NULL;
 	GInputStream* _tmp5_ = NULL;
@@ -330,7 +330,7 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	GOutputStream* _tmp11_ = NULL;
 	GDataOutputStream* _tmp12_ = NULL;
 	GDataOutputStream* _tmp13_ = NULL;
-	yrcdyrcd_server* _tmp14_ = NULL;
+	yrcdServer* _tmp14_ = NULL;
 	gint _tmp15_ = 0;
 	GDateTime* _tmp16_ = NULL;
 	GDateTime* _tmp17_ = NULL;
@@ -338,26 +338,26 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	gchar* _tmp19_ = NULL;
 	GDateTime* _tmp20_ = NULL;
 	gint64 _tmp21_ = 0LL;
-	yrcdyrcd_server* _tmp22_ = NULL;
-	yrcdyrcd_config* _tmp23_ = NULL;
+	yrcdServer* _tmp22_ = NULL;
+	yrcdConfig* _tmp23_ = NULL;
 	gint _tmp24_ = 0;
 	guint _tmp25_ = 0U;
-	yrcdyrcd_server* _tmp26_ = NULL;
+	yrcdServer* _tmp26_ = NULL;
 	const gchar* _tmp27_ = NULL;
 	gint _tmp28_ = 0;
 	gchar* _tmp29_ = NULL;
 	gchar* _tmp30_ = NULL;
 	g_return_val_if_fail (conn != NULL, NULL);
 	g_return_val_if_fail (_server != NULL, NULL);
-	self = (yrcdyrcd_user*) g_object_new (object_type, NULL);
-	_tmp0_ = gee_hash_map_new (G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, YRCD_TYPE_YRCD_CHANNEL, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
+	self = (yrcdUser*) g_object_new (object_type, NULL);
+	_tmp0_ = gee_hash_map_new (G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, YRCD_TYPE_CHANNEL, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
 	_g_object_unref0 (self->user_chanels);
 	self->user_chanels = _tmp0_;
 	_tmp1_ = conn;
-	yrcd_yrcd_user_set_sock (self, _tmp1_);
+	yrcd_user_set_sock (self, _tmp1_);
 	_tmp2_ = _server;
-	yrcd_yrcd_user_set_server (self, _tmp2_);
-	_tmp3_ = yrcd_yrcd_user_get_ip (self);
+	yrcd_user_set_server (self, _tmp2_);
+	_tmp3_ = yrcd_user_get_ip (self);
 	_g_free0 (self->ip);
 	self->ip = _tmp3_;
 	_tmp4_ = self->priv->_sock;
@@ -365,18 +365,18 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	_tmp6_ = _tmp5_;
 	_tmp7_ = g_data_input_stream_new (_tmp6_);
 	_tmp8_ = _tmp7_;
-	yrcd_yrcd_user_set_dis (self, _tmp8_);
+	yrcd_user_set_dis (self, _tmp8_);
 	_g_object_unref0 (_tmp8_);
 	_tmp9_ = self->priv->_sock;
 	_tmp10_ = g_io_stream_get_output_stream ((GIOStream*) _tmp9_);
 	_tmp11_ = _tmp10_;
 	_tmp12_ = g_data_output_stream_new (_tmp11_);
 	_tmp13_ = _tmp12_;
-	yrcd_yrcd_user_set_dos (self, _tmp13_);
+	yrcd_user_set_dos (self, _tmp13_);
 	_g_object_unref0 (_tmp13_);
 	_tmp14_ = self->priv->_server;
-	_tmp15_ = yrcd_yrcd_server_new_userid (_tmp14_);
-	yrcd_yrcd_user_set_id (self, _tmp15_);
+	_tmp15_ = yrcd_server_new_userid (_tmp14_);
+	yrcd_user_set_id (self, _tmp15_);
 	_tmp16_ = g_date_time_new_now_utc ();
 	_g_date_time_unref0 (self->priv->epoch);
 	self->priv->epoch = _tmp16_;
@@ -387,7 +387,7 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	_tmp19_ = g_strdup (_tmp18_);
 	_g_free0 (self->host);
 	self->host = _tmp19_;
-	yrcd_yrcd_user_hostname_lookup (self, NULL, NULL);
+	yrcd_user_hostname_lookup (self, NULL, NULL);
 	self->priv->awaiting_response = FALSE;
 	_tmp20_ = self->priv->epoch;
 	_tmp21_ = g_date_time_to_unix (_tmp20_);
@@ -397,26 +397,26 @@ yrcdyrcd_user* yrcd_yrcd_user_construct (GType object_type, GSocketConnection* c
 	self->priv->check_ping_at = _tmp21_ + _tmp24_;
 	_g_list_free0 (self->asources);
 	self->asources = NULL;
-	_tmp25_ = yrcd_yrcd_user_setup_ping_timer (self);
+	_tmp25_ = yrcd_user_setup_ping_timer (self);
 	self->asources = g_list_append (self->asources, (gpointer) ((guintptr) _tmp25_));
-	yrcd_yrcd_user_set_registered (self, FALSE);
+	yrcd_user_set_registered (self, FALSE);
 	_tmp26_ = self->priv->_server;
 	_tmp27_ = self->host;
 	_tmp28_ = self->priv->_id;
 	_tmp29_ = g_strdup_printf ("User connected from %s with ID %d", _tmp27_, _tmp28_);
 	_tmp30_ = _tmp29_;
-	yrcd_yrcd_server_log (_tmp26_, _tmp30_);
+	yrcd_server_log (_tmp26_, _tmp30_);
 	_g_free0 (_tmp30_);
 	return self;
 }
 
 
-yrcdyrcd_user* yrcd_yrcd_user_new (GSocketConnection* conn, yrcdyrcd_server* _server) {
-	return yrcd_yrcd_user_construct (YRCD_TYPE_YRCD_USER, conn, _server);
+yrcdUser* yrcd_user_new (GSocketConnection* conn, yrcdServer* _server) {
+	return yrcd_user_construct (YRCD_TYPE_USER, conn, _server);
 }
 
 
-static gboolean __lambda4_ (yrcdyrcd_user* self) {
+static gboolean __lambda4_ (yrcdUser* self) {
 	gboolean result = FALSE;
 	GSocketConnection* _tmp0_ = NULL;
 	GSocket* _tmp1_ = NULL;
@@ -428,7 +428,7 @@ static gboolean __lambda4_ (yrcdyrcd_user* self) {
 		result = FALSE;
 		return result;
 	}
-	yrcd_yrcd_user_check_ping (self);
+	yrcd_user_check_ping (self);
 	result = TRUE;
 	return result;
 }
@@ -436,12 +436,12 @@ static gboolean __lambda4_ (yrcdyrcd_user* self) {
 
 static gboolean ___lambda4__gsource_func (gpointer self) {
 	gboolean result;
-	result = __lambda4_ ((yrcdyrcd_user*) self);
+	result = __lambda4_ ((yrcdUser*) self);
 	return result;
 }
 
 
-static guint yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self) {
+static guint yrcd_user_setup_ping_timer (yrcdUser* self) {
 	guint result = 0U;
 	guint t = 0U;
 	guint _tmp0_ = 0U;
@@ -453,8 +453,8 @@ static guint yrcd_yrcd_user_setup_ping_timer (yrcdyrcd_user* self) {
 }
 
 
-static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
-	yrcdyrcd_server* _tmp0_ = NULL;
+static void yrcd_user_check_ping (yrcdUser* self) {
+	yrcdServer* _tmp0_ = NULL;
 	gint _tmp1_ = 0;
 	gchar* _tmp2_ = NULL;
 	gchar* _tmp3_ = NULL;
@@ -473,7 +473,7 @@ static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
 	_tmp1_ = self->priv->_id;
 	_tmp2_ = g_strdup_printf ("check ping called on user %d", _tmp1_);
 	_tmp3_ = _tmp2_;
-	yrcd_yrcd_server_log (_tmp0_, _tmp3_);
+	yrcd_server_log (_tmp0_, _tmp3_);
 	_g_free0 (_tmp3_);
 	_tmp4_ = g_date_time_new_now_utc ();
 	_tmp5_ = _tmp4_;
@@ -490,8 +490,8 @@ static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
 		gint64 _tmp12_ = 0LL;
 		gint64 _tmp13_ = 0LL;
 		gint64 _tmp26_ = 0LL;
-		yrcdyrcd_server* _tmp27_ = NULL;
-		yrcdyrcd_config* _tmp28_ = NULL;
+		yrcdServer* _tmp27_ = NULL;
+		yrcdConfig* _tmp28_ = NULL;
 		gint _tmp29_ = 0;
 		_tmp12_ = self->priv->check_ping_at;
 		_tmp13_ = last;
@@ -499,8 +499,8 @@ static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
 			gboolean _tmp14_ = FALSE;
 			_tmp14_ = self->priv->awaiting_response;
 			if (_tmp14_) {
-				yrcdyrcd_server* _tmp15_ = NULL;
-				yrcdyrcd_config* _tmp16_ = NULL;
+				yrcdServer* _tmp15_ = NULL;
+				yrcdConfig* _tmp16_ = NULL;
 				gint _tmp17_ = 0;
 				gchar* _tmp18_ = NULL;
 				gchar* _tmp19_ = NULL;
@@ -509,22 +509,22 @@ static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
 				_tmp17_ = _tmp16_->ping_invertal;
 				_tmp18_ = g_strdup_printf ("Ping timeout: %d seconds", _tmp17_);
 				_tmp19_ = _tmp18_;
-				yrcd_yrcd_user_quit (self, _tmp19_);
+				yrcd_user_quit (self, _tmp19_);
 				_g_free0 (_tmp19_);
 			} else {
-				yrcdyrcd_server* _tmp20_ = NULL;
-				yrcdyrcd_config* _tmp21_ = NULL;
+				yrcdServer* _tmp20_ = NULL;
+				yrcdConfig* _tmp21_ = NULL;
 				const gchar* _tmp22_ = NULL;
 				const gchar* _tmp23_ = NULL;
 				gchar* _tmp24_ = NULL;
 				gchar* _tmp25_ = NULL;
 				_tmp20_ = self->priv->_server;
 				_tmp21_ = _tmp20_->config;
-				_tmp22_ = yrcd_yrcd_config_get_sname (_tmp21_);
+				_tmp22_ = yrcd_config_get_sname (_tmp21_);
 				_tmp23_ = _tmp22_;
 				_tmp24_ = g_strconcat ("PING :", _tmp23_, NULL);
 				_tmp25_ = _tmp24_;
-				yrcd_yrcd_user_send_line (self, _tmp25_, G_PRIORITY_HIGH);
+				yrcd_user_send_line (self, _tmp25_, G_PRIORITY_HIGH);
 				_g_free0 (_tmp25_);
 				self->priv->awaiting_response = TRUE;
 			}
@@ -538,7 +538,7 @@ static void yrcd_yrcd_user_check_ping (yrcdyrcd_user* self) {
 }
 
 
-gchar* yrcd_yrcd_user_get_ip (yrcdyrcd_user* self) {
+gchar* yrcd_user_get_ip (yrcdUser* self) {
 	gchar* result = NULL;
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -602,7 +602,7 @@ gchar* yrcd_yrcd_user_get_ip (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
+void yrcd_user_quit (yrcdUser* self, const gchar* msg) {
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
 	{
@@ -614,7 +614,7 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		GList* _tmp17_ = NULL;
 		GSocketConnection* _tmp20_ = NULL;
 		GSocket* _tmp21_ = NULL;
-		yrcdyrcd_server* _tmp22_ = NULL;
+		yrcdServer* _tmp22_ = NULL;
 		gint _tmp23_ = 0;
 		_tmp0_ = msg;
 		if (_tmp0_ == NULL) {
@@ -639,10 +639,10 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 			while (TRUE) {
 				GeeIterator* _tmp7_ = NULL;
 				gboolean _tmp8_ = FALSE;
-				yrcdyrcd_channel* k = NULL;
+				yrcdChannel* k = NULL;
 				GeeIterator* _tmp9_ = NULL;
 				gpointer _tmp10_ = NULL;
-				yrcdyrcd_channel* _tmp11_ = NULL;
+				yrcdChannel* _tmp11_ = NULL;
 				const gchar* _tmp12_ = NULL;
 				_tmp7_ = _k_it;
 				_tmp8_ = gee_iterator_next (_tmp7_);
@@ -651,10 +651,10 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 				}
 				_tmp9_ = _k_it;
 				_tmp10_ = gee_iterator_get (_tmp9_);
-				k = (yrcdyrcd_channel*) _tmp10_;
+				k = (yrcdChannel*) _tmp10_;
 				_tmp11_ = k;
 				_tmp12_ = msg;
-				yrcd_yrcd_channel_quit (_tmp11_, self, _tmp12_);
+				yrcd_channel_quit (_tmp11_, self, _tmp12_);
 				_g_object_unref0 (k);
 			}
 			_g_object_unref0 (_k_it);
@@ -663,7 +663,7 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		_tmp14_ = msg;
 		_tmp15_ = g_strdup_printf ("Error :Closing Link: %s (%s)", _tmp13_, _tmp14_);
 		_tmp16_ = _tmp15_;
-		yrcd_yrcd_user_send_line (self, _tmp16_, G_PRIORITY_DEFAULT);
+		yrcd_user_send_line (self, _tmp16_, G_PRIORITY_DEFAULT);
 		_g_free0 (_tmp16_);
 		_tmp17_ = self->asources;
 		{
@@ -691,13 +691,13 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		}
 		_tmp22_ = self->priv->_server;
 		_tmp23_ = self->priv->_id;
-		yrcd_yrcd_server_remove_user (_tmp22_, _tmp23_);
+		yrcd_server_remove_user (_tmp22_, _tmp23_);
 	}
 	goto __finally4;
 	__catch4_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp24_ = NULL;
+		yrcdServer* _tmp24_ = NULL;
 		GError* _tmp25_ = NULL;
 		const gchar* _tmp26_ = NULL;
 		gchar* _tmp27_ = NULL;
@@ -709,7 +709,7 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 		_tmp26_ = _tmp25_->message;
 		_tmp27_ = g_strdup_printf ("Error closing socket: %s", _tmp26_);
 		_tmp28_ = _tmp27_;
-		yrcd_yrcd_server_log (_tmp24_, _tmp28_);
+		yrcd_server_log (_tmp24_, _tmp28_);
 		_g_free0 (_tmp28_);
 		_g_error_free0 (e);
 	}
@@ -722,29 +722,29 @@ void yrcd_yrcd_user_quit (yrcdyrcd_user* self, const gchar* msg) {
 }
 
 
-void yrcd_yrcd_user_part (yrcdyrcd_user* self, yrcdyrcd_channel* chan, const gchar* msg) {
+void yrcd_user_part (yrcdUser* self, yrcdChannel* chan, const gchar* msg) {
 	GeeHashMap* _tmp0_ = NULL;
-	yrcdyrcd_channel* _tmp1_ = NULL;
+	yrcdChannel* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
 	const gchar* _tmp3_ = NULL;
 	gpointer _tmp4_ = NULL;
-	yrcdyrcd_channel* _tmp5_ = NULL;
+	yrcdChannel* _tmp5_ = NULL;
 	gboolean _tmp6_ = FALSE;
 	const gchar* _tmp7_ = NULL;
 	GeeHashMap* _tmp8_ = NULL;
-	yrcdyrcd_channel* _tmp9_ = NULL;
+	yrcdChannel* _tmp9_ = NULL;
 	const gchar* _tmp10_ = NULL;
 	const gchar* _tmp11_ = NULL;
-	yrcdyrcd_channel* _tmp12_ = NULL;
+	yrcdChannel* _tmp12_ = NULL;
 	const gchar* _tmp13_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (chan != NULL);
 	_tmp0_ = self->user_chanels;
 	_tmp1_ = chan;
-	_tmp2_ = yrcd_yrcd_channel_get_name (_tmp1_);
+	_tmp2_ = yrcd_channel_get_name (_tmp1_);
 	_tmp3_ = _tmp2_;
 	_tmp4_ = gee_abstract_map_get ((GeeAbstractMap*) _tmp0_, _tmp3_);
-	_tmp5_ = (yrcdyrcd_channel*) _tmp4_;
+	_tmp5_ = (yrcdChannel*) _tmp4_;
 	_tmp6_ = _tmp5_ == NULL;
 	_g_object_unref0 (_tmp5_);
 	if (_tmp6_) {
@@ -756,12 +756,12 @@ void yrcd_yrcd_user_part (yrcdyrcd_user* self, yrcdyrcd_channel* chan, const gch
 	}
 	_tmp8_ = self->user_chanels;
 	_tmp9_ = chan;
-	_tmp10_ = yrcd_yrcd_channel_get_name (_tmp9_);
+	_tmp10_ = yrcd_channel_get_name (_tmp9_);
 	_tmp11_ = _tmp10_;
 	gee_abstract_map_unset ((GeeAbstractMap*) _tmp8_, _tmp11_, NULL);
 	_tmp12_ = chan;
 	_tmp13_ = msg;
-	yrcd_yrcd_channel_part (_tmp12_, self, _tmp13_);
+	yrcd_channel_part (_tmp12_, self, _tmp13_);
 }
 
 
@@ -773,20 +773,20 @@ static const gchar* string_to_string (const gchar* self) {
 }
 
 
-void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan) {
-	yrcdyrcd_channel* _tmp0_ = NULL;
+void yrcd_user_join (yrcdUser* self, yrcdChannel* chan) {
+	yrcdChannel* _tmp0_ = NULL;
 	gboolean _tmp1_ = FALSE;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (chan != NULL);
 	_tmp0_ = chan;
-	_tmp1_ = yrcd_yrcd_channel_add_user (_tmp0_, self);
+	_tmp1_ = yrcd_channel_add_user (_tmp0_, self);
 	if (_tmp1_) {
 		gchar* name = NULL;
-		yrcdyrcd_channel* _tmp2_ = NULL;
+		yrcdChannel* _tmp2_ = NULL;
 		const gchar* _tmp3_ = NULL;
 		const gchar* _tmp4_ = NULL;
 		gchar* _tmp5_ = NULL;
-		yrcdyrcd_server* _tmp6_ = NULL;
+		yrcdServer* _tmp6_ = NULL;
 		const gchar* _tmp7_ = NULL;
 		const gchar* _tmp8_ = NULL;
 		const gchar* _tmp9_ = NULL;
@@ -794,12 +794,12 @@ void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan) {
 		gchar* _tmp11_ = NULL;
 		gchar* _tmp12_ = NULL;
 		GeeHashMap* _tmp13_ = NULL;
-		yrcdyrcd_channel* _tmp14_ = NULL;
+		yrcdChannel* _tmp14_ = NULL;
 		const gchar* _tmp15_ = NULL;
 		const gchar* _tmp16_ = NULL;
-		yrcdyrcd_channel* _tmp17_ = NULL;
+		yrcdChannel* _tmp17_ = NULL;
 		_tmp2_ = chan;
-		_tmp3_ = yrcd_yrcd_channel_get_name (_tmp2_);
+		_tmp3_ = yrcd_channel_get_name (_tmp2_);
 		_tmp4_ = _tmp3_;
 		_tmp5_ = g_strdup (_tmp4_);
 		name = _tmp5_;
@@ -810,11 +810,11 @@ void yrcd_yrcd_user_join (yrcdyrcd_user* self, yrcdyrcd_channel* chan) {
 		_tmp10_ = string_to_string (_tmp9_);
 		_tmp11_ = g_strconcat ("user ", _tmp8_, " joining chan ", _tmp10_, NULL);
 		_tmp12_ = _tmp11_;
-		yrcd_yrcd_server_log (_tmp6_, _tmp12_);
+		yrcd_server_log (_tmp6_, _tmp12_);
 		_g_free0 (_tmp12_);
 		_tmp13_ = self->user_chanels;
 		_tmp14_ = chan;
-		_tmp15_ = yrcd_yrcd_channel_get_name (_tmp14_);
+		_tmp15_ = yrcd_channel_get_name (_tmp14_);
 		_tmp16_ = _tmp15_;
 		_tmp17_ = chan;
 		gee_abstract_map_set ((GeeAbstractMap*) _tmp13_, _tmp16_, _tmp17_);
@@ -836,15 +836,15 @@ static gboolean string_contains (const gchar* self, const gchar* needle) {
 }
 
 
-void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_length1) {
+void yrcd_user_change_nick (yrcdUser* self, gchar** args, int args_length1) {
 	gchar** _tmp0_ = NULL;
 	gint _tmp0__length1 = 0;
-	yrcdyrcd_server* _tmp5_ = NULL;
+	yrcdServer* _tmp5_ = NULL;
 	gchar** _tmp6_ = NULL;
 	gint _tmp6__length1 = 0;
 	const gchar* _tmp7_ = NULL;
-	yrcdyrcd_user* _tmp8_ = NULL;
-	yrcdyrcd_user* _tmp9_ = NULL;
+	yrcdUser* _tmp8_ = NULL;
+	yrcdUser* _tmp9_ = NULL;
 	gboolean _tmp10_ = FALSE;
 	gchar* oldnick = NULL;
 	const gchar* _tmp20_ = NULL;
@@ -857,7 +857,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 	_tmp0_ = args;
 	_tmp0__length1 = args_length1;
 	if (_tmp0__length1 < 2) {
-		yrcdyrcd_server* _tmp1_ = NULL;
+		yrcdServer* _tmp1_ = NULL;
 		gint _tmp2_ = 0;
 		gchar* _tmp3_ = NULL;
 		gchar* _tmp4_ = NULL;
@@ -865,16 +865,16 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		_tmp2_ = self->priv->_id;
 		_tmp3_ = g_strdup_printf ("User %d attempted NICK with invalid arguments", _tmp2_);
 		_tmp4_ = _tmp3_;
-		yrcd_yrcd_server_log (_tmp1_, _tmp4_);
+		yrcd_server_log (_tmp1_, _tmp4_);
 		_g_free0 (_tmp4_);
-		yrcd_yrcd_user_fire_numeric (self, YRCD_ERR_NONICKNAMEGIVEN, NULL);
+		yrcd_user_fire_numeric (self, YRCD_ERR_NONICKNAMEGIVEN, NULL);
 		return;
 	}
 	_tmp5_ = self->priv->_server;
 	_tmp6_ = args;
 	_tmp6__length1 = args_length1;
 	_tmp7_ = _tmp6_[1];
-	_tmp8_ = yrcd_yrcd_server_get_user_by_nick (_tmp5_, _tmp7_);
+	_tmp8_ = yrcd_server_get_user_by_nick (_tmp5_, _tmp7_);
 	_tmp9_ = _tmp8_;
 	_tmp10_ = _tmp9_ != NULL;
 	_g_object_unref0 (_tmp9_);
@@ -885,7 +885,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		_tmp11_ = args;
 		_tmp11__length1 = args_length1;
 		_tmp12_ = _tmp11_[1];
-		yrcd_yrcd_user_fire_numeric (self, YRCD_ERR_NICKNAMEINUSE, _tmp12_, NULL);
+		yrcd_user_fire_numeric (self, YRCD_ERR_NICKNAMEINUSE, _tmp12_, NULL);
 		return;
 	}
 	{
@@ -893,9 +893,9 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		gint k_collection_length1 = 0;
 		gint _k_collection_size_ = 0;
 		gint k_it = 0;
-		k_collection = YRCD_YRCD_CONSTANTS_forbidden_nick_chars;
-		k_collection_length1 = G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_forbidden_nick_chars);
-		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_YRCD_CONSTANTS_forbidden_nick_chars); k_it = k_it + 1) {
+		k_collection = YRCD_CONSTANTS_forbidden_nick_chars;
+		k_collection_length1 = G_N_ELEMENTS (YRCD_CONSTANTS_forbidden_nick_chars);
+		for (k_it = 0; k_it < G_N_ELEMENTS (YRCD_CONSTANTS_forbidden_nick_chars); k_it = k_it + 1) {
 			gchar* _tmp13_ = NULL;
 			gchar* k = NULL;
 			_tmp13_ = g_strdup (k_collection[k_it]);
@@ -918,7 +918,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 					_tmp18_ = args;
 					_tmp18__length1 = args_length1;
 					_tmp19_ = _tmp18_[1];
-					yrcd_yrcd_user_fire_numeric (self, YRCD_ERR_ERRONEOUSNICKNAME, _tmp19_, NULL);
+					yrcd_user_fire_numeric (self, YRCD_ERR_ERRONEOUSNICKNAME, _tmp19_, NULL);
 					_g_free0 (k);
 					return;
 				}
@@ -932,10 +932,10 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 	_tmp22_ = args;
 	_tmp22__length1 = args_length1;
 	_tmp23_ = _tmp22_[1];
-	yrcd_yrcd_user_set_nick (self, _tmp23_);
+	yrcd_user_set_nick (self, _tmp23_);
 	_tmp24_ = self->priv->_nick_set;
 	if (!_tmp24_) {
-		yrcdyrcd_server* _tmp25_ = NULL;
+		yrcdServer* _tmp25_ = NULL;
 		gint _tmp26_ = 0;
 		const gchar* _tmp27_ = NULL;
 		gchar* _tmp28_ = NULL;
@@ -946,15 +946,15 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		_tmp27_ = self->priv->_nick;
 		_tmp28_ = g_strdup_printf ("User %d set nick to %s", _tmp26_, _tmp27_);
 		_tmp29_ = _tmp28_;
-		yrcd_yrcd_server_log (_tmp25_, _tmp29_);
+		yrcd_server_log (_tmp25_, _tmp29_);
 		_g_free0 (_tmp29_);
-		yrcd_yrcd_user_set_nick_set (self, TRUE);
+		yrcd_user_set_nick_set (self, TRUE);
 		_tmp30_ = self->priv->_user_set;
 		if (_tmp30_) {
-			yrcd_yrcd_user_reg_finished (self);
+			yrcd_user_reg_finished (self);
 		}
 	} else {
-		yrcdyrcd_server* _tmp31_ = NULL;
+		yrcdServer* _tmp31_ = NULL;
 		gint _tmp32_ = 0;
 		const gchar* _tmp33_ = NULL;
 		const gchar* _tmp34_ = NULL;
@@ -966,7 +966,7 @@ void yrcd_yrcd_user_change_nick (yrcdyrcd_user* self, gchar** args, int args_len
 		_tmp34_ = self->priv->_nick;
 		_tmp35_ = g_strdup_printf ("User %d changed nick from %s to %s", _tmp32_, _tmp33_, _tmp34_);
 		_tmp36_ = _tmp35_;
-		yrcd_yrcd_server_log (_tmp31_, _tmp36_);
+		yrcd_server_log (_tmp31_, _tmp36_);
 		_g_free0 (_tmp36_);
 	}
 	_g_free0 (oldnick);
@@ -1060,7 +1060,7 @@ static gchar* string_strip (const gchar* self) {
 }
 
 
-void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length1) {
+void yrcd_user_user_reg (yrcdUser* self, gchar** args, int args_length1) {
 	gboolean _tmp0_ = FALSE;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = self->priv->_user_set;
@@ -1085,13 +1085,13 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 		_tmp1_ = args;
 		_tmp1__length1 = args_length1;
 		if (_tmp1__length1 < 5) {
-			yrcd_yrcd_user_fire_numeric (self, YRCD_ERR_NEEDMOREPARAMS, "USER", NULL);
+			yrcd_user_fire_numeric (self, YRCD_ERR_NEEDMOREPARAMS, "USER", NULL);
 			return;
 		}
 		_tmp2_ = args;
 		_tmp2__length1 = args_length1;
 		_tmp3_ = _tmp2_[1];
-		yrcd_yrcd_user_set_ident (self, _tmp3_);
+		yrcd_user_set_ident (self, _tmp3_);
 		_tmp4_ = args;
 		_tmp4__length1 = args_length1;
 		_tmp5_ = _tmp4_[4];
@@ -1156,16 +1156,16 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 		_tmp23_ = _tmp22_->str;
 		_tmp24_ = string_strip (_tmp23_);
 		_tmp25_ = _tmp24_;
-		yrcd_yrcd_user_set_realname (self, _tmp25_);
+		yrcd_user_set_realname (self, _tmp25_);
 		_g_free0 (_tmp25_);
-		yrcd_yrcd_user_set_user_set (self, TRUE);
+		yrcd_user_set_user_set (self, TRUE);
 		_tmp26_ = self->priv->_nick_set;
 		if (_tmp26_) {
-			yrcd_yrcd_user_reg_finished (self);
+			yrcd_user_reg_finished (self);
 		}
 		_g_string_free0 (builder);
 	} else {
-		yrcdyrcd_server* _tmp27_ = NULL;
+		yrcdServer* _tmp27_ = NULL;
 		gint _tmp28_ = 0;
 		gchar* _tmp29_ = NULL;
 		gchar* _tmp30_ = NULL;
@@ -1173,15 +1173,15 @@ void yrcd_yrcd_user_user_reg (yrcdyrcd_user* self, gchar** args, int args_length
 		_tmp28_ = self->priv->_id;
 		_tmp29_ = g_strdup_printf ("User %d attempted user registration while already registered", _tmp28_);
 		_tmp30_ = _tmp29_;
-		yrcd_yrcd_server_log (_tmp27_, _tmp30_);
+		yrcd_server_log (_tmp27_, _tmp30_);
 		_g_free0 (_tmp30_);
-		yrcd_yrcd_user_fire_numeric (self, 462, NULL);
+		yrcd_user_fire_numeric (self, 462, NULL);
 	}
 }
 
 
-void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
-	yrcdyrcd_server* _tmp0_ = NULL;
+void yrcd_user_reg_finished (yrcdUser* self) {
+	yrcdServer* _tmp0_ = NULL;
 	gint _tmp1_ = 0;
 	gchar* _tmp2_ = NULL;
 	gchar* _tmp3_ = NULL;
@@ -1191,62 +1191,62 @@ void yrcd_yrcd_user_reg_finished (yrcdyrcd_user* self) {
 	const gchar* _tmp7_ = NULL;
 	const gchar* _tmp8_ = NULL;
 	const gchar* _tmp9_ = NULL;
-	yrcdyrcd_server* _tmp10_ = NULL;
-	yrcdyrcd_config* _tmp11_ = NULL;
+	yrcdServer* _tmp10_ = NULL;
+	yrcdConfig* _tmp11_ = NULL;
 	const gchar* _tmp12_ = NULL;
 	const gchar* _tmp13_ = NULL;
-	yrcdyrcd_server* _tmp14_ = NULL;
-	yrcdyrcd_server* _tmp15_ = NULL;
+	yrcdServer* _tmp14_ = NULL;
+	yrcdServer* _tmp15_ = NULL;
 	gint64 _tmp16_ = 0LL;
 	gchar* _tmp17_ = NULL;
 	gchar* _tmp18_ = NULL;
 	gchar* _tmp19_ = NULL;
 	gchar* _tmp20_ = NULL;
-	yrcdyrcd_server* _tmp21_ = NULL;
-	yrcdyrcd_config* _tmp22_ = NULL;
+	yrcdServer* _tmp21_ = NULL;
+	yrcdConfig* _tmp22_ = NULL;
 	const gchar* _tmp23_ = NULL;
 	const gchar* _tmp24_ = NULL;
 	g_return_if_fail (self != NULL);
-	yrcd_yrcd_user_set_registered (self, TRUE);
+	yrcd_user_set_registered (self, TRUE);
 	_tmp0_ = self->priv->_server;
 	_tmp1_ = self->priv->_id;
-	_tmp2_ = yrcd_yrcd_user_get_hostmask (self);
+	_tmp2_ = yrcd_user_get_hostmask (self);
 	_tmp3_ = _tmp2_;
 	_tmp4_ = self->priv->_realname;
 	_tmp5_ = g_strdup_printf ("User %d finished registration with mask %s and realname %s", _tmp1_, _tmp3_, _tmp4_);
 	_tmp6_ = _tmp5_;
-	yrcd_yrcd_server_log (_tmp0_, _tmp6_);
+	yrcd_server_log (_tmp0_, _tmp6_);
 	_g_free0 (_tmp6_);
 	_g_free0 (_tmp3_);
 	_tmp7_ = self->priv->_nick;
 	_tmp8_ = self->priv->_ident;
 	_tmp9_ = self->host;
-	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_WELCOME, _tmp7_, _tmp8_, _tmp9_, NULL);
+	yrcd_user_fire_numeric (self, YRCD_RPL_WELCOME, _tmp7_, _tmp8_, _tmp9_, NULL);
 	_tmp10_ = self->priv->_server;
 	_tmp11_ = _tmp10_->config;
-	_tmp12_ = yrcd_yrcd_config_get_sname (_tmp11_);
+	_tmp12_ = yrcd_config_get_sname (_tmp11_);
 	_tmp13_ = _tmp12_;
-	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_YOURHOST, _tmp13_, YRCD_YRCD_CONSTANTS_software, YRCD_YRCD_CONSTANTS_version, NULL);
+	yrcd_user_fire_numeric (self, YRCD_RPL_YOURHOST, _tmp13_, YRCD_CONSTANTS_software, YRCD_CONSTANTS_version, NULL);
 	_tmp14_ = self->priv->_server;
 	_tmp15_ = self->priv->_server;
 	_tmp16_ = _tmp15_->epoch;
-	_tmp17_ = yrcd_yrcd_server_ut_to_utc (_tmp14_, _tmp16_);
+	_tmp17_ = yrcd_server_ut_to_utc (_tmp14_, _tmp16_);
 	_tmp18_ = _tmp17_;
 	_tmp19_ = g_strdup_printf ("%s", _tmp18_);
 	_tmp20_ = _tmp19_;
-	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_CREATED, _tmp20_, NULL);
+	yrcd_user_fire_numeric (self, YRCD_RPL_CREATED, _tmp20_, NULL);
 	_g_free0 (_tmp20_);
 	_g_free0 (_tmp18_);
 	_tmp21_ = self->priv->_server;
 	_tmp22_ = _tmp21_->config;
-	_tmp23_ = yrcd_yrcd_config_get_sname (_tmp22_);
+	_tmp23_ = yrcd_config_get_sname (_tmp22_);
 	_tmp24_ = _tmp23_;
-	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_MYINFO, _tmp24_, YRCD_YRCD_CONSTANTS_version, "", "", NULL);
-	yrcd_yrcd_user_fire_motd (self);
+	yrcd_user_fire_numeric (self, YRCD_RPL_MYINFO, _tmp24_, YRCD_CONSTANTS_version, "", "", NULL);
+	yrcd_user_fire_motd (self);
 }
 
 
-void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self) {
+void yrcd_user_update_timestamp (yrcdUser* self) {
 	GDateTime* _tmp0_ = NULL;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = g_date_time_new_now_utc ();
@@ -1256,11 +1256,11 @@ void yrcd_yrcd_user_update_timestamp (yrcdyrcd_user* self) {
 }
 
 
-gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self) {
+gchar* yrcd_user_get_hostmask (yrcdUser* self) {
 	gchar* result = NULL;
 	gchar* k = NULL;
-	yrcdyrcd_server* _tmp0_ = NULL;
-	yrcdyrcd_config* _tmp1_ = NULL;
+	yrcdServer* _tmp0_ = NULL;
+	yrcdConfig* _tmp1_ = NULL;
 	gboolean _tmp2_ = FALSE;
 	gchar* hm = NULL;
 	const gchar* _tmp6_ = NULL;
@@ -1280,7 +1280,7 @@ gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self) {
 	_tmp2_ = _tmp1_->cloaking;
 	if (_tmp2_) {
 		gchar* _tmp3_ = NULL;
-		_tmp3_ = yrcd_yrcd_user_cloaked_host (self);
+		_tmp3_ = yrcd_user_cloaked_host (self);
 		_g_free0 (k);
 		k = _tmp3_;
 	} else {
@@ -1312,7 +1312,7 @@ gchar* yrcd_yrcd_user_get_hostmask (yrcdyrcd_user* self) {
 }
 
 
-static void yrcd_yrcd_user_send_to_socket (yrcdyrcd_user* self, const gchar* msg) {
+static void yrcd_user_send_to_socket (yrcdUser* self, const gchar* msg) {
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (msg != NULL);
@@ -1328,7 +1328,7 @@ static void yrcd_yrcd_user_send_to_socket (yrcdyrcd_user* self, const gchar* msg
 			const gchar* _tmp4_ = NULL;
 			gchar* _tmp5_ = NULL;
 			gchar* _tmp6_ = NULL;
-			yrcdyrcd_server* _tmp7_ = NULL;
+			yrcdServer* _tmp7_ = NULL;
 			const gchar* _tmp8_ = NULL;
 			const gchar* _tmp9_ = NULL;
 			gchar* _tmp10_ = NULL;
@@ -1347,7 +1347,7 @@ static void yrcd_yrcd_user_send_to_socket (yrcdyrcd_user* self, const gchar* msg
 			_tmp9_ = msg;
 			_tmp10_ = g_strdup_printf ("Send to %s: %s", _tmp8_, _tmp9_);
 			_tmp11_ = _tmp10_;
-			yrcd_yrcd_server_log (_tmp7_, _tmp11_);
+			yrcd_server_log (_tmp7_, _tmp11_);
 			_g_free0 (_tmp11_);
 		}
 	}
@@ -1355,7 +1355,7 @@ static void yrcd_yrcd_user_send_to_socket (yrcdyrcd_user* self, const gchar* msg
 	__catch6_g_error:
 	{
 		GError* e = NULL;
-		yrcdyrcd_server* _tmp12_ = NULL;
+		yrcdServer* _tmp12_ = NULL;
 		GError* _tmp13_ = NULL;
 		const gchar* _tmp14_ = NULL;
 		gchar* _tmp15_ = NULL;
@@ -1367,7 +1367,7 @@ static void yrcd_yrcd_user_send_to_socket (yrcdyrcd_user* self, const gchar* msg
 		_tmp14_ = _tmp13_->message;
 		_tmp15_ = g_strdup_printf ("Error sending data to socket %s", _tmp14_);
 		_tmp16_ = _tmp15_;
-		yrcd_yrcd_server_log (_tmp12_, _tmp16_);
+		yrcd_server_log (_tmp12_, _tmp16_);
 		_g_free0 (_tmp16_);
 		_g_error_free0 (e);
 	}
@@ -1390,7 +1390,7 @@ static void block1_data_unref (void * _userdata_) {
 	Block1Data* _data1_;
 	_data1_ = (Block1Data*) _userdata_;
 	if (g_atomic_int_dec_and_test (&_data1_->_ref_count_)) {
-		yrcdyrcd_user* self;
+		yrcdUser* self;
 		self = _data1_->self;
 		_g_free0 (_data1_->msg);
 		_g_object_unref0 (self);
@@ -1400,12 +1400,12 @@ static void block1_data_unref (void * _userdata_) {
 
 
 static gboolean __lambda3_ (Block1Data* _data1_) {
-	yrcdyrcd_user* self;
+	yrcdUser* self;
 	gboolean result = FALSE;
 	const gchar* _tmp0_ = NULL;
 	self = _data1_->self;
 	_tmp0_ = _data1_->msg;
-	yrcd_yrcd_user_send_to_socket (self, _tmp0_);
+	yrcd_user_send_to_socket (self, _tmp0_);
 	result = FALSE;
 	return result;
 }
@@ -1418,7 +1418,7 @@ static gboolean ___lambda3__gsource_func (gpointer self) {
 }
 
 
-void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg, gint p) {
+void yrcd_user_send_line (yrcdUser* self, const gchar* msg, gint p) {
 	Block1Data* _data1_;
 	const gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
@@ -1441,11 +1441,11 @@ void yrcd_yrcd_user_send_line (yrcdyrcd_user* self, const gchar* msg, gint p) {
 }
 
 
-static void yrcd_yrcd_user_hostname_lookup_data_free (gpointer _data) {
-	YrcdYrcdUserHostnameLookupData* _data_;
+static void yrcd_user_hostname_lookup_data_free (gpointer _data) {
+	YrcdUserHostnameLookupData* _data_;
 	_data_ = _data;
 	_g_object_unref0 (_data_->self);
-	g_slice_free (YrcdYrcdUserHostnameLookupData, _data_);
+	g_slice_free (YrcdUserHostnameLookupData, _data_);
 }
 
 
@@ -1454,30 +1454,30 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-void yrcd_yrcd_user_hostname_lookup (yrcdyrcd_user* self, GAsyncReadyCallback _callback_, gpointer _user_data_) {
-	YrcdYrcdUserHostnameLookupData* _data_;
-	yrcdyrcd_user* _tmp0_ = NULL;
-	_data_ = g_slice_new0 (YrcdYrcdUserHostnameLookupData);
-	_data_->_async_result = g_simple_async_result_new (G_OBJECT (self), _callback_, _user_data_, yrcd_yrcd_user_hostname_lookup);
-	g_simple_async_result_set_op_res_gpointer (_data_->_async_result, _data_, yrcd_yrcd_user_hostname_lookup_data_free);
+void yrcd_user_hostname_lookup (yrcdUser* self, GAsyncReadyCallback _callback_, gpointer _user_data_) {
+	YrcdUserHostnameLookupData* _data_;
+	yrcdUser* _tmp0_ = NULL;
+	_data_ = g_slice_new0 (YrcdUserHostnameLookupData);
+	_data_->_async_result = g_simple_async_result_new (G_OBJECT (self), _callback_, _user_data_, yrcd_user_hostname_lookup);
+	g_simple_async_result_set_op_res_gpointer (_data_->_async_result, _data_, yrcd_user_hostname_lookup_data_free);
 	_tmp0_ = _g_object_ref0 (self);
 	_data_->self = _tmp0_;
-	yrcd_yrcd_user_hostname_lookup_co (_data_);
+	yrcd_user_hostname_lookup_co (_data_);
 }
 
 
-void yrcd_yrcd_user_hostname_lookup_finish (yrcdyrcd_user* self, GAsyncResult* _res_) {
-	YrcdYrcdUserHostnameLookupData* _data_;
+void yrcd_user_hostname_lookup_finish (yrcdUser* self, GAsyncResult* _res_) {
+	YrcdUserHostnameLookupData* _data_;
 	_data_ = g_simple_async_result_get_op_res_gpointer (G_SIMPLE_ASYNC_RESULT (_res_));
 }
 
 
-static void yrcd_yrcd_user_hostname_lookup_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_) {
-	YrcdYrcdUserHostnameLookupData* _data_;
+static void yrcd_user_hostname_lookup_ready (GObject* source_object, GAsyncResult* _res_, gpointer _user_data_) {
+	YrcdUserHostnameLookupData* _data_;
 	_data_ = _user_data_;
 	_data_->_source_object_ = source_object;
 	_data_->_res_ = _res_;
-	yrcd_yrcd_user_hostname_lookup_co (_data_);
+	yrcd_user_hostname_lookup_co (_data_);
 }
 
 
@@ -1492,7 +1492,7 @@ static void _g_list_free__g_object_unref0_ (GList* self) {
 }
 
 
-static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupData* _data_) {
+static gboolean yrcd_user_hostname_lookup_co (YrcdUserHostnameLookupData* _data_) {
 	switch (_data_->_state_) {
 		case 0:
 		goto _state_0;
@@ -1504,7 +1504,7 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		g_assert_not_reached ();
 	}
 	_state_0:
-	yrcd_yrcd_user_send_notice (_data_->self, "*** Looking up your hostname...");
+	yrcd_user_send_notice (_data_->self, "*** Looking up your hostname...");
 	_data_->_tmp0_ = NULL;
 	_data_->_tmp0_ = g_resolver_get_default ();
 	_data_->resolv = _data_->_tmp0_;
@@ -1520,7 +1520,7 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		_data_->_tmp5_ = NULL;
 		_data_->_tmp5_ = _data_->add;
 		_data_->_state_ = 1;
-		g_resolver_lookup_by_address_async (_data_->_tmp4_, _data_->_tmp5_, NULL, yrcd_yrcd_user_hostname_lookup_ready, _data_);
+		g_resolver_lookup_by_address_async (_data_->_tmp4_, _data_->_tmp5_, NULL, yrcd_user_hostname_lookup_ready, _data_);
 		return FALSE;
 		_state_1:
 		_data_->_tmp6_ = NULL;
@@ -1541,7 +1541,7 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 	{
 		_data_->e = _data_->_inner_error_;
 		_data_->_inner_error_ = NULL;
-		yrcd_yrcd_user_send_notice (_data_->self, "*** Unable to resolve your hostname");
+		yrcd_user_send_notice (_data_->self, "*** Unable to resolve your hostname");
 		_data_->_tmp8_ = NULL;
 		_data_->_tmp8_ = _data_->self->ip;
 		_data_->_tmp9_ = NULL;
@@ -1577,7 +1577,7 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		_data_->_tmp12_ = NULL;
 		_data_->_tmp12_ = _data_->hn;
 		_data_->_state_ = 2;
-		g_resolver_lookup_by_name_async (_data_->_tmp11_, _data_->_tmp12_, NULL, yrcd_yrcd_user_hostname_lookup_ready, _data_);
+		g_resolver_lookup_by_name_async (_data_->_tmp11_, _data_->_tmp12_, NULL, yrcd_user_hostname_lookup_ready, _data_);
 		return FALSE;
 		_state_2:
 		_data_->_tmp13_ = NULL;
@@ -1598,7 +1598,7 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 	{
 		_data_->_vala1_e = _data_->_inner_error_;
 		_data_->_inner_error_ = NULL;
-		yrcd_yrcd_user_send_notice (_data_->self, "*** Unable to resolve your hostname");
+		yrcd_user_send_notice (_data_->self, "*** Unable to resolve your hostname");
 		_data_->_tmp15_ = NULL;
 		_data_->_tmp15_ = _data_->self->ip;
 		_data_->_tmp16_ = NULL;
@@ -1666,7 +1666,7 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		_data_->_tmp26_ = g_strdup (_data_->_tmp25_);
 		_g_free0 (_data_->self->host);
 		_data_->self->host = _data_->_tmp26_;
-		yrcd_yrcd_user_send_notice (_data_->self, "*** Your forward and reverse DNS do not match, ignoring hostname");
+		yrcd_user_send_notice (_data_->self, "*** Your forward and reverse DNS do not match, ignoring hostname");
 	} else {
 		_data_->_tmp27_ = NULL;
 		_data_->_tmp27_ = _data_->hn;
@@ -1674,7 +1674,7 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 		_data_->_tmp28_ = g_strdup (_data_->_tmp27_);
 		_g_free0 (_data_->self->host);
 		_data_->self->host = _data_->_tmp28_;
-		yrcd_yrcd_user_send_notice (_data_->self, "*** Found your hostname");
+		yrcd_user_send_notice (_data_->self, "*** Found your hostname");
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
 		_g_free0 (_data_->hn);
 		_g_object_unref0 (_data_->add);
@@ -1701,19 +1701,19 @@ static gboolean yrcd_yrcd_user_hostname_lookup_co (YrcdYrcdUserHostnameLookupDat
 }
 
 
-void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...) {
+void yrcd_user_fire_numeric (yrcdUser* self, gint numeric, ...) {
 	va_list args = {0};
 	gchar* msg = NULL;
-	yrcdyrcd_server* _tmp0_ = NULL;
-	yrcdyrcd_config* _tmp1_ = NULL;
+	yrcdServer* _tmp0_ = NULL;
+	yrcdConfig* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
 	const gchar* _tmp3_ = NULL;
 	gint _tmp4_ = 0;
 	const gchar* _tmp5_ = NULL;
 	gchar* _tmp6_ = NULL;
 	gchar* msg2 = NULL;
-	yrcdyrcd_server* _tmp7_ = NULL;
-	yrcdyrcd_numeric_wrapper* _tmp8_ = NULL;
+	yrcdServer* _tmp7_ = NULL;
+	yrcdNumericWrapper* _tmp8_ = NULL;
 	GeeHashMap* _tmp9_ = NULL;
 	gint _tmp10_ = 0;
 	gpointer _tmp11_ = NULL;
@@ -1727,7 +1727,7 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...) {
 	va_start (args, numeric);
 	_tmp0_ = self->priv->_server;
 	_tmp1_ = _tmp0_->config;
-	_tmp2_ = yrcd_yrcd_config_get_sname (_tmp1_);
+	_tmp2_ = yrcd_config_get_sname (_tmp1_);
 	_tmp3_ = _tmp2_;
 	_tmp4_ = numeric;
 	_tmp5_ = self->priv->_nick;
@@ -1748,16 +1748,16 @@ void yrcd_yrcd_user_fire_numeric (yrcdyrcd_user* self, gint numeric, ...) {
 	_g_free0 (msg);
 	msg = _tmp16_;
 	_tmp17_ = msg;
-	yrcd_yrcd_user_send_line (self, _tmp17_, G_PRIORITY_LOW);
+	yrcd_user_send_line (self, _tmp17_, G_PRIORITY_LOW);
 	_g_free0 (msg2);
 	_g_free0 (msg);
 	va_end (args);
 }
 
 
-void yrcd_yrcd_user_send_notice (yrcdyrcd_user* self, const gchar* msg) {
-	yrcdyrcd_server* _tmp0_ = NULL;
-	yrcdyrcd_config* _tmp1_ = NULL;
+void yrcd_user_send_notice (yrcdUser* self, const gchar* msg) {
+	yrcdServer* _tmp0_ = NULL;
+	yrcdConfig* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
 	const gchar* _tmp3_ = NULL;
 	const gchar* _tmp4_ = NULL;
@@ -1768,31 +1768,31 @@ void yrcd_yrcd_user_send_notice (yrcdyrcd_user* self, const gchar* msg) {
 	g_return_if_fail (msg != NULL);
 	_tmp0_ = self->priv->_server;
 	_tmp1_ = _tmp0_->config;
-	_tmp2_ = yrcd_yrcd_config_get_sname (_tmp1_);
+	_tmp2_ = yrcd_config_get_sname (_tmp1_);
 	_tmp3_ = _tmp2_;
 	_tmp4_ = self->priv->_nick;
 	_tmp5_ = msg;
 	_tmp6_ = g_strdup_printf (":%s NOTICE %s :%s", _tmp3_, _tmp4_, _tmp5_);
 	_tmp7_ = _tmp6_;
-	yrcd_yrcd_user_send_line (self, _tmp7_, G_PRIORITY_DEFAULT);
+	yrcd_user_send_line (self, _tmp7_, G_PRIORITY_DEFAULT);
 	_g_free0 (_tmp7_);
 }
 
 
-void yrcd_yrcd_user_fire_motd (yrcdyrcd_user* self) {
-	yrcdyrcd_server* _tmp0_ = NULL;
-	yrcdyrcd_config* _tmp1_ = NULL;
+void yrcd_user_fire_motd (yrcdUser* self) {
+	yrcdServer* _tmp0_ = NULL;
+	yrcdConfig* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
 	const gchar* _tmp3_ = NULL;
-	yrcdyrcd_server* _tmp4_ = NULL;
-	yrcdyrcd_config* _tmp5_ = NULL;
+	yrcdServer* _tmp4_ = NULL;
+	yrcdConfig* _tmp5_ = NULL;
 	GList* _tmp6_ = NULL;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = self->priv->_server;
 	_tmp1_ = _tmp0_->config;
-	_tmp2_ = yrcd_yrcd_config_get_sname (_tmp1_);
+	_tmp2_ = yrcd_config_get_sname (_tmp1_);
 	_tmp3_ = _tmp2_;
-	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_MOTDSTART, _tmp3_, NULL);
+	yrcd_user_fire_numeric (self, YRCD_RPL_MOTDSTART, _tmp3_, NULL);
 	_tmp4_ = self->priv->_server;
 	_tmp5_ = _tmp4_->config;
 	_tmp6_ = _tmp5_->motd;
@@ -1808,16 +1808,16 @@ void yrcd_yrcd_user_fire_motd (yrcdyrcd_user* self) {
 			{
 				const gchar* _tmp8_ = NULL;
 				_tmp8_ = line;
-				yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_MOTD, _tmp8_, NULL);
+				yrcd_user_fire_numeric (self, YRCD_RPL_MOTD, _tmp8_, NULL);
 				_g_free0 (line);
 			}
 		}
 	}
-	yrcd_yrcd_user_fire_numeric (self, YRCD_RPL_ENDOFMOTD, NULL);
+	yrcd_user_fire_numeric (self, YRCD_RPL_ENDOFMOTD, NULL);
 }
 
 
-gchar* yrcd_yrcd_user_cloaked_host (yrcdyrcd_user* self) {
+gchar* yrcd_user_cloaked_host (yrcdUser* self) {
 	gchar* result = NULL;
 	GString* builder = NULL;
 	GString* _tmp0_ = NULL;
@@ -1829,7 +1829,7 @@ gchar* yrcd_yrcd_user_cloaked_host (yrcdyrcd_user* self) {
 	gint j_length1 = 0;
 	gint _j_size_ = 0;
 	GString* _tmp4_ = NULL;
-	yrcdyrcd_server* _tmp5_ = NULL;
+	yrcdServer* _tmp5_ = NULL;
 	gchar** _tmp6_ = NULL;
 	gint _tmp6__length1 = 0;
 	const gchar* _tmp7_ = NULL;
@@ -1852,7 +1852,7 @@ gchar* yrcd_yrcd_user_cloaked_host (yrcdyrcd_user* self) {
 	_tmp6_ = j;
 	_tmp6__length1 = j_length1;
 	_tmp7_ = _tmp6_[0];
-	_tmp8_ = yrcd_yrcd_server_secure_hash (_tmp5_, _tmp7_);
+	_tmp8_ = yrcd_server_secure_hash (_tmp5_, _tmp7_);
 	_tmp9_ = _tmp8_;
 	g_string_append (_tmp4_, _tmp9_);
 	_g_free0 (_tmp9_);
@@ -1912,7 +1912,7 @@ gchar* yrcd_yrcd_user_cloaked_host (yrcdyrcd_user* self) {
 }
 
 
-GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self) {
+GSocketConnection* yrcd_user_get_sock (yrcdUser* self) {
 	GSocketConnection* result;
 	GSocketConnection* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -1922,7 +1922,7 @@ GSocketConnection* yrcd_yrcd_user_get_sock (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_sock (yrcdyrcd_user* self, GSocketConnection* value) {
+void yrcd_user_set_sock (yrcdUser* self, GSocketConnection* value) {
 	GSocketConnection* _tmp0_ = NULL;
 	GSocketConnection* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -1934,7 +1934,7 @@ void yrcd_yrcd_user_set_sock (yrcdyrcd_user* self, GSocketConnection* value) {
 }
 
 
-GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self) {
+GDataInputStream* yrcd_user_get_dis (yrcdUser* self) {
 	GDataInputStream* result;
 	GDataInputStream* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -1944,7 +1944,7 @@ GDataInputStream* yrcd_yrcd_user_get_dis (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_dis (yrcdyrcd_user* self, GDataInputStream* value) {
+void yrcd_user_set_dis (yrcdUser* self, GDataInputStream* value) {
 	GDataInputStream* _tmp0_ = NULL;
 	GDataInputStream* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -1956,7 +1956,7 @@ void yrcd_yrcd_user_set_dis (yrcdyrcd_user* self, GDataInputStream* value) {
 }
 
 
-GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self) {
+GDataOutputStream* yrcd_user_get_dos (yrcdUser* self) {
 	GDataOutputStream* result;
 	GDataOutputStream* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -1966,7 +1966,7 @@ GDataOutputStream* yrcd_yrcd_user_get_dos (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_dos (yrcdyrcd_user* self, GDataOutputStream* value) {
+void yrcd_user_set_dos (yrcdUser* self, GDataOutputStream* value) {
 	GDataOutputStream* _tmp0_ = NULL;
 	GDataOutputStream* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -1978,9 +1978,9 @@ void yrcd_yrcd_user_set_dos (yrcdyrcd_user* self, GDataOutputStream* value) {
 }
 
 
-yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self) {
-	yrcdyrcd_server* result;
-	yrcdyrcd_server* _tmp0_ = NULL;
+yrcdServer* yrcd_user_get_server (yrcdUser* self) {
+	yrcdServer* result;
+	yrcdServer* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
 	_tmp0_ = self->priv->_server;
 	result = _tmp0_;
@@ -1988,9 +1988,9 @@ yrcdyrcd_server* yrcd_yrcd_user_get_server (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_server (yrcdyrcd_user* self, yrcdyrcd_server* value) {
-	yrcdyrcd_server* _tmp0_ = NULL;
-	yrcdyrcd_server* _tmp1_ = NULL;
+void yrcd_user_set_server (yrcdUser* self, yrcdServer* value) {
+	yrcdServer* _tmp0_ = NULL;
+	yrcdServer* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = value;
 	_tmp1_ = _g_object_ref0 (_tmp0_);
@@ -2000,7 +2000,7 @@ void yrcd_yrcd_user_set_server (yrcdyrcd_user* self, yrcdyrcd_server* value) {
 }
 
 
-gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self) {
+gint yrcd_user_get_id (yrcdUser* self) {
 	gint result;
 	gint _tmp0_ = 0;
 	g_return_val_if_fail (self != NULL, 0);
@@ -2010,7 +2010,7 @@ gint yrcd_yrcd_user_get_id (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value) {
+void yrcd_user_set_id (yrcdUser* self, gint value) {
 	gint _tmp0_ = 0;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = value;
@@ -2019,7 +2019,7 @@ void yrcd_yrcd_user_set_id (yrcdyrcd_user* self, gint value) {
 }
 
 
-const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self) {
+const gchar* yrcd_user_get_nick (yrcdUser* self) {
 	const gchar* result;
 	const gchar* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -2029,7 +2029,7 @@ const gchar* yrcd_yrcd_user_get_nick (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value) {
+void yrcd_user_set_nick (yrcdUser* self, const gchar* value) {
 	const gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -2041,7 +2041,7 @@ void yrcd_yrcd_user_set_nick (yrcdyrcd_user* self, const gchar* value) {
 }
 
 
-const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self) {
+const gchar* yrcd_user_get_ident (yrcdUser* self) {
 	const gchar* result;
 	const gchar* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -2051,7 +2051,7 @@ const gchar* yrcd_yrcd_user_get_ident (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value) {
+void yrcd_user_set_ident (yrcdUser* self, const gchar* value) {
 	const gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -2063,7 +2063,7 @@ void yrcd_yrcd_user_set_ident (yrcdyrcd_user* self, const gchar* value) {
 }
 
 
-const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self) {
+const gchar* yrcd_user_get_realname (yrcdUser* self) {
 	const gchar* result;
 	const gchar* _tmp0_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
@@ -2073,7 +2073,7 @@ const gchar* yrcd_yrcd_user_get_realname (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value) {
+void yrcd_user_set_realname (yrcdUser* self, const gchar* value) {
 	const gchar* _tmp0_ = NULL;
 	gchar* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
@@ -2085,7 +2085,7 @@ void yrcd_yrcd_user_set_realname (yrcdyrcd_user* self, const gchar* value) {
 }
 
 
-gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self) {
+gboolean yrcd_user_get_user_set (yrcdUser* self) {
 	gboolean result;
 	gboolean _tmp0_ = FALSE;
 	g_return_val_if_fail (self != NULL, FALSE);
@@ -2095,7 +2095,7 @@ gboolean yrcd_yrcd_user_get_user_set (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value) {
+void yrcd_user_set_user_set (yrcdUser* self, gboolean value) {
 	gboolean _tmp0_ = FALSE;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = value;
@@ -2104,7 +2104,7 @@ void yrcd_yrcd_user_set_user_set (yrcdyrcd_user* self, gboolean value) {
 }
 
 
-gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self) {
+gboolean yrcd_user_get_nick_set (yrcdUser* self) {
 	gboolean result;
 	gboolean _tmp0_ = FALSE;
 	g_return_val_if_fail (self != NULL, FALSE);
@@ -2114,7 +2114,7 @@ gboolean yrcd_yrcd_user_get_nick_set (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value) {
+void yrcd_user_set_nick_set (yrcdUser* self, gboolean value) {
 	gboolean _tmp0_ = FALSE;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = value;
@@ -2123,7 +2123,7 @@ void yrcd_yrcd_user_set_nick_set (yrcdyrcd_user* self, gboolean value) {
 }
 
 
-gboolean yrcd_yrcd_user_get_registered (yrcdyrcd_user* self) {
+gboolean yrcd_user_get_registered (yrcdUser* self) {
 	gboolean result;
 	gboolean _tmp0_ = FALSE;
 	g_return_val_if_fail (self != NULL, FALSE);
@@ -2133,7 +2133,7 @@ gboolean yrcd_yrcd_user_get_registered (yrcdyrcd_user* self) {
 }
 
 
-void yrcd_yrcd_user_set_registered (yrcdyrcd_user* self, gboolean value) {
+void yrcd_user_set_registered (yrcdUser* self, gboolean value) {
 	gboolean _tmp0_ = FALSE;
 	g_return_if_fail (self != NULL);
 	_tmp0_ = value;
@@ -2142,34 +2142,34 @@ void yrcd_yrcd_user_set_registered (yrcdyrcd_user* self, gboolean value) {
 }
 
 
-static void yrcd_yrcd_user_class_init (yrcdyrcd_userClass * klass) {
-	yrcd_yrcd_user_parent_class = g_type_class_peek_parent (klass);
-	g_type_class_add_private (klass, sizeof (yrcdyrcd_userPrivate));
-	G_OBJECT_CLASS (klass)->get_property = _vala_yrcd_yrcd_user_get_property;
-	G_OBJECT_CLASS (klass)->set_property = _vala_yrcd_yrcd_user_set_property;
-	G_OBJECT_CLASS (klass)->finalize = yrcd_yrcd_user_finalize;
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_SOCK, g_param_spec_object ("sock", "sock", "sock", G_TYPE_SOCKET_CONNECTION, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_DIS, g_param_spec_object ("dis", "dis", "dis", G_TYPE_DATA_INPUT_STREAM, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_DOS, g_param_spec_object ("dos", "dos", "dos", g_data_output_stream_get_type (), G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_SERVER, g_param_spec_object ("server", "server", "server", YRCD_TYPE_YRCD_SERVER, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_ID, g_param_spec_int ("id", "id", "id", G_MININT, G_MAXINT, 0, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_NICK, g_param_spec_string ("nick", "nick", "nick", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_IDENT, g_param_spec_string ("ident", "ident", "ident", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_REALNAME, g_param_spec_string ("realname", "realname", "realname", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_USER_SET, g_param_spec_boolean ("user-set", "user-set", "user-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_NICK_SET, g_param_spec_boolean ("nick-set", "nick-set", "nick-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
-	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_YRCD_USER_REGISTERED, g_param_spec_boolean ("registered", "registered", "registered", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+static void yrcd_user_class_init (yrcdUserClass * klass) {
+	yrcd_user_parent_class = g_type_class_peek_parent (klass);
+	g_type_class_add_private (klass, sizeof (yrcdUserPrivate));
+	G_OBJECT_CLASS (klass)->get_property = _vala_yrcd_user_get_property;
+	G_OBJECT_CLASS (klass)->set_property = _vala_yrcd_user_set_property;
+	G_OBJECT_CLASS (klass)->finalize = yrcd_user_finalize;
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_SOCK, g_param_spec_object ("sock", "sock", "sock", G_TYPE_SOCKET_CONNECTION, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_DIS, g_param_spec_object ("dis", "dis", "dis", G_TYPE_DATA_INPUT_STREAM, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_DOS, g_param_spec_object ("dos", "dos", "dos", g_data_output_stream_get_type (), G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_SERVER, g_param_spec_object ("server", "server", "server", YRCD_TYPE_SERVER, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_ID, g_param_spec_int ("id", "id", "id", G_MININT, G_MAXINT, 0, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_NICK, g_param_spec_string ("nick", "nick", "nick", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_IDENT, g_param_spec_string ("ident", "ident", "ident", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_REALNAME, g_param_spec_string ("realname", "realname", "realname", NULL, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_USER_SET, g_param_spec_boolean ("user-set", "user-set", "user-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_NICK_SET, g_param_spec_boolean ("nick-set", "nick-set", "nick-set", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), YRCD_USER_REGISTERED, g_param_spec_boolean ("registered", "registered", "registered", FALSE, G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 }
 
 
-static void yrcd_yrcd_user_instance_init (yrcdyrcd_user * self) {
-	self->priv = YRCD_YRCD_USER_GET_PRIVATE (self);
+static void yrcd_user_instance_init (yrcdUser * self) {
+	self->priv = YRCD_USER_GET_PRIVATE (self);
 }
 
 
-static void yrcd_yrcd_user_finalize (GObject* obj) {
-	yrcdyrcd_user * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_YRCD_USER, yrcdyrcd_user);
+static void yrcd_user_finalize (GObject* obj) {
+	yrcdUser * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (obj, YRCD_TYPE_USER, yrcdUser);
 	_g_object_unref0 (self->priv->_sock);
 	_g_object_unref0 (self->priv->_dis);
 	_g_object_unref0 (self->priv->_dos);
@@ -2183,58 +2183,58 @@ static void yrcd_yrcd_user_finalize (GObject* obj) {
 	_g_free0 (self->host);
 	_g_object_unref0 (self->user_chanels);
 	_g_list_free0 (self->asources);
-	G_OBJECT_CLASS (yrcd_yrcd_user_parent_class)->finalize (obj);
+	G_OBJECT_CLASS (yrcd_user_parent_class)->finalize (obj);
 }
 
 
-GType yrcd_yrcd_user_get_type (void) {
-	static volatile gsize yrcd_yrcd_user_type_id__volatile = 0;
-	if (g_once_init_enter (&yrcd_yrcd_user_type_id__volatile)) {
-		static const GTypeInfo g_define_type_info = { sizeof (yrcdyrcd_userClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_yrcd_user_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdyrcd_user), 0, (GInstanceInitFunc) yrcd_yrcd_user_instance_init, NULL };
-		GType yrcd_yrcd_user_type_id;
-		yrcd_yrcd_user_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdyrcd_user", &g_define_type_info, 0);
-		g_once_init_leave (&yrcd_yrcd_user_type_id__volatile, yrcd_yrcd_user_type_id);
+GType yrcd_user_get_type (void) {
+	static volatile gsize yrcd_user_type_id__volatile = 0;
+	if (g_once_init_enter (&yrcd_user_type_id__volatile)) {
+		static const GTypeInfo g_define_type_info = { sizeof (yrcdUserClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_user_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdUser), 0, (GInstanceInitFunc) yrcd_user_instance_init, NULL };
+		GType yrcd_user_type_id;
+		yrcd_user_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdUser", &g_define_type_info, 0);
+		g_once_init_leave (&yrcd_user_type_id__volatile, yrcd_user_type_id);
 	}
-	return yrcd_yrcd_user_type_id__volatile;
+	return yrcd_user_type_id__volatile;
 }
 
 
-static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec) {
-	yrcdyrcd_user * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_YRCD_USER, yrcdyrcd_user);
+static void _vala_yrcd_user_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec) {
+	yrcdUser * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_USER, yrcdUser);
 	switch (property_id) {
-		case YRCD_YRCD_USER_SOCK:
-		g_value_set_object (value, yrcd_yrcd_user_get_sock (self));
+		case YRCD_USER_SOCK:
+		g_value_set_object (value, yrcd_user_get_sock (self));
 		break;
-		case YRCD_YRCD_USER_DIS:
-		g_value_set_object (value, yrcd_yrcd_user_get_dis (self));
+		case YRCD_USER_DIS:
+		g_value_set_object (value, yrcd_user_get_dis (self));
 		break;
-		case YRCD_YRCD_USER_DOS:
-		g_value_set_object (value, yrcd_yrcd_user_get_dos (self));
+		case YRCD_USER_DOS:
+		g_value_set_object (value, yrcd_user_get_dos (self));
 		break;
-		case YRCD_YRCD_USER_SERVER:
-		g_value_set_object (value, yrcd_yrcd_user_get_server (self));
+		case YRCD_USER_SERVER:
+		g_value_set_object (value, yrcd_user_get_server (self));
 		break;
-		case YRCD_YRCD_USER_ID:
-		g_value_set_int (value, yrcd_yrcd_user_get_id (self));
+		case YRCD_USER_ID:
+		g_value_set_int (value, yrcd_user_get_id (self));
 		break;
-		case YRCD_YRCD_USER_NICK:
-		g_value_set_string (value, yrcd_yrcd_user_get_nick (self));
+		case YRCD_USER_NICK:
+		g_value_set_string (value, yrcd_user_get_nick (self));
 		break;
-		case YRCD_YRCD_USER_IDENT:
-		g_value_set_string (value, yrcd_yrcd_user_get_ident (self));
+		case YRCD_USER_IDENT:
+		g_value_set_string (value, yrcd_user_get_ident (self));
 		break;
-		case YRCD_YRCD_USER_REALNAME:
-		g_value_set_string (value, yrcd_yrcd_user_get_realname (self));
+		case YRCD_USER_REALNAME:
+		g_value_set_string (value, yrcd_user_get_realname (self));
 		break;
-		case YRCD_YRCD_USER_USER_SET:
-		g_value_set_boolean (value, yrcd_yrcd_user_get_user_set (self));
+		case YRCD_USER_USER_SET:
+		g_value_set_boolean (value, yrcd_user_get_user_set (self));
 		break;
-		case YRCD_YRCD_USER_NICK_SET:
-		g_value_set_boolean (value, yrcd_yrcd_user_get_nick_set (self));
+		case YRCD_USER_NICK_SET:
+		g_value_set_boolean (value, yrcd_user_get_nick_set (self));
 		break;
-		case YRCD_YRCD_USER_REGISTERED:
-		g_value_set_boolean (value, yrcd_yrcd_user_get_registered (self));
+		case YRCD_USER_REGISTERED:
+		g_value_set_boolean (value, yrcd_user_get_registered (self));
 		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -2243,42 +2243,42 @@ static void _vala_yrcd_yrcd_user_get_property (GObject * object, guint property_
 }
 
 
-static void _vala_yrcd_yrcd_user_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec) {
-	yrcdyrcd_user * self;
-	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_YRCD_USER, yrcdyrcd_user);
+static void _vala_yrcd_user_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec) {
+	yrcdUser * self;
+	self = G_TYPE_CHECK_INSTANCE_CAST (object, YRCD_TYPE_USER, yrcdUser);
 	switch (property_id) {
-		case YRCD_YRCD_USER_SOCK:
-		yrcd_yrcd_user_set_sock (self, g_value_get_object (value));
+		case YRCD_USER_SOCK:
+		yrcd_user_set_sock (self, g_value_get_object (value));
 		break;
-		case YRCD_YRCD_USER_DIS:
-		yrcd_yrcd_user_set_dis (self, g_value_get_object (value));
+		case YRCD_USER_DIS:
+		yrcd_user_set_dis (self, g_value_get_object (value));
 		break;
-		case YRCD_YRCD_USER_DOS:
-		yrcd_yrcd_user_set_dos (self, g_value_get_object (value));
+		case YRCD_USER_DOS:
+		yrcd_user_set_dos (self, g_value_get_object (value));
 		break;
-		case YRCD_YRCD_USER_SERVER:
-		yrcd_yrcd_user_set_server (self, g_value_get_object (value));
+		case YRCD_USER_SERVER:
+		yrcd_user_set_server (self, g_value_get_object (value));
 		break;
-		case YRCD_YRCD_USER_ID:
-		yrcd_yrcd_user_set_id (self, g_value_get_int (value));
+		case YRCD_USER_ID:
+		yrcd_user_set_id (self, g_value_get_int (value));
 		break;
-		case YRCD_YRCD_USER_NICK:
-		yrcd_yrcd_user_set_nick (self, g_value_get_string (value));
+		case YRCD_USER_NICK:
+		yrcd_user_set_nick (self, g_value_get_string (value));
 		break;
-		case YRCD_YRCD_USER_IDENT:
-		yrcd_yrcd_user_set_ident (self, g_value_get_string (value));
+		case YRCD_USER_IDENT:
+		yrcd_user_set_ident (self, g_value_get_string (value));
 		break;
-		case YRCD_YRCD_USER_REALNAME:
-		yrcd_yrcd_user_set_realname (self, g_value_get_string (value));
+		case YRCD_USER_REALNAME:
+		yrcd_user_set_realname (self, g_value_get_string (value));
 		break;
-		case YRCD_YRCD_USER_USER_SET:
-		yrcd_yrcd_user_set_user_set (self, g_value_get_boolean (value));
+		case YRCD_USER_USER_SET:
+		yrcd_user_set_user_set (self, g_value_get_boolean (value));
 		break;
-		case YRCD_YRCD_USER_NICK_SET:
-		yrcd_yrcd_user_set_nick_set (self, g_value_get_boolean (value));
+		case YRCD_USER_NICK_SET:
+		yrcd_user_set_nick_set (self, g_value_get_boolean (value));
 		break;
-		case YRCD_YRCD_USER_REGISTERED:
-		yrcd_yrcd_user_set_registered (self, g_value_get_boolean (value));
+		case YRCD_USER_REGISTERED:
+		yrcd_user_set_registered (self, g_value_get_boolean (value));
 		break;
 		default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
