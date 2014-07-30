@@ -5,7 +5,7 @@ namespace yrcd {
     private SocketService ss = new SocketService();
     private yrcd_router router;
     public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
-    public HashMap<string, yrcd_channel> channellist;
+    public HashMap<string, Channel> channellist;
     private int user_counter = 0;
     public int64 epoch;
     public int max_users = 0;
@@ -24,7 +24,7 @@ namespace yrcd {
       epoch = new DateTime.now_utc().to_unix();
       add_listeners();
       router = new yrcd_router(this);
-      channellist = new HashMap<string, yrcd_channel>();
+      channellist = new HashMap<string, Channel>();
       ss.incoming.connect(accept_connection);
       ss.start();
     }
@@ -66,7 +66,7 @@ namespace yrcd {
       //Nothing found, so return null. This is useful in other functions to find if a user exists by that name at all.
       return null;
     }
-    public yrcd_channel get_channel_by_name(string nametocheck) {
+    public Channel get_channel_by_name(string nametocheck) {
       log(@"Looking for channel $nametocheck");
       if (channellist[nametocheck] != null) {
         log(@"channel $nametocheck  found");
@@ -74,7 +74,7 @@ namespace yrcd {
       }
       //Nothing found, so return null. This is useful in other functions to find if a channel exists by that name at all.
       log(@"Channel $nametocheck not found, creating it");
-      yrcd_channel chan = new yrcd_channel(this, nametocheck);
+      Channel chan = new Channel(this, nametocheck);
       channellist[chan.name.down()] = chan;
       return chan;
     }

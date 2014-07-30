@@ -71,7 +71,7 @@ namespace yrcd {
       } else {
         msg = null;
       }
-      yrcd_channel chan = server.get_channel_by_name(args[1]);
+      Channel chan = server.get_channel_by_name(args[1]);
       user.part(chan, msg);
     }
     public void who_handler(yrcd_user user, string[] args) {
@@ -81,7 +81,7 @@ namespace yrcd {
       }
       int i;
       for (i = 1; i < args.length; i++) {
-        yrcd_channel chan = server.get_channel_by_name(args[i]);
+        Channel chan = server.get_channel_by_name(args[i]);
         if (chan.users.length() > 0) {
           chan.who_response(user);
         }
@@ -127,7 +127,7 @@ namespace yrcd {
         user.fire_numeric(ERR_NOSUCHCHANNEL, args[1]);
         return;
       }
-      yrcd_channel chan = server.get_channel_by_name(args[1]);
+      Channel chan = server.get_channel_by_name(args[1]);
       user.join(chan);
     }
     public void privmsg_handler(yrcd_user user, string[] args) {
@@ -155,7 +155,7 @@ namespace yrcd {
             builder.erase(0,1);
           }
           string msg = builder.str.strip();
-          yrcd_channel chan = server.get_channel_by_name(args[1]);
+          Channel chan = server.get_channel_by_name(args[1]);
           chan.privmsg(user, msg);
         }
         //if we've reached this point, it's possible it could be a user

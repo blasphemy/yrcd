@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class yrcd_channel : Object {
+  class Channel : Object {
     public string name { get; set; } 
     public string[] modes;
     public string topic;
@@ -11,7 +11,7 @@ namespace yrcd {
     public yrcd_server server;
     public GLib.List<weak yrcd_user> users;
     public uint timer;
-    public yrcd_channel(yrcd_server _server, string _name) {
+    public Channel(yrcd_server _server, string _name) {
       server = _server;
       set_topic("", server.config.sname);
       epoch = new DateTime.now_utc().to_unix();

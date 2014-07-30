@@ -20,10 +20,10 @@ namespace yrcd {
     public bool registered { get; set; }
     public string ip; 
     public string host;
-    public HashMap<string,yrcd_channel> user_chanels;
+    public HashMap<string,Channel> user_chanels;
     public GLib.List<uint> asources;
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
-      user_chanels = new HashMap<string,yrcd_channel>();
+      user_chanels = new HashMap<string,Channel>();
       sock = conn;
       server = _server;
       ip = get_ip();
@@ -83,7 +83,7 @@ namespace yrcd {
         if (msg == null) {
           msg = "Quit";
         }
-        foreach (yrcd_channel k in user_chanels.values) {
+        foreach (Channel k in user_chanels.values) {
           k.quit(this, msg);
         }
         send_line("Error :Closing Link: %s (%s)".printf(host,msg));
@@ -97,7 +97,7 @@ namespace yrcd {
         server.log("Error closing socket: %s".printf(e.message));
       }
     }
-    public void part (yrcd_channel chan, string? msg) {
+    public void part (Channel chan, string? msg) {
       if (user_chanels[chan.name] == null) {
         return;
       }
@@ -107,7 +107,7 @@ namespace yrcd {
       user_chanels.unset(chan.name);
       chan.part(this,msg);
     }
-    public void join (yrcd_channel chan) {
+    public void join (Channel chan) {
       if (chan.add_user(this)) {
         string name = chan.name;
         server.log(@"user $nick joining chan $name");
