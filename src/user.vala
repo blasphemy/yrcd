@@ -132,6 +132,7 @@ namespace yrcd {
           return;
         }
       }
+      string oldhm = get_hostmask();
       string oldnick = nick;
       nick = args[1];
       if (!nick_set) {
@@ -142,6 +143,12 @@ namespace yrcd {
         }
       } else {
         server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
+        var rec = new GLib.List<User>();
+        foreach (Channel k in user_chanels.values) {
+          rec.concat(k.get_users());
+        }
+        string to_send = ":%s NICK %s".printf(oldhm,nick);
+        server.send_to_many(rec,to_send,Priority.DEFAULT);
       }
     }
     public void user_reg (string[] args) {
