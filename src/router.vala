@@ -169,7 +169,11 @@ namespace yrcd {
     }
     public async void process_user (SocketConnection conn) {
       if (server.userlist.size > server.config.max_users && server.config.max_users > 0) {
-        conn.get_socket().close();
+        try {
+          conn.get_socket().close();
+        } catch (Error e) {
+          server.log(e.message);
+        }
         server.log("Max amount of connections %d reached, closing socket".printf(server.config.max_users));
         return;
       }

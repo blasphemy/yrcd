@@ -11,7 +11,6 @@ namespace yrcd {
     private DateTime epoch;
     private int64 check_ping_at;
     private bool awaiting_response;
-    private uint ping_timer;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
