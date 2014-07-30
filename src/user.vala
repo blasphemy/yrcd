@@ -122,7 +122,7 @@ namespace yrcd {
         fire_numeric(ERR_NONICKNAMEGIVEN);
         return;
       }
-      if (args[1] > server.config.max_nick_length && server.config.max_nick_length > 0) { // if they're dumb enough to set it to 0, make it unlimited.
+      if (args[1].length > server.config.max_nick_length && server.config.max_nick_length > 0) { // if they're dumb enough to set it to 0, make it unlimited.
         fire_numeric(ERR_ERRONEOUSNICKNAME);
         return;
       }
