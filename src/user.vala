@@ -84,7 +84,8 @@ namespace yrcd {
         }
         GLib.List<User> rec = new GLib.List<User>();
         foreach (Channel k in user_chanels.values) {
-          rec.concat(k.quit(this));
+          rec.concat(k.get_users());
+          k.remove_user(this);
         }
         server.send_to_many(rec, ":%s QUIT :%s".printf(get_hostmask(), msg), Priority.LOW);
         send_line("Error :Closing Link: %s (%s)".printf(host,msg));
