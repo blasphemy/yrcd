@@ -83,9 +83,11 @@ namespace yrcd {
         if (msg == null) {
           msg = "Quit";
         }
+        GLib.List<User> rec = new GLib.List<User>();
         foreach (Channel k in user_chanels.values) {
-          k.quit(this, msg);
+          rec.concat(k.quit(this));
         }
+        server.send_to_many(rec, ":%s QUIT :%s".printf(get_hostmask(), msg), Priority.LOW);
         send_line("Error :Closing Link: %s (%s)".printf(host,msg));
         foreach (uint k in asources) {
           Source.remove(k);

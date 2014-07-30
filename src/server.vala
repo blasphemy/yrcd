@@ -50,7 +50,7 @@ namespace yrcd {
       }
     }
     public bool accept_connection (SocketConnection conn) {
-      router.process_user(conn);
+      router.process_user.begin(conn);
       return true;
     }
     public string ut_to_utc(int64 ut) { //why does this function even exist? TODO: Remove me.
@@ -89,6 +89,23 @@ namespace yrcd {
       //and shorten it to the original length.
       builder.truncate(in.length);
       return builder.str;
+    }
+    public void send_to_many(GLib.List<User> users,string msg, int p = Priority.DEFAULT) {
+      GLib.List<User> final = new GLib.List<User>();
+      foreach (User k in users) {
+        bool dup = false;
+        foreach(User j in final) {
+          if (k == j) {
+            dup = true;
+          }
+        }
+        if (!dup) {
+          final.append(k);
+        }
+      }
+      foreach (User k in final) {
+        k.send_line(msg,p);
+      }
     }
   }
 }

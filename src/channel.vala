@@ -48,12 +48,15 @@ namespace yrcd {
       fire_names(user);
       return true;
     }
-    public void quit(User user, string msg) {
+    public GLib.List<User> quit(User user) {
+      GLib.List<User> response = new GLib.List<User>();
       foreach (User k in users) {
         //:danieltest!~k@2604:180::d8f:be0e QUIT :Client Quit
-        k.send_line(":%s QUIT :%s".printf(user.get_hostmask(),msg), Priority.LOW);
+        //k.send_line(":%s QUIT :%s".printf(user.get_hostmask(),msg), Priority.LOW);
+        response.append(k);
       }
       users.remove(user);
+      return response;
     }
     public void part(User user, string msg) {
       foreach(User k in users) {
