@@ -170,6 +170,9 @@ namespace yrcd {
     public async void process_user (SocketConnection conn) {
       yrcd_user user = new yrcd_user(conn, server);
       server.userlist[user.id] = user;
+      if (server.userlist.size > server.config.max_users && server.config.max_users > 0) {
+        user.quit("Max users met");
+      }
       if (server.userlist.size > server.max_users) {
         server.max_users = server.userlist.size;
         server.log("New max amount of users: %d".printf(server.max_users));
