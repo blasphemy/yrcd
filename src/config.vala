@@ -30,7 +30,7 @@ namespace yrcd {
         ping_invertal = file.get_integer("ServerVariables", "ping_invertal");
         salt = file.get_string("ServerVariables","host_salt");
         if (file.has_key("ServerVariables", "cloaking")) {
-            cloaking = file.get_string("ServerVariables", "cloaking");
+            cloaking = file.get_boolean("ServerVariables", "cloaking");
         } else {
             cloaking = false;
         }
