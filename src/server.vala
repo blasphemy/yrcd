@@ -59,10 +59,8 @@ namespace yrcd {
     }
     public yrcd_user? get_user_by_nick (string nicktocheck) {
       foreach (yrcd_user k in userlist) {
-        if (k.nick_set) {
-          if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
-            return k;
-          }
+        if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
+          return k;
         }
       }
       //Nothing found, so return null. This is useful in other functions to find if a user exists by that name at all.

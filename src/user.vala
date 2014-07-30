@@ -66,13 +66,16 @@ namespace yrcd {
       }
     }
     public string get_ip () {
-      try { 
-        InetSocketAddress inetsockaddr = sock.get_remote_address() as InetSocketAddress;
-        string ip = inetsockaddr.get_address().to_string();
-        return ip;
+      try {
+        InetSocketAddress inet = (InetSocketAddress) sock.get_remote_address();
+        if (inet != null) {
+          string k = inet.get_address().to_string();
+          return k;
+        } else {
+          return "1.2.3.4";
+        }
       } catch (Error e) {
-        server.log("Error getting user ip: %s".printf(e.message));
-        return "unknown";
+        return "1.2.3.4";
       }
     }
     public void quit (string? msg) { //TODO Finish this.
