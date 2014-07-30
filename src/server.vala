@@ -4,7 +4,7 @@ namespace yrcd {
   class Server : Object {
     private SocketService ss = new SocketService();
     private Router router;
-    public HashMap<int, User> userlist = new HashMap<int, User>();
+    public HashMap<int, weak User> userlist = new HashMap<int, weak User>();
     public HashMap<string, Channel> channellist;
     private int user_counter = 0;
     public int64 epoch;
