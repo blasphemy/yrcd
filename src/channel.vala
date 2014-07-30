@@ -8,10 +8,10 @@ namespace yrcd {
     public int64 epoch;
     public int64 topictime;
     public string topic_host;
-    public yrcd_server server;
+    public Server server;
     public GLib.List<weak yrcd_user> users;
     public uint timer;
-    public Channel(yrcd_server _server, string _name) {
+    public Channel(Server _server, string _name) {
       server = _server;
       set_topic("", server.config.sname);
       epoch = new DateTime.now_utc().to_unix();

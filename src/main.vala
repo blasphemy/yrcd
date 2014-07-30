@@ -5,7 +5,7 @@ namespace yrcd {
       return;
     }
     MainLoop loop = new MainLoop();
-    yrcd_server server = new yrcd_server(config);
+    Server server = new Server(config);
     loop.run();
     server.log("For some reason, we're all done here.... goodbye");
   }

@@ -5,7 +5,7 @@ namespace yrcd {
     public SocketConnection sock { get; set; }
     public DataInputStream dis { get; set; }
     public DataOutputStream dos { get; set; }
-    public yrcd_server server { get; set; }
+    public Server server { get; set; }
     public int id { get; set; }
     private DateTime time_last_rcv;
     private DateTime epoch;
@@ -22,7 +22,7 @@ namespace yrcd {
     public string host;
     public HashMap<string,Channel> user_chanels;
     public GLib.List<uint> asources;
-    public yrcd_user (SocketConnection conn, yrcd_server _server) {
+    public yrcd_user (SocketConnection conn, Server _server) {
       user_chanels = new HashMap<string,Channel>();
       sock = conn;
       server = _server;

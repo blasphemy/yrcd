@@ -4,8 +4,8 @@ using Gee;
  */
 namespace yrcd {
   class yrcd_router : Object {
-    public yrcd_server server;
-    public yrcd_router(yrcd_server k) {
+    public Server server;
+    public yrcd_router(Server k) {
       server = k;
     }
     public void route (yrcd_user user, string? msg) {

@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class yrcd_server : Object {
+  class Server : Object {
     private SocketService ss = new SocketService();
     private yrcd_router router;
     public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
@@ -18,7 +18,7 @@ namespace yrcd {
     public void log (string msg) {
       stdout.printf("LOG: %s\n", msg);
     } 
-    public yrcd_server (Config _config) {
+    public Server (Config _config) {
       config = _config;
       log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
       epoch = new DateTime.now_utc().to_unix();
