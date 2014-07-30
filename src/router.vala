@@ -56,6 +56,10 @@ namespace yrcd {
       }
     }
     public void part_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       StringBuilder builder = new StringBuilder();
       string msg;
       if (args.length > 2) {
@@ -71,6 +75,10 @@ namespace yrcd {
       user.part(chan, msg);
     }
     public void who_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       int i;
       for (i = 1; i < args.length; i++) {
         yrcd_channel chan = server.get_channel_by_name(args[i]);
@@ -107,6 +115,10 @@ namespace yrcd {
       user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
     }
     public void join_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       if (args.length < 2) {
         user.fire_numeric(ERR_NEEDMOREPARAMS, "JOIN");
         return;
@@ -119,6 +131,10 @@ namespace yrcd {
       user.join(chan);
     }
     public void privmsg_handler(yrcd_user user, string[] args) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
       /*
        * No plans to support sending to hostmasks for now.
        */
@@ -154,13 +170,21 @@ namespace yrcd {
     public async void process_user (SocketConnection conn) {
       yrcd_user user = new yrcd_user(conn, server);
       server.userlist[user.id] = user;
+      if (server.userlist.size > server.config.max_users && server.config.max_users > 0) {
+        user.quit("Max users met");
+      }
       if (server.userlist.size > server.max_users) {
         server.max_users = server.userlist.size;
         server.log("New max amount of users: %d".printf(server.max_users));
       }
       while (user.sock.get_socket().is_connected()) {
         try {
-          string msg = yield user.dis.read_line_async (Priority.DEFAULT);
+          string msg;
+          if (user.registered) {
+            msg = yield user.dis.read_line_async (Priority.DEFAULT);
+          } else {
+            msg = yield user.dis.read_line_async (Priority.LOW);
+          }
           route(user, msg);
         } catch (Error e) {
           server.log("Encountered error reading %s (%d) socket...");

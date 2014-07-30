@@ -9,7 +9,7 @@ namespace yrcd {
     public int64 topictime;
     public string topic_host;
     public yrcd_server server;
-    public GLib.List<yrcd_user> users;
+    public GLib.List<weak yrcd_user> users;
     public uint timer;
     public yrcd_channel(yrcd_server _server, string _name) {
       server = _server;
@@ -41,7 +41,7 @@ namespace yrcd {
       users.append(user);
       foreach (yrcd_user k in users) {
         string msg = ":%s JOIN %s".printf(user.get_hostmask(), this.name);
-        k.send_line(msg);
+        k.send_line(msg, Priority.LOW);
       }
       user.fire_numeric(RPL_TOPIC, name, topic);
       user.fire_numeric(RPL_TOPICWHOTIME, name, topic_host, topictime);
@@ -51,13 +51,13 @@ namespace yrcd {
     public void quit(yrcd_user user, string msg) {
       foreach (yrcd_user k in users) {
         //:danieltest!~k@2604:180::d8f:be0e QUIT :Client Quit
-        k.send_line(":%s QUIT :%s".printf(user.get_hostmask(),msg));
+        k.send_line(":%s QUIT :%s".printf(user.get_hostmask(),msg), Priority.LOW);
       }
       users.remove(user);
     }
     public void part(yrcd_user user, string msg) {
       foreach(yrcd_user k in users) {
-        k.send_line(":%s PART %s :%s".printf(user.get_hostmask(),name,msg));
+        k.send_line(":%s PART %s :%s".printf(user.get_hostmask(),name,msg), Priority.LOW);
       }
       users.remove(user);
     }
@@ -81,7 +81,7 @@ namespace yrcd {
       server.log(@"channel $name sending message $msg");
       foreach (yrcd_user k in users) {
         if (k != user) {
-          k.send_line(to_send);
+          k.send_line(to_send, Priority.HIGH);
         }
       }
     }

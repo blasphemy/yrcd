@@ -6,7 +6,9 @@ namespace yrcd {
     public string[] listen_ips;
     public List<string> motd;
     public int ping_invertal;
+    public int max_users;
     public bool config_error = false;
+    public bool cloaking;
     public string salt;
     public yrcd_config(string filepath) {
       try {
@@ -27,6 +29,8 @@ namespace yrcd {
         }
         ping_invertal = file.get_integer("ServerVariables", "ping_invertal");
         salt = file.get_string("ServerVariables","host_salt");
+        cloaking = file.get_boolean("ServerVariables","cloaking");
+        max_users = file.get_integer("ServerVariables", "max_connections");
       } catch (Error e) {
         stdout.printf("Error Loading config file: %s\n".printf(e.message));
         config_error = true;

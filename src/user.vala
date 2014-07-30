@@ -17,9 +17,11 @@ namespace yrcd {
     public string realname { get; set; }
     public bool user_set { get; set; }
     public bool nick_set { get; set; }
+    public bool registered { get; set; }
     public string ip; 
     public string host;
     public HashMap<string,yrcd_channel> user_chanels;
+    public GLib.List<uint> asources;
     public yrcd_user (SocketConnection conn, yrcd_server _server) {
       user_chanels = new HashMap<string,yrcd_channel>();
       sock = conn;
@@ -34,11 +36,13 @@ namespace yrcd {
       hostname_lookup.begin();
       awaiting_response = false;
       check_ping_at = epoch.to_unix() + server.config.ping_invertal;
-      ping_timer = setup_ping_timer();
+      asources = new GLib.List<uint>();
+      asources.append(setup_ping_timer());
+      registered = false;
       server.log("User connected from %s with ID %d".printf(host,id));
     }
     private uint setup_ping_timer() {
-      uint t = Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
+      uint t = Timeout.add_seconds_full(Priority.LOW, 10, () => {
           if (!sock.get_socket().is_connected()) { return false; }
           check_ping();
           return true;
@@ -54,7 +58,7 @@ namespace yrcd {
           if (awaiting_response) {
             quit("Ping timeout: %d seconds".printf(server.config.ping_invertal));
           } else {
-            send_line("PING :" + server.config.sname);
+            send_line("PING :" + server.config.sname, Priority.HIGH);
             awaiting_response = true;
           }
         }
@@ -62,13 +66,16 @@ namespace yrcd {
       }
     }
     public string get_ip () {
-      try { 
-        InetSocketAddress inetsockaddr = sock.get_remote_address() as InetSocketAddress;
-        string ip = inetsockaddr.get_address().to_string();
-        return ip;
+      try {
+        InetSocketAddress inet = (InetSocketAddress) sock.get_remote_address();
+        if (inet != null) {
+          string k = inet.get_address().to_string();
+          return k;
+        } else {
+          return "1.2.3.4";
+        }
       } catch (Error e) {
-        server.log("Error getting user ip: %s".printf(e.message));
-        return "unknown";
+        return "1.2.3.4";
       }
     }
     public void quit (string? msg) { //TODO Finish this.
@@ -79,8 +86,11 @@ namespace yrcd {
         foreach (yrcd_channel k in user_chanels.values) {
           k.quit(this, msg);
         }
-        Source.remove(ping_timer);
-        send_line("ERROR :Closing Link: %s (%s)".printf(host,msg));
+        send_line("Error :Closing Link: %s (%s)".printf(host,msg));
+        foreach (uint k in asources) {
+          Source.remove(k);
+          asources.remove(k);
+        }
         sock.get_socket().close();
         server.remove_user(id);
       } catch (Error e) {
@@ -88,6 +98,9 @@ namespace yrcd {
       }
     }
     public void part (yrcd_channel chan, string? msg) {
+      if (user_chanels[chan.name] == null) {
+        return;
+      }
       if (msg == null) {
         msg = "Leaving";
       }
@@ -156,6 +169,7 @@ namespace yrcd {
       }
     }
     public void reg_finished () {
+      registered = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(RPL_WELCOME, nick, ident, host);
       fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);
@@ -168,16 +182,31 @@ namespace yrcd {
       awaiting_response = false;
     }
     public string get_hostmask() { //TODO Implement cloaking here.
-      string hm = nick + "!" + ident + "@" + host;
+      string k;
+      if (server.config.cloaking) {
+        k = cloaked_host();
+      } else {
+        k = host;
+      }
+      string hm = nick + "!" + ident + "@" + k;
       return hm;
     }
-    public void send_line(string msg) {
+    private void send_to_socket (string msg) {
       try {
-        dos.put_string("%s\n".printf(msg));
-        server.log("sending to %s: %s".printf(nick,msg));
+        if (sock.get_socket().is_connected()) {
+          dos.put_string("%s\n".printf(msg));
+          server.log("Send to %s: %s".printf(nick,msg));
+        } 
       } catch (Error e) {
-        server.log("Error sending message to UID %d : %s".printf(id,e.message));
+        server.log("Error sending data to socket %s".printf(e.message));
       }
+
+    }
+    public void send_line(string msg, int p = Priority.DEFAULT) {
+      asources.append(Idle.add(() => {
+          send_to_socket(msg);
+          return false;
+          }, p));
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
@@ -220,7 +249,7 @@ namespace yrcd {
       string msg = ":%s %.3d %s ".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
-      send_line(msg);
+      send_line(msg, Priority.LOW);
     }
     public void send_notice (string msg) {
       send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));
@@ -231,6 +260,20 @@ namespace yrcd {
         fire_numeric(RPL_MOTD, line);
       }
       fire_numeric(RPL_ENDOFMOTD);
+    }
+    public string cloaked_host() {
+      StringBuilder builder = new StringBuilder();
+      int i;
+      string[] j = host.split(".");
+      builder.append(server.secure_hash(j[0]));
+      builder.append(".");
+      for (i=1;i<j.length;i++) {
+        builder.append(j[i]);
+        if (i<j.length -1) {
+          builder.append(".");
+        }
+      }
+      return builder.str;
     }
   }
 }
