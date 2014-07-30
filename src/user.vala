@@ -275,7 +275,7 @@ namespace yrcd {
       StringBuilder builder = new StringBuilder();
       int i;
       string[] j = host.split(".");
-      builder.append(Utils.secure_hash(j[0]));
+      builder.append(Utils.secure_hash(j[0], server.config.salt));
       builder.append(".");
       for (i=1;i<j.length;i++) {
         builder.append(j[i]);
