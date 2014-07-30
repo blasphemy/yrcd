@@ -168,11 +168,13 @@ namespace yrcd {
       }
     }
     public async void process_user (SocketConnection conn) {
+      if (server.userlist.size > server.config.max_users && server.config.max_users > 0) {
+        conn.get_socket().close();
+        server.log("Max amount of connections %d reached, closing socket".printf(server.config.max_users));
+        return;
+      }
       User user = new User(conn, server);
       server.userlist[user.id] = user;
-      if (server.userlist.size > server.config.max_users && server.config.max_users > 0) {
-        user.quit("Max users met");
-      }
       if (server.userlist.size > server.max_users) {
         server.max_users = server.userlist.size;
         server.log("New max amount of users: %d".printf(server.max_users));
