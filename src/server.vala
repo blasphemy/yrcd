@@ -58,7 +58,7 @@ namespace yrcd {
       return time.to_string();
     }
     public User? get_user_by_nick (string nicktocheck) {
-      foreach (User k in userlist) {
+      foreach (User k in userlist.values) {
         if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
           return k;
         }
