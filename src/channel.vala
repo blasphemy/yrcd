@@ -48,12 +48,15 @@ namespace yrcd {
       fire_names(user);
       return true;
     }
-    public void quit(User user, string msg) {
-      foreach (User k in users) {
-        //:danieltest!~k@2604:180::d8f:be0e QUIT :Client Quit
-        k.send_line(":%s QUIT :%s".printf(user.get_hostmask(),msg), Priority.LOW);
-      }
+    public void remove_user (User user) {
       users.remove(user);
+    }
+    public GLib.List<User> get_users() {
+      GLib.List<User> response = new GLib.List<User>();
+      foreach (User k in users) {
+        response.append(k);
+      }
+      return response;
     }
     public void part(User user, string msg) {
       foreach(User k in users) {
@@ -79,11 +82,9 @@ namespace yrcd {
     public void privmsg(User user, string msg) {
       string to_send = ":%s PRIVMSG %s :%s".printf(user.get_hostmask(), name, msg);
       server.log(@"channel $name sending message $msg");
-      foreach (User k in users) {
-        if (k != user) {
-          k.send_line(to_send, Priority.HIGH);
-        }
-      }
+      GLib.List<User> rec = get_users();
+      rec.remove(user);
+      server.send_to_many(rec,to_send, Priority.HIGH);
     }
     public void who_response (User user) {
       foreach (User k in users) {

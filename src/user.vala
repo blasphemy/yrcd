@@ -11,7 +11,6 @@ namespace yrcd {
     private DateTime epoch;
     private int64 check_ping_at;
     private bool awaiting_response;
-    private uint ping_timer;
     public string nick { get; set; }
     public string ident { get; set; }
     public string realname { get; set; }
@@ -83,9 +82,12 @@ namespace yrcd {
         if (msg == null) {
           msg = "Quit";
         }
+        GLib.List<User> rec = new GLib.List<User>();
         foreach (Channel k in user_chanels.values) {
-          k.quit(this, msg);
+          rec.concat(k.get_users());
+          k.remove_user(this);
         }
+        server.send_to_many(rec, ":%s QUIT :%s".printf(get_hostmask(), msg), Priority.LOW);
         send_line("Error :Closing Link: %s (%s)".printf(host,msg));
         foreach (uint k in asources) {
           Source.remove(k);
@@ -130,6 +132,7 @@ namespace yrcd {
           return;
         }
       }
+      string oldhm = get_hostmask();
       string oldnick = nick;
       nick = args[1];
       if (!nick_set) {
@@ -140,6 +143,12 @@ namespace yrcd {
         }
       } else {
         server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
+        var rec = new GLib.List<User>();
+        foreach (Channel k in user_chanels.values) {
+          rec.concat(k.get_users());
+        }
+        string to_send = ":%s NICK %s".printf(oldhm,nick);
+        server.send_to_many(rec,to_send,Priority.DEFAULT);
       }
     }
     public void user_reg (string[] args) {

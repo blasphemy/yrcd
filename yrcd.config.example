@@ -8,3 +8,4 @@ ping_invertal=45
 motd_path=motd.txt
 host_salt=s3krit
 cloaking=true
+max_connections=500
