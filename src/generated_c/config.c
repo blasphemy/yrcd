@@ -133,9 +133,9 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 		gboolean _tmp38_ = FALSE;
 		GKeyFile* _tmp39_ = NULL;
 		gboolean _tmp40_ = FALSE;
-		gint _tmp41_ = 0;
-		GKeyFile* _tmp42_ = NULL;
-		gint _tmp43_ = 0;
+		gboolean _tmp44_ = FALSE;
+		GKeyFile* _tmp45_ = NULL;
+		gboolean _tmp46_ = FALSE;
 		_tmp0_ = self->priv->file;
 		_tmp1_ = filepath;
 		g_key_file_load_from_file (_tmp0_, _tmp1_, G_KEY_FILE_NONE, &_inner_error_);
@@ -291,7 +291,7 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 		_g_free0 (self->salt);
 		self->salt = _tmp37_;
 		_tmp39_ = self->priv->file;
-		_tmp40_ = g_key_file_get_boolean (_tmp39_, "ServerVariables", "cloaking", &_inner_error_);
+		_tmp40_ = g_key_file_has_key (_tmp39_, "ServerVariables", "cloaking", &_inner_error_);
 		_tmp38_ = _tmp40_;
 		if (G_UNLIKELY (_inner_error_ != NULL)) {
 			_g_free0 (_tmp34_);
@@ -305,10 +305,32 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 			_g_free0 (_tmp3_);
 			goto __catch0_g_error;
 		}
-		self->cloaking = _tmp38_;
-		_tmp42_ = self->priv->file;
-		_tmp43_ = g_key_file_get_integer (_tmp42_, "ServerVariables", "max_connections", &_inner_error_);
-		_tmp41_ = _tmp43_;
+		if (_tmp38_) {
+			gboolean _tmp41_ = FALSE;
+			GKeyFile* _tmp42_ = NULL;
+			gboolean _tmp43_ = FALSE;
+			_tmp42_ = self->priv->file;
+			_tmp43_ = g_key_file_get_boolean (_tmp42_, "ServerVariables", "cloaking", &_inner_error_);
+			_tmp41_ = _tmp43_;
+			if (G_UNLIKELY (_inner_error_ != NULL)) {
+				_g_free0 (_tmp34_);
+				_g_free0 (motd_line);
+				_g_object_unref0 (dis);
+				_g_object_unref0 (_tmp20_);
+				_g_object_unref0 (motdfile);
+				_g_free0 (motdpath);
+				_tmp11_ = (_vala_array_free (_tmp11_, _tmp11__length1, (GDestroyNotify) g_free), NULL);
+				tmplist = (g_free (tmplist), NULL);
+				_g_free0 (_tmp3_);
+				goto __catch0_g_error;
+			}
+			self->cloaking = _tmp41_;
+		} else {
+			self->cloaking = FALSE;
+		}
+		_tmp45_ = self->priv->file;
+		_tmp46_ = g_key_file_has_key (_tmp45_, "ServerVariables", "max_connections", &_inner_error_);
+		_tmp44_ = _tmp46_;
 		if (G_UNLIKELY (_inner_error_ != NULL)) {
 			_g_free0 (_tmp34_);
 			_g_free0 (motd_line);
@@ -321,7 +343,29 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 			_g_free0 (_tmp3_);
 			goto __catch0_g_error;
 		}
-		self->max_users = _tmp41_;
+		if (_tmp44_) {
+			gint _tmp47_ = 0;
+			GKeyFile* _tmp48_ = NULL;
+			gint _tmp49_ = 0;
+			_tmp48_ = self->priv->file;
+			_tmp49_ = g_key_file_get_integer (_tmp48_, "ServerVariables", "max_connections", &_inner_error_);
+			_tmp47_ = _tmp49_;
+			if (G_UNLIKELY (_inner_error_ != NULL)) {
+				_g_free0 (_tmp34_);
+				_g_free0 (motd_line);
+				_g_object_unref0 (dis);
+				_g_object_unref0 (_tmp20_);
+				_g_object_unref0 (motdfile);
+				_g_free0 (motdpath);
+				_tmp11_ = (_vala_array_free (_tmp11_, _tmp11__length1, (GDestroyNotify) g_free), NULL);
+				tmplist = (g_free (tmplist), NULL);
+				_g_free0 (_tmp3_);
+				goto __catch0_g_error;
+			}
+			self->max_users = _tmp47_;
+		} else {
+			self->max_users = 0;
+		}
 		_g_free0 (_tmp34_);
 		_g_free0 (motd_line);
 		_g_object_unref0 (dis);
@@ -336,20 +380,20 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 	__catch0_g_error:
 	{
 		GError* e = NULL;
-		FILE* _tmp44_ = NULL;
-		GError* _tmp45_ = NULL;
-		const gchar* _tmp46_ = NULL;
-		gchar* _tmp47_ = NULL;
-		gchar* _tmp48_ = NULL;
+		FILE* _tmp50_ = NULL;
+		GError* _tmp51_ = NULL;
+		const gchar* _tmp52_ = NULL;
+		gchar* _tmp53_ = NULL;
+		gchar* _tmp54_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp44_ = stdout;
-		_tmp45_ = e;
-		_tmp46_ = _tmp45_->message;
-		_tmp47_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp46_);
-		_tmp48_ = _tmp47_;
-		fprintf (_tmp44_, "%s", _tmp48_);
-		_g_free0 (_tmp48_);
+		_tmp50_ = stdout;
+		_tmp51_ = e;
+		_tmp52_ = _tmp51_->message;
+		_tmp53_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp52_);
+		_tmp54_ = _tmp53_;
+		fprintf (_tmp50_, "%s", _tmp54_);
+		_g_free0 (_tmp54_);
 		self->config_error = TRUE;
 		_g_error_free0 (e);
 	}

@@ -76,7 +76,6 @@ typedef struct _yrcdRouterClass yrcdRouterClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
-#define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 
 struct _yrcdServer {
@@ -155,7 +154,6 @@ yrcdChannel* yrcd_server_get_channel_by_name (yrcdServer* self, const gchar* nam
 yrcdChannel* yrcd_channel_new (yrcdServer* _server, const gchar* _name);
 yrcdChannel* yrcd_channel_construct (GType object_type, yrcdServer* _server, const gchar* _name);
 const gchar* yrcd_channel_get_name (yrcdChannel* self);
-gchar* yrcd_server_secure_hash (yrcdServer* self, const gchar* in);
 void yrcd_server_send_to_many (yrcdServer* self, GList* users, const gchar* msg, gint p);
 void yrcd_user_send_line (yrcdUser* self, const gchar* msg, gint p);
 static void _g_object_unref0_ (gpointer var);
@@ -585,76 +583,6 @@ yrcdChannel* yrcd_server_get_channel_by_name (yrcdServer* self, const gchar* nam
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp22_, _tmp27_, _tmp28_);
 	_g_free0 (_tmp27_);
 	result = chan;
-	return result;
-}
-
-
-gchar* yrcd_server_secure_hash (yrcdServer* self, const gchar* in) {
-	gchar* result = NULL;
-	GString* builder = NULL;
-	GString* _tmp0_ = NULL;
-	GString* _tmp1_ = NULL;
-	const gchar* _tmp2_ = NULL;
-	gchar* _tmp3_ = NULL;
-	gchar* _tmp4_ = NULL;
-	GString* _tmp17_ = NULL;
-	const gchar* _tmp18_ = NULL;
-	gint _tmp19_ = 0;
-	gint _tmp20_ = 0;
-	GString* _tmp21_ = NULL;
-	const gchar* _tmp22_ = NULL;
-	gchar* _tmp23_ = NULL;
-	g_return_val_if_fail (self != NULL, NULL);
-	g_return_val_if_fail (in != NULL, NULL);
-	_tmp0_ = g_string_new ("");
-	builder = _tmp0_;
-	_tmp1_ = builder;
-	_tmp2_ = in;
-	_tmp3_ = g_compute_checksum_for_string (G_CHECKSUM_MD5, _tmp2_, (gsize) (-1));
-	_tmp4_ = _tmp3_;
-	g_string_append (_tmp1_, _tmp4_);
-	_g_free0 (_tmp4_);
-	while (TRUE) {
-		GString* _tmp5_ = NULL;
-		const gchar* _tmp6_ = NULL;
-		gint _tmp7_ = 0;
-		gint _tmp8_ = 0;
-		const gchar* _tmp9_ = NULL;
-		gint _tmp10_ = 0;
-		gint _tmp11_ = 0;
-		GString* _tmp12_ = NULL;
-		GString* _tmp13_ = NULL;
-		const gchar* _tmp14_ = NULL;
-		gchar* _tmp15_ = NULL;
-		gchar* _tmp16_ = NULL;
-		_tmp5_ = builder;
-		_tmp6_ = _tmp5_->str;
-		_tmp7_ = strlen (_tmp6_);
-		_tmp8_ = _tmp7_;
-		_tmp9_ = in;
-		_tmp10_ = strlen (_tmp9_);
-		_tmp11_ = _tmp10_;
-		if (!(_tmp8_ < _tmp11_)) {
-			break;
-		}
-		_tmp12_ = builder;
-		_tmp13_ = builder;
-		_tmp14_ = _tmp13_->str;
-		_tmp15_ = g_compute_checksum_for_string (G_CHECKSUM_MD5, _tmp14_, (gsize) (-1));
-		_tmp16_ = _tmp15_;
-		g_string_append (_tmp12_, _tmp16_);
-		_g_free0 (_tmp16_);
-	}
-	_tmp17_ = builder;
-	_tmp18_ = in;
-	_tmp19_ = strlen (_tmp18_);
-	_tmp20_ = _tmp19_;
-	g_string_truncate (_tmp17_, (gsize) _tmp20_);
-	_tmp21_ = builder;
-	_tmp22_ = _tmp21_->str;
-	_tmp23_ = g_strdup (_tmp22_);
-	result = _tmp23_;
-	_g_string_free0 (builder);
 	return result;
 }
 

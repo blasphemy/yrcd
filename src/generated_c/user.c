@@ -79,7 +79,6 @@ struct _yrcdUser {
 	GObject parent_instance;
 	yrcdUserPrivate * priv;
 	gchar* ip;
-	gchar* host;
 	GeeHashMap* user_chanels;
 	GList* asources;
 };
@@ -104,6 +103,7 @@ struct _yrcdUserPrivate {
 	gboolean _user_set;
 	gboolean _nick_set;
 	gboolean _registered;
+	gchar* host;
 };
 
 struct _yrcdServer {
@@ -289,7 +289,7 @@ gchar* yrcd_server_ut_to_utc (yrcdServer* self, gint64 ut);
 #define YRCD_RPL_MYINFO 004
 void yrcd_user_fire_motd (yrcdUser* self);
 void yrcd_user_update_timestamp (yrcdUser* self);
-gchar* yrcd_user_cloaked_host (yrcdUser* self);
+gchar* yrcd_user_get_host (yrcdUser* self);
 static void yrcd_user_send_to_socket (yrcdUser* self, const gchar* msg);
 GDataOutputStream* yrcd_user_get_dos (yrcdUser* self);
 static Block1Data* block1_data_ref (Block1Data* _data1_);
@@ -303,7 +303,8 @@ static void yrcd_user_hostname_lookup_ready (GObject* source_object, GAsyncResul
 #define YRCD_RPL_MOTDSTART 375
 #define YRCD_RPL_MOTD 372
 #define YRCD_RPL_ENDOFMOTD 376
-gchar* yrcd_server_secure_hash (yrcdServer* self, const gchar* in);
+gchar* yrcd_user_cloaked_host (yrcdUser* self);
+gchar* yrcd_utils_secure_hash (const gchar* in, const gchar* salt);
 GDataInputStream* yrcd_user_get_dis (yrcdUser* self);
 gboolean yrcd_user_get_registered (yrcdUser* self);
 static void yrcd_user_finalize (GObject* obj);
@@ -386,8 +387,8 @@ yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdS
 	self->priv->time_last_rcv = _tmp17_;
 	_tmp18_ = self->ip;
 	_tmp19_ = g_strdup (_tmp18_);
-	_g_free0 (self->host);
-	self->host = _tmp19_;
+	_g_free0 (self->priv->host);
+	self->priv->host = _tmp19_;
 	yrcd_user_hostname_lookup (self, NULL, NULL);
 	self->priv->awaiting_response = FALSE;
 	_tmp20_ = self->priv->epoch;
@@ -402,7 +403,7 @@ yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdS
 	self->asources = g_list_append (self->asources, (gpointer) ((guintptr) _tmp25_));
 	yrcd_user_set_registered (self, FALSE);
 	_tmp26_ = self->priv->_server;
-	_tmp27_ = self->host;
+	_tmp27_ = self->priv->host;
 	_tmp28_ = self->priv->_id;
 	_tmp29_ = g_strdup_printf ("User connected from %s with ID %d", _tmp27_, _tmp28_);
 	_tmp30_ = _tmp29_;
@@ -693,7 +694,7 @@ void yrcd_user_quit (yrcdUser* self, const gchar* msg) {
 		yrcd_server_send_to_many (_tmp14_, _tmp15_, _tmp20_, G_PRIORITY_LOW);
 		_g_free0 (_tmp20_);
 		_g_free0 (_tmp17_);
-		_tmp21_ = self->host;
+		_tmp21_ = self->priv->host;
 		_tmp22_ = msg;
 		_tmp23_ = g_strdup_printf ("Error :Closing Link: %s (%s)", _tmp21_, _tmp22_);
 		_tmp24_ = _tmp23_;
@@ -1319,7 +1320,7 @@ void yrcd_user_reg_finished (yrcdUser* self) {
 	_g_free0 (_tmp3_);
 	_tmp7_ = self->priv->_nick;
 	_tmp8_ = self->priv->_ident;
-	_tmp9_ = self->host;
+	_tmp9_ = self->priv->host;
 	yrcd_user_fire_numeric (self, YRCD_RPL_WELCOME, _tmp7_, _tmp8_, _tmp9_, NULL);
 	_tmp10_ = self->priv->_server;
 	_tmp11_ = _tmp10_->config;
@@ -1357,56 +1358,23 @@ void yrcd_user_update_timestamp (yrcdUser* self) {
 
 gchar* yrcd_user_get_hostmask (yrcdUser* self) {
 	gchar* result = NULL;
-	gchar* k = NULL;
-	yrcdServer* _tmp0_ = NULL;
-	yrcdConfig* _tmp1_ = NULL;
-	gboolean _tmp2_ = FALSE;
 	gchar* hm = NULL;
-	const gchar* _tmp6_ = NULL;
-	gchar* _tmp7_ = NULL;
-	gchar* _tmp8_ = NULL;
-	const gchar* _tmp9_ = NULL;
-	gchar* _tmp10_ = NULL;
-	gchar* _tmp11_ = NULL;
-	gchar* _tmp12_ = NULL;
-	gchar* _tmp13_ = NULL;
-	const gchar* _tmp14_ = NULL;
-	gchar* _tmp15_ = NULL;
-	gchar* _tmp16_ = NULL;
+	const gchar* _tmp0_ = NULL;
+	const gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	gchar* _tmp4_ = NULL;
+	gchar* _tmp5_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
-	_tmp0_ = self->priv->_server;
-	_tmp1_ = _tmp0_->config;
-	_tmp2_ = _tmp1_->cloaking;
-	if (_tmp2_) {
-		gchar* _tmp3_ = NULL;
-		_tmp3_ = yrcd_user_cloaked_host (self);
-		_g_free0 (k);
-		k = _tmp3_;
-	} else {
-		const gchar* _tmp4_ = NULL;
-		gchar* _tmp5_ = NULL;
-		_tmp4_ = self->host;
-		_tmp5_ = g_strdup (_tmp4_);
-		_g_free0 (k);
-		k = _tmp5_;
-	}
-	_tmp6_ = self->priv->_nick;
-	_tmp7_ = g_strconcat (_tmp6_, "!", NULL);
-	_tmp8_ = _tmp7_;
-	_tmp9_ = self->priv->_ident;
-	_tmp10_ = g_strconcat (_tmp8_, _tmp9_, NULL);
-	_tmp11_ = _tmp10_;
-	_tmp12_ = g_strconcat (_tmp11_, "@", NULL);
-	_tmp13_ = _tmp12_;
-	_tmp14_ = k;
-	_tmp15_ = g_strconcat (_tmp13_, _tmp14_, NULL);
-	_tmp16_ = _tmp15_;
-	_g_free0 (_tmp13_);
-	_g_free0 (_tmp11_);
-	_g_free0 (_tmp8_);
-	hm = _tmp16_;
+	_tmp0_ = self->priv->_nick;
+	_tmp1_ = self->priv->_ident;
+	_tmp2_ = yrcd_user_get_host (self);
+	_tmp3_ = _tmp2_;
+	_tmp4_ = g_strdup_printf ("%s!%s@%s", _tmp0_, _tmp1_, _tmp3_);
+	_tmp5_ = _tmp4_;
+	_g_free0 (_tmp3_);
+	hm = _tmp5_;
 	result = hm;
-	_g_free0 (k);
 	return result;
 }
 
@@ -1634,8 +1602,8 @@ static gboolean yrcd_user_hostname_lookup_co (YrcdUserHostnameLookupData* _data_
 		_data_->_tmp8_ = _data_->self->ip;
 		_data_->_tmp9_ = NULL;
 		_data_->_tmp9_ = g_strdup (_data_->_tmp8_);
-		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp9_;
+		_g_free0 (_data_->self->priv->host);
+		_data_->self->priv->host = _data_->_tmp9_;
 		_g_error_free0 (_data_->e);
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
 		_g_free0 (_data_->hn);
@@ -1691,8 +1659,8 @@ static gboolean yrcd_user_hostname_lookup_co (YrcdUserHostnameLookupData* _data_
 		_data_->_tmp15_ = _data_->self->ip;
 		_data_->_tmp16_ = NULL;
 		_data_->_tmp16_ = g_strdup (_data_->_tmp15_);
-		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp16_;
+		_g_free0 (_data_->self->priv->host);
+		_data_->self->priv->host = _data_->_tmp16_;
 		_g_error_free0 (_data_->_vala1_e);
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
 		_g_free0 (_data_->hn);
@@ -1752,16 +1720,16 @@ static gboolean yrcd_user_hostname_lookup_co (YrcdUserHostnameLookupData* _data_
 		_data_->_tmp25_ = _data_->self->ip;
 		_data_->_tmp26_ = NULL;
 		_data_->_tmp26_ = g_strdup (_data_->_tmp25_);
-		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp26_;
+		_g_free0 (_data_->self->priv->host);
+		_data_->self->priv->host = _data_->_tmp26_;
 		yrcd_user_send_notice (_data_->self, "*** Your forward and reverse DNS do not match, ignoring hostname");
 	} else {
 		_data_->_tmp27_ = NULL;
 		_data_->_tmp27_ = _data_->hn;
 		_data_->_tmp28_ = NULL;
 		_data_->_tmp28_ = g_strdup (_data_->_tmp27_);
-		_g_free0 (_data_->self->host);
-		_data_->self->host = _data_->_tmp28_;
+		_g_free0 (_data_->self->priv->host);
+		_data_->self->priv->host = _data_->_tmp28_;
 		yrcd_user_send_notice (_data_->self, "*** Found your hostname");
 		__g_list_free__g_object_unref0_0 (_data_->addresses);
 		_g_free0 (_data_->hn);
@@ -1905,6 +1873,31 @@ void yrcd_user_fire_motd (yrcdUser* self) {
 }
 
 
+gchar* yrcd_user_get_host (yrcdUser* self) {
+	gchar* result = NULL;
+	yrcdServer* _tmp0_ = NULL;
+	yrcdConfig* _tmp1_ = NULL;
+	gboolean _tmp2_ = FALSE;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = self->priv->_server;
+	_tmp1_ = _tmp0_->config;
+	_tmp2_ = _tmp1_->cloaking;
+	if (_tmp2_) {
+		gchar* _tmp3_ = NULL;
+		_tmp3_ = yrcd_user_cloaked_host (self);
+		result = _tmp3_;
+		return result;
+	} else {
+		const gchar* _tmp4_ = NULL;
+		gchar* _tmp5_ = NULL;
+		_tmp4_ = self->priv->host;
+		_tmp5_ = g_strdup (_tmp4_);
+		result = _tmp5_;
+		return result;
+	}
+}
+
+
 gchar* yrcd_user_cloaked_host (yrcdUser* self) {
 	gchar* result = NULL;
 	GString* builder = NULL;
@@ -1917,83 +1910,87 @@ gchar* yrcd_user_cloaked_host (yrcdUser* self) {
 	gint j_length1 = 0;
 	gint _j_size_ = 0;
 	GString* _tmp4_ = NULL;
-	yrcdServer* _tmp5_ = NULL;
-	gchar** _tmp6_ = NULL;
-	gint _tmp6__length1 = 0;
-	const gchar* _tmp7_ = NULL;
-	gchar* _tmp8_ = NULL;
-	gchar* _tmp9_ = NULL;
-	GString* _tmp10_ = NULL;
-	GString* _tmp22_ = NULL;
-	const gchar* _tmp23_ = NULL;
-	gchar* _tmp24_ = NULL;
+	gchar** _tmp5_ = NULL;
+	gint _tmp5__length1 = 0;
+	const gchar* _tmp6_ = NULL;
+	yrcdServer* _tmp7_ = NULL;
+	yrcdConfig* _tmp8_ = NULL;
+	const gchar* _tmp9_ = NULL;
+	gchar* _tmp10_ = NULL;
+	gchar* _tmp11_ = NULL;
+	GString* _tmp12_ = NULL;
+	GString* _tmp24_ = NULL;
+	const gchar* _tmp25_ = NULL;
+	gchar* _tmp26_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
 	_tmp0_ = g_string_new ("");
 	builder = _tmp0_;
-	_tmp1_ = self->host;
+	_tmp1_ = self->priv->host;
 	_tmp3_ = _tmp2_ = g_strsplit (_tmp1_, ".", 0);
 	j = _tmp3_;
 	j_length1 = _vala_array_length (_tmp2_);
 	_j_size_ = j_length1;
 	_tmp4_ = builder;
-	_tmp5_ = self->priv->_server;
-	_tmp6_ = j;
-	_tmp6__length1 = j_length1;
-	_tmp7_ = _tmp6_[0];
-	_tmp8_ = yrcd_server_secure_hash (_tmp5_, _tmp7_);
-	_tmp9_ = _tmp8_;
-	g_string_append (_tmp4_, _tmp9_);
-	_g_free0 (_tmp9_);
-	_tmp10_ = builder;
-	g_string_append (_tmp10_, ".");
+	_tmp5_ = j;
+	_tmp5__length1 = j_length1;
+	_tmp6_ = _tmp5_[0];
+	_tmp7_ = self->priv->_server;
+	_tmp8_ = _tmp7_->config;
+	_tmp9_ = _tmp8_->salt;
+	_tmp10_ = yrcd_utils_secure_hash (_tmp6_, _tmp9_);
+	_tmp11_ = _tmp10_;
+	g_string_append (_tmp4_, _tmp11_);
+	_g_free0 (_tmp11_);
+	_tmp12_ = builder;
+	g_string_append (_tmp12_, ".");
 	{
-		gboolean _tmp11_ = FALSE;
+		gboolean _tmp13_ = FALSE;
 		i = 1;
-		_tmp11_ = TRUE;
+		_tmp13_ = TRUE;
 		while (TRUE) {
-			gint _tmp13_ = 0;
-			gchar** _tmp14_ = NULL;
-			gint _tmp14__length1 = 0;
-			GString* _tmp15_ = NULL;
+			gint _tmp15_ = 0;
 			gchar** _tmp16_ = NULL;
 			gint _tmp16__length1 = 0;
-			gint _tmp17_ = 0;
-			const gchar* _tmp18_ = NULL;
+			GString* _tmp17_ = NULL;
+			gchar** _tmp18_ = NULL;
+			gint _tmp18__length1 = 0;
 			gint _tmp19_ = 0;
-			gchar** _tmp20_ = NULL;
-			gint _tmp20__length1 = 0;
-			if (!_tmp11_) {
-				gint _tmp12_ = 0;
-				_tmp12_ = i;
-				i = _tmp12_ + 1;
+			const gchar* _tmp20_ = NULL;
+			gint _tmp21_ = 0;
+			gchar** _tmp22_ = NULL;
+			gint _tmp22__length1 = 0;
+			if (!_tmp13_) {
+				gint _tmp14_ = 0;
+				_tmp14_ = i;
+				i = _tmp14_ + 1;
 			}
-			_tmp11_ = FALSE;
-			_tmp13_ = i;
-			_tmp14_ = j;
-			_tmp14__length1 = j_length1;
-			if (!(_tmp13_ < _tmp14__length1)) {
-				break;
-			}
-			_tmp15_ = builder;
+			_tmp13_ = FALSE;
+			_tmp15_ = i;
 			_tmp16_ = j;
 			_tmp16__length1 = j_length1;
-			_tmp17_ = i;
-			_tmp18_ = _tmp16_[_tmp17_];
-			g_string_append (_tmp15_, _tmp18_);
+			if (!(_tmp15_ < _tmp16__length1)) {
+				break;
+			}
+			_tmp17_ = builder;
+			_tmp18_ = j;
+			_tmp18__length1 = j_length1;
 			_tmp19_ = i;
-			_tmp20_ = j;
-			_tmp20__length1 = j_length1;
-			if (_tmp19_ < (_tmp20__length1 - 1)) {
-				GString* _tmp21_ = NULL;
-				_tmp21_ = builder;
-				g_string_append (_tmp21_, ".");
+			_tmp20_ = _tmp18_[_tmp19_];
+			g_string_append (_tmp17_, _tmp20_);
+			_tmp21_ = i;
+			_tmp22_ = j;
+			_tmp22__length1 = j_length1;
+			if (_tmp21_ < (_tmp22__length1 - 1)) {
+				GString* _tmp23_ = NULL;
+				_tmp23_ = builder;
+				g_string_append (_tmp23_, ".");
 			}
 		}
 	}
-	_tmp22_ = builder;
-	_tmp23_ = _tmp22_->str;
-	_tmp24_ = g_strdup (_tmp23_);
-	result = _tmp24_;
+	_tmp24_ = builder;
+	_tmp25_ = _tmp24_->str;
+	_tmp26_ = g_strdup (_tmp25_);
+	result = _tmp26_;
 	j = (_vala_array_free (j, j_length1, (GDestroyNotify) g_free), NULL);
 	_g_string_free0 (builder);
 	return result;
@@ -2268,7 +2265,7 @@ static void yrcd_user_finalize (GObject* obj) {
 	_g_free0 (self->priv->_ident);
 	_g_free0 (self->priv->_realname);
 	_g_free0 (self->ip);
-	_g_free0 (self->host);
+	_g_free0 (self->priv->host);
 	_g_object_unref0 (self->user_chanels);
 	_g_list_free0 (self->asources);
 	G_OBJECT_CLASS (yrcd_user_parent_class)->finalize (obj);

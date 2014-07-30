@@ -66,7 +66,6 @@ typedef struct _yrcdConfigClass yrcdConfigClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
-typedef struct _yrcdUserPrivate yrcdUserPrivate;
 
 struct _yrcdChannel {
 	GObject parent_instance;
@@ -103,19 +102,6 @@ struct _yrcdServer {
 };
 
 struct _yrcdServerClass {
-	GObjectClass parent_class;
-};
-
-struct _yrcdUser {
-	GObject parent_instance;
-	yrcdUserPrivate * priv;
-	gchar* ip;
-	gchar* host;
-	GeeHashMap* user_chanels;
-	GList* asources;
-};
-
-struct _yrcdUserClass {
 	GObjectClass parent_class;
 };
 
@@ -163,6 +149,7 @@ void yrcd_server_send_to_many (yrcdServer* self, GList* users, const gchar* msg,
 void yrcd_channel_who_response (yrcdChannel* self, yrcdUser* user);
 #define YRCD_RPL_WHOREPLY 352
 const gchar* yrcd_user_get_ident (yrcdUser* self);
+gchar* yrcd_user_get_host (yrcdUser* self);
 const gchar* yrcd_user_get_realname (yrcdUser* self);
 #define YRCD_RPL_ENDOFWHO 315
 static void yrcd_channel_finalize (GObject* obj);
@@ -638,8 +625,8 @@ void yrcd_channel_privmsg (yrcdChannel* self, yrcdUser* user, const gchar* msg) 
 
 void yrcd_channel_who_response (yrcdChannel* self, yrcdUser* user) {
 	GList* _tmp0_ = NULL;
-	yrcdUser* _tmp19_ = NULL;
-	const gchar* _tmp20_ = NULL;
+	yrcdUser* _tmp20_ = NULL;
+	const gchar* _tmp21_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (user != NULL);
 	_tmp0_ = self->users;
@@ -659,42 +646,45 @@ void yrcd_channel_who_response (yrcdChannel* self, yrcdUser* user) {
 				const gchar* _tmp5_ = NULL;
 				const gchar* _tmp6_ = NULL;
 				yrcdUser* _tmp7_ = NULL;
-				const gchar* _tmp8_ = NULL;
-				yrcdServer* _tmp9_ = NULL;
-				yrcdConfig* _tmp10_ = NULL;
-				const gchar* _tmp11_ = NULL;
+				gchar* _tmp8_ = NULL;
+				gchar* _tmp9_ = NULL;
+				yrcdServer* _tmp10_ = NULL;
+				yrcdConfig* _tmp11_ = NULL;
 				const gchar* _tmp12_ = NULL;
-				yrcdUser* _tmp13_ = NULL;
-				const gchar* _tmp14_ = NULL;
+				const gchar* _tmp13_ = NULL;
+				yrcdUser* _tmp14_ = NULL;
 				const gchar* _tmp15_ = NULL;
-				yrcdUser* _tmp16_ = NULL;
-				const gchar* _tmp17_ = NULL;
+				const gchar* _tmp16_ = NULL;
+				yrcdUser* _tmp17_ = NULL;
 				const gchar* _tmp18_ = NULL;
+				const gchar* _tmp19_ = NULL;
 				_tmp2_ = user;
 				_tmp3_ = self->priv->_name;
 				_tmp4_ = k;
 				_tmp5_ = yrcd_user_get_ident (_tmp4_);
 				_tmp6_ = _tmp5_;
 				_tmp7_ = k;
-				_tmp8_ = _tmp7_->host;
-				_tmp9_ = self->server;
-				_tmp10_ = _tmp9_->config;
-				_tmp11_ = yrcd_config_get_sname (_tmp10_);
-				_tmp12_ = _tmp11_;
-				_tmp13_ = k;
-				_tmp14_ = yrcd_user_get_nick (_tmp13_);
-				_tmp15_ = _tmp14_;
-				_tmp16_ = k;
-				_tmp17_ = yrcd_user_get_realname (_tmp16_);
-				_tmp18_ = _tmp17_;
-				yrcd_user_fire_numeric (_tmp2_, YRCD_RPL_WHOREPLY, _tmp3_, _tmp6_, _tmp8_, _tmp12_, _tmp15_, "H", ":0", _tmp18_, NULL);
+				_tmp8_ = yrcd_user_get_host (_tmp7_);
+				_tmp9_ = _tmp8_;
+				_tmp10_ = self->server;
+				_tmp11_ = _tmp10_->config;
+				_tmp12_ = yrcd_config_get_sname (_tmp11_);
+				_tmp13_ = _tmp12_;
+				_tmp14_ = k;
+				_tmp15_ = yrcd_user_get_nick (_tmp14_);
+				_tmp16_ = _tmp15_;
+				_tmp17_ = k;
+				_tmp18_ = yrcd_user_get_realname (_tmp17_);
+				_tmp19_ = _tmp18_;
+				yrcd_user_fire_numeric (_tmp2_, YRCD_RPL_WHOREPLY, _tmp3_, _tmp6_, _tmp9_, _tmp13_, _tmp16_, "H", ":0", _tmp19_, NULL);
+				_g_free0 (_tmp9_);
 				_g_object_unref0 (k);
 			}
 		}
 	}
-	_tmp19_ = user;
-	_tmp20_ = self->priv->_name;
-	yrcd_user_fire_numeric (_tmp19_, YRCD_RPL_ENDOFWHO, _tmp20_, NULL);
+	_tmp20_ = user;
+	_tmp21_ = self->priv->_name;
+	yrcd_user_fire_numeric (_tmp20_, YRCD_RPL_ENDOFWHO, _tmp21_, NULL);
 }
 
 
