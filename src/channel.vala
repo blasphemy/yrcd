@@ -82,11 +82,9 @@ namespace yrcd {
     public void privmsg(User user, string msg) {
       string to_send = ":%s PRIVMSG %s :%s".printf(user.get_hostmask(), name, msg);
       server.log(@"channel $name sending message $msg");
-      foreach (User k in users) {
-        if (k != user) {
-          k.send_line(to_send, Priority.HIGH);
-        }
-      }
+      GLib.List<User> rec = get_users();
+      rec.remove(user);
+      server.send_to_many(rec,to_send, Priority.HIGH);
     }
     public void who_response (User user) {
       foreach (User k in users) {
