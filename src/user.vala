@@ -191,8 +191,7 @@ namespace yrcd {
       awaiting_response = false;
     }
     public string get_hostmask() {
-      string k;
-      string hm = nick + "!" + ident + "@" + get_host();
+      string hm = "%s!%s@%s".printf(nick,ident,get_host());
       return hm;
     }
     private void send_to_socket (string msg) {
@@ -276,7 +275,7 @@ namespace yrcd {
       StringBuilder builder = new StringBuilder();
       int i;
       string[] j = host.split(".");
-      builder.append(server.secure_hash(j[0]));
+      builder.append(Utils.secure_hash(j[0]));
       builder.append(".");
       for (i=1;i<j.length;i++) {
         builder.append(j[i]);
