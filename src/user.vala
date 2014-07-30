@@ -144,6 +144,7 @@ namespace yrcd {
       } else {
         server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
         var rec = new GLib.List<User>();
+        rec.append(this);
         foreach (Channel k in user_chanels.values) {
           rec.concat(k.get_users());
         }
