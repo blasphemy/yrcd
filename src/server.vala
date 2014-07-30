@@ -3,13 +3,13 @@ using Gee;
 namespace yrcd {
   class Server : Object {
     private SocketService ss = new SocketService();
-    private yrcd_router router;
+    private Router router;
     public HashMap<int, User> userlist = new HashMap<int, User>();
     public HashMap<string, Channel> channellist;
     private int user_counter = 0;
     public int64 epoch;
     public int max_users = 0;
-    public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
+    public NumericWrapper numeric_wrapper = new NumericWrapper();
     public Config config;
     public int new_userid() {
       user_counter++;
@@ -20,10 +20,10 @@ namespace yrcd {
     } 
     public Server (Config _config) {
       config = _config;
-      log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
+      log("Initializing server: %s %s".printf(Constants.software, Constants.version));
       epoch = new DateTime.now_utc().to_unix();
       add_listeners();
-      router = new yrcd_router(this);
+      router = new Router(this);
       channellist = new HashMap<string, Channel>();
       ss.incoming.connect(accept_connection);
       ss.start();

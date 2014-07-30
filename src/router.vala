@@ -3,9 +3,9 @@ using Gee;
    Router.vala. I absolutely hate this file, because if I wasn't so stupid, I would have made commands modular.
  */
 namespace yrcd {
-  class yrcd_router : Object {
+  class Router : Object {
     public Server server;
-    public yrcd_router(Server k) {
+    public Router(Server k) {
       server = k;
     }
     public void route (User user, string? msg) {
@@ -202,14 +202,14 @@ namespace yrcd {
          2. check if it has any forbidden characters as in constants.vala
          3. combine the previous factors, along with checking if there's already a channel by the name.
        */
-      foreach (string k in yrcd_constants.chan_prefixes) { //step 1
+      foreach (string k in Constants.chan_prefixes) { //step 1
         if (chan.has_prefix(k)) {
           server.log (@"channel name $chan has valid prefix $k");
           has_prefix = true;
           break;
         }
       }
-      foreach (string k in yrcd_constants.chan_forbidden) { //step 2
+      foreach (string k in Constants.chan_forbidden) { //step 2
         if (k in chan) {
           server.log(@"channel name $chan has invalid char $k");
           valid = false;

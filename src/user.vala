@@ -124,7 +124,7 @@ namespace yrcd {
         fire_numeric(ERR_NICKNAMEINUSE, args[1]);
         return;
       }
-      foreach (string k in yrcd_constants.forbidden_nick_chars) {
+      foreach (string k in Constants.forbidden_nick_chars) {
         if (k in args[1]) {
           fire_numeric(ERR_ERRONEOUSNICKNAME, args[1]);
           return;
@@ -172,9 +172,9 @@ namespace yrcd {
       registered = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(RPL_WELCOME, nick, ident, host);
-      fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);
+      fire_numeric(RPL_YOURHOST, server.config.sname, Constants.software, Constants.version);
       fire_numeric(RPL_CREATED, "%s".printf(server.ut_to_utc(server.epoch)));
-      fire_numeric(RPL_MYINFO, server.config.sname, yrcd_constants.version, "", ""); //No modes yet....
+      fire_numeric(RPL_MYINFO, server.config.sname, Constants.version, "", ""); //No modes yet....
       fire_motd();
     }
     public void update_timestamp() {
