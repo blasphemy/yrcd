@@ -8,7 +8,7 @@ namespace yrcd {
     public yrcd_router(Server k) {
       server = k;
     }
-    public void route (yrcd_user user, string? msg) {
+    public void route (User user, string? msg) {
       if (msg == null) {
         user.server.log("Received null message, disconnecting user %d".printf(user.id));
         user.quit(null);
@@ -55,7 +55,7 @@ namespace yrcd {
         }
       }
     }
-    public void part_handler(yrcd_user user, string[] args) {
+    public void part_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
@@ -74,7 +74,7 @@ namespace yrcd {
       Channel chan = server.get_channel_by_name(args[1]);
       user.part(chan, msg);
     }
-    public void who_handler(yrcd_user user, string[] args) {
+    public void who_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
@@ -96,7 +96,7 @@ namespace yrcd {
       }
       return builder.str.strip();
     }
-    public void quit_handler(yrcd_user user, string[] args) {
+    public void quit_handler(User user, string[] args) {
       if (args.length < 2) {
         user.quit(null);
       } else {
@@ -108,13 +108,13 @@ namespace yrcd {
         user.quit(builder.str);
       }
     } 
-    public void ping_handler(yrcd_user user, string[] args) {
+    public void ping_handler(User user, string[] args) {
       user.send_line("PONG %s".printf(args[1]));
     }
-    public void unknown_command_handler(yrcd_user user, string[] args) {
+    public void unknown_command_handler(User user, string[] args) {
       user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
     }
-    public void join_handler(yrcd_user user, string[] args) {
+    public void join_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
@@ -130,7 +130,7 @@ namespace yrcd {
       Channel chan = server.get_channel_by_name(args[1]);
       user.join(chan);
     }
-    public void privmsg_handler(yrcd_user user, string[] args) {
+    public void privmsg_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
@@ -168,7 +168,7 @@ namespace yrcd {
       }
     }
     public async void process_user (SocketConnection conn) {
-      yrcd_user user = new yrcd_user(conn, server);
+      User user = new User(conn, server);
       server.userlist[user.id] = user;
       if (server.userlist.size > server.config.max_users && server.config.max_users > 0) {
         user.quit("Max users met");

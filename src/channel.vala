@@ -9,7 +9,7 @@ namespace yrcd {
     public int64 topictime;
     public string topic_host;
     public Server server;
-    public GLib.List<weak yrcd_user> users;
+    public GLib.List<weak User> users;
     public uint timer;
     public Channel(Server _server, string _name) {
       server = _server;
@@ -17,7 +17,7 @@ namespace yrcd {
       epoch = new DateTime.now_utc().to_unix();
       name = _name;
       server.log (@"New channel created $name");
-      users = new GLib.List<yrcd_user>();
+      users = new GLib.List<User>();
       check_users();
     }
     public void check_users() {
@@ -32,14 +32,14 @@ namespace yrcd {
             }
           });
     }
-    public bool add_user(yrcd_user user) {
+    public bool add_user(User user) {
       if (users.find(user) != null) {
         string nick = user.nick;
         server.log(@"user $nick attempted to join $name while already joined... doing nothing");
         return false;
       }
       users.append(user);
-      foreach (yrcd_user k in users) {
+      foreach (User k in users) {
         string msg = ":%s JOIN %s".printf(user.get_hostmask(), this.name);
         k.send_line(msg, Priority.LOW);
       }
@@ -48,15 +48,15 @@ namespace yrcd {
       fire_names(user);
       return true;
     }
-    public void quit(yrcd_user user, string msg) {
-      foreach (yrcd_user k in users) {
+    public void quit(User user, string msg) {
+      foreach (User k in users) {
         //:danieltest!~k@2604:180::d8f:be0e QUIT :Client Quit
         k.send_line(":%s QUIT :%s".printf(user.get_hostmask(),msg), Priority.LOW);
       }
       users.remove(user);
     }
-    public void part(yrcd_user user, string msg) {
-      foreach(yrcd_user k in users) {
+    public void part(User user, string msg) {
+      foreach(User k in users) {
         k.send_line(":%s PART %s :%s".printf(user.get_hostmask(),name,msg), Priority.LOW);
       }
       users.remove(user);
@@ -66,9 +66,9 @@ namespace yrcd {
       topic_host = hostmask;
       //topictime = new DateTime.now_utc().to_unix();
     }
-    public void fire_names(yrcd_user user) {
+    public void fire_names(User user) {
       StringBuilder builder = new StringBuilder();
-      foreach (yrcd_user k in users) {
+      foreach (User k in users) {
         builder.append(k.nick);
         builder.append(" ");
       }
@@ -76,17 +76,17 @@ namespace yrcd {
       user.fire_numeric(RPL_NAMEPLY, name, resp);
       user.fire_numeric(RPL_ENDOFNAMES, name);
     }
-    public void privmsg(yrcd_user user, string msg) {
+    public void privmsg(User user, string msg) {
       string to_send = ":%s PRIVMSG %s :%s".printf(user.get_hostmask(), name, msg);
       server.log(@"channel $name sending message $msg");
-      foreach (yrcd_user k in users) {
+      foreach (User k in users) {
         if (k != user) {
           k.send_line(to_send, Priority.HIGH);
         }
       }
     }
-    public void who_response (yrcd_user user) {
-      foreach (yrcd_user k in users) {
+    public void who_response (User user) {
+      foreach (User k in users) {
         //:presentday.notroll.me 352 test #k ~tyrone atlanta.the-beach.co k.notroll.net Tyrone H :0 Tyrone B. Stoned
         user.fire_numeric(RPL_WHOREPLY, name, k.ident, k.host, server.config.sname, k.nick, "H", ":0", k.realname);
       }

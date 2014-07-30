@@ -4,7 +4,7 @@ namespace yrcd {
   class Server : Object {
     private SocketService ss = new SocketService();
     private yrcd_router router;
-    public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
+    public HashMap<int, User> userlist = new HashMap<int, User>();
     public HashMap<string, Channel> channellist;
     private int user_counter = 0;
     public int64 epoch;
@@ -57,8 +57,8 @@ namespace yrcd {
       DateTime time = new DateTime.from_unix_utc(ut);
       return time.to_string();
     }
-    public yrcd_user? get_user_by_nick (string nicktocheck) {
-      foreach (yrcd_user k in userlist) {
+    public User? get_user_by_nick (string nicktocheck) {
+      foreach (User k in userlist) {
         if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
           return k;
         }

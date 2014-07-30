@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class yrcd_user : Object {
+  class User : Object {
     public SocketConnection sock { get; set; }
     public DataInputStream dis { get; set; }
     public DataOutputStream dos { get; set; }
@@ -22,7 +22,7 @@ namespace yrcd {
     public string host;
     public HashMap<string,Channel> user_chanels;
     public GLib.List<uint> asources;
-    public yrcd_user (SocketConnection conn, Server _server) {
+    public User (SocketConnection conn, Server _server) {
       user_chanels = new HashMap<string,Channel>();
       sock = conn;
       server = _server;
