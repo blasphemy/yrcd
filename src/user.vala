@@ -1,11 +1,11 @@
 using Gee;
 
 namespace yrcd {
-  class yrcd_user : Object {
+  class User : Object {
     public SocketConnection sock { get; set; }
     public DataInputStream dis { get; set; }
     public DataOutputStream dos { get; set; }
-    public yrcd_server server { get; set; }
+    public Server server { get; set; }
     public int id { get; set; }
     private DateTime time_last_rcv;
     private DateTime epoch;
@@ -20,10 +20,10 @@ namespace yrcd {
     public bool registered { get; set; }
     public string ip; 
     public string host;
-    public HashMap<string,yrcd_channel> user_chanels;
+    public HashMap<string,Channel> user_chanels;
     public GLib.List<uint> asources;
-    public yrcd_user (SocketConnection conn, yrcd_server _server) {
-      user_chanels = new HashMap<string,yrcd_channel>();
+    public User (SocketConnection conn, Server _server) {
+      user_chanels = new HashMap<string,Channel>();
       sock = conn;
       server = _server;
       ip = get_ip();
@@ -83,7 +83,7 @@ namespace yrcd {
         if (msg == null) {
           msg = "Quit";
         }
-        foreach (yrcd_channel k in user_chanels.values) {
+        foreach (Channel k in user_chanels.values) {
           k.quit(this, msg);
         }
         send_line("Error :Closing Link: %s (%s)".printf(host,msg));
@@ -97,7 +97,7 @@ namespace yrcd {
         server.log("Error closing socket: %s".printf(e.message));
       }
     }
-    public void part (yrcd_channel chan, string? msg) {
+    public void part (Channel chan, string? msg) {
       if (user_chanels[chan.name] == null) {
         return;
       }
@@ -107,7 +107,7 @@ namespace yrcd {
       user_chanels.unset(chan.name);
       chan.part(this,msg);
     }
-    public void join (yrcd_channel chan) {
+    public void join (Channel chan) {
       if (chan.add_user(this)) {
         string name = chan.name;
         server.log(@"user $nick joining chan $name");
@@ -124,7 +124,7 @@ namespace yrcd {
         fire_numeric(ERR_NICKNAMEINUSE, args[1]);
         return;
       }
-      foreach (string k in yrcd_constants.forbidden_nick_chars) {
+      foreach (string k in Constants.forbidden_nick_chars) {
         if (k in args[1]) {
           fire_numeric(ERR_ERRONEOUSNICKNAME, args[1]);
           return;
@@ -172,9 +172,9 @@ namespace yrcd {
       registered = true;
       server.log("User %d finished registration with mask %s and realname %s".printf(id,get_hostmask(),realname));
       fire_numeric(RPL_WELCOME, nick, ident, host);
-      fire_numeric(RPL_YOURHOST, server.config.sname, yrcd_constants.software, yrcd_constants.version);
+      fire_numeric(RPL_YOURHOST, server.config.sname, Constants.software, Constants.version);
       fire_numeric(RPL_CREATED, "%s".printf(server.ut_to_utc(server.epoch)));
-      fire_numeric(RPL_MYINFO, server.config.sname, yrcd_constants.version, "", ""); //No modes yet....
+      fire_numeric(RPL_MYINFO, server.config.sname, Constants.version, "", ""); //No modes yet....
       fire_motd();
     }
     public void update_timestamp() {

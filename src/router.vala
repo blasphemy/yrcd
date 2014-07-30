@@ -3,12 +3,12 @@ using Gee;
    Router.vala. I absolutely hate this file, because if I wasn't so stupid, I would have made commands modular.
  */
 namespace yrcd {
-  class yrcd_router : Object {
-    public yrcd_server server;
-    public yrcd_router(yrcd_server k) {
+  class Router : Object {
+    public Server server;
+    public Router(Server k) {
       server = k;
     }
-    public void route (yrcd_user user, string? msg) {
+    public void route (User user, string? msg) {
       if (msg == null) {
         user.server.log("Received null message, disconnecting user %d".printf(user.id));
         user.quit(null);
@@ -55,7 +55,7 @@ namespace yrcd {
         }
       }
     }
-    public void part_handler(yrcd_user user, string[] args) {
+    public void part_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
@@ -71,17 +71,17 @@ namespace yrcd {
       } else {
         msg = null;
       }
-      yrcd_channel chan = server.get_channel_by_name(args[1]);
+      Channel chan = server.get_channel_by_name(args[1]);
       user.part(chan, msg);
     }
-    public void who_handler(yrcd_user user, string[] args) {
+    public void who_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
       }
       int i;
       for (i = 1; i < args.length; i++) {
-        yrcd_channel chan = server.get_channel_by_name(args[i]);
+        Channel chan = server.get_channel_by_name(args[i]);
         if (chan.users.length() > 0) {
           chan.who_response(user);
         }
@@ -96,7 +96,7 @@ namespace yrcd {
       }
       return builder.str.strip();
     }
-    public void quit_handler(yrcd_user user, string[] args) {
+    public void quit_handler(User user, string[] args) {
       if (args.length < 2) {
         user.quit(null);
       } else {
@@ -108,13 +108,13 @@ namespace yrcd {
         user.quit(builder.str);
       }
     } 
-    public void ping_handler(yrcd_user user, string[] args) {
+    public void ping_handler(User user, string[] args) {
       user.send_line("PONG %s".printf(args[1]));
     }
-    public void unknown_command_handler(yrcd_user user, string[] args) {
+    public void unknown_command_handler(User user, string[] args) {
       user.fire_numeric(ERR_UNKNOWNCOMMAND, args[0]);
     }
-    public void join_handler(yrcd_user user, string[] args) {
+    public void join_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
@@ -127,10 +127,10 @@ namespace yrcd {
         user.fire_numeric(ERR_NOSUCHCHANNEL, args[1]);
         return;
       }
-      yrcd_channel chan = server.get_channel_by_name(args[1]);
+      Channel chan = server.get_channel_by_name(args[1]);
       user.join(chan);
     }
-    public void privmsg_handler(yrcd_user user, string[] args) {
+    public void privmsg_handler(User user, string[] args) {
       if (!user.registered) {
         user.fire_numeric(ERR_NOTREGISTERED);
         return;
@@ -155,7 +155,7 @@ namespace yrcd {
             builder.erase(0,1);
           }
           string msg = builder.str.strip();
-          yrcd_channel chan = server.get_channel_by_name(args[1]);
+          Channel chan = server.get_channel_by_name(args[1]);
           chan.privmsg(user, msg);
         }
         //if we've reached this point, it's possible it could be a user
@@ -168,7 +168,7 @@ namespace yrcd {
       }
     }
     public async void process_user (SocketConnection conn) {
-      yrcd_user user = new yrcd_user(conn, server);
+      User user = new User(conn, server);
       server.userlist[user.id] = user;
       if (server.userlist.size > server.config.max_users && server.config.max_users > 0) {
         user.quit("Max users met");
@@ -202,14 +202,14 @@ namespace yrcd {
          2. check if it has any forbidden characters as in constants.vala
          3. combine the previous factors, along with checking if there's already a channel by the name.
        */
-      foreach (string k in yrcd_constants.chan_prefixes) { //step 1
+      foreach (string k in Constants.chan_prefixes) { //step 1
         if (chan.has_prefix(k)) {
           server.log (@"channel name $chan has valid prefix $k");
           has_prefix = true;
           break;
         }
       }
-      foreach (string k in yrcd_constants.chan_forbidden) { //step 2
+      foreach (string k in Constants.chan_forbidden) { //step 2
         if (k in chan) {
           server.log(@"channel name $chan has invalid char $k");
           valid = false;

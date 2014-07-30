@@ -1,5 +1,5 @@
 namespace yrcd {
-  public class yrcd_config : Object {
+  public class Config : Object {
     private KeyFile file = new KeyFile();
     public string sname { get; set; }
     public List<uint16> listen_ports;
@@ -10,7 +10,7 @@ namespace yrcd {
     public bool config_error = false;
     public bool cloaking;
     public string salt;
-    public yrcd_config(string filepath) {
+    public Config(string filepath) {
       try {
         file.load_from_file(filepath,KeyFileFlags.NONE);
         file.set_list_separator (',');

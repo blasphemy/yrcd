@@ -1,16 +1,16 @@
 using Gee;
 
 namespace yrcd {
-  class yrcd_server : Object {
+  class Server : Object {
     private SocketService ss = new SocketService();
-    private yrcd_router router;
-    public HashMap<int, yrcd_user> userlist = new HashMap<int, yrcd_user>();
-    public HashMap<string, yrcd_channel> channellist;
+    private Router router;
+    public HashMap<int, User> userlist = new HashMap<int, User>();
+    public HashMap<string, Channel> channellist;
     private int user_counter = 0;
     public int64 epoch;
     public int max_users = 0;
-    public yrcd_numeric_wrapper numeric_wrapper = new yrcd_numeric_wrapper();
-    public yrcd_config config;
+    public NumericWrapper numeric_wrapper = new NumericWrapper();
+    public Config config;
     public int new_userid() {
       user_counter++;
       return user_counter;
@@ -18,13 +18,13 @@ namespace yrcd {
     public void log (string msg) {
       stdout.printf("LOG: %s\n", msg);
     } 
-    public yrcd_server (yrcd_config _config) {
+    public Server (Config _config) {
       config = _config;
-      log("Initializing server: %s %s".printf(yrcd_constants.software, yrcd_constants.version));
+      log("Initializing server: %s %s".printf(Constants.software, Constants.version));
       epoch = new DateTime.now_utc().to_unix();
       add_listeners();
-      router = new yrcd_router(this);
-      channellist = new HashMap<string, yrcd_channel>();
+      router = new Router(this);
+      channellist = new HashMap<string, Channel>();
       ss.incoming.connect(accept_connection);
       ss.start();
     }
@@ -57,8 +57,8 @@ namespace yrcd {
       DateTime time = new DateTime.from_unix_utc(ut);
       return time.to_string();
     }
-    public yrcd_user? get_user_by_nick (string nicktocheck) {
-      foreach (yrcd_user k in userlist) {
+    public User? get_user_by_nick (string nicktocheck) {
+      foreach (User k in userlist) {
         if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
           return k;
         }
@@ -66,7 +66,7 @@ namespace yrcd {
       //Nothing found, so return null. This is useful in other functions to find if a user exists by that name at all.
       return null;
     }
-    public yrcd_channel get_channel_by_name(string nametocheck) {
+    public Channel get_channel_by_name(string nametocheck) {
       log(@"Looking for channel $nametocheck");
       if (channellist[nametocheck] != null) {
         log(@"channel $nametocheck  found");
@@ -74,7 +74,7 @@ namespace yrcd {
       }
       //Nothing found, so return null. This is useful in other functions to find if a channel exists by that name at all.
       log(@"Channel $nametocheck not found, creating it");
-      yrcd_channel chan = new yrcd_channel(this, nametocheck);
+      Channel chan = new Channel(this, nametocheck);
       channellist[chan.name.down()] = chan;
       return chan;
     }

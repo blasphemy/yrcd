@@ -1,9 +1,9 @@
 using Gee;
 
 namespace yrcd {
-  class yrcd_numeric_wrapper : Object {
+  class NumericWrapper : Object {
     public HashMap<int,string> numerics = new HashMap<int,string>();
-    public yrcd_numeric_wrapper()   {
+    public NumericWrapper() {
       numerics[RPL_WELCOME] = "Welcome to the Internet Relay Network %s!%s@%s";
       numerics[RPL_YOURHOST] = "Your host is %s, running %s version %s";
       numerics[RPL_CREATED] = "This server was created %s";

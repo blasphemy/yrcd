@@ -1,11 +1,11 @@
 namespace yrcd {
   void main() {
-    yrcd_config config  = new yrcd_config("yrcd.config");
+    Config config  = new Config("yrcd.config");
     if (config.config_error) {
       return;
     }
     MainLoop loop = new MainLoop();
-    yrcd_server server = new yrcd_server(config);
+    Server server = new Server(config);
     loop.run();
     server.log("For some reason, we're all done here.... goodbye");
   }
