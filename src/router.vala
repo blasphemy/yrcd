@@ -193,7 +193,7 @@ namespace yrcd {
           }
           route(user, msg);
         } catch (Error e) {
-          server.log("Encountered error reading %s (%d) socket...");
+          server.log("Encountered error reading socket: %s".printf(e.message));
           user.quit(null);
           return;
         }
