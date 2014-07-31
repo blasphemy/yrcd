@@ -68,9 +68,9 @@ namespace yrcd {
     }
     public Channel get_channel_by_name(string nametocheck) {
       log(@"Looking for channel $nametocheck");
-      if (channellist[nametocheck] != null) {
+      if (channellist[nametocheck.down()] != null) {
         log(@"channel $nametocheck  found");
-        return channellist[nametocheck];
+        return channellist[nametocheck.down()];
       }
       //Nothing found, so return null. This is useful in other functions to find if a channel exists by that name at all.
       log(@"Channel $nametocheck not found, creating it");
