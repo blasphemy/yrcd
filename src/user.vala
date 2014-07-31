@@ -41,7 +41,7 @@ namespace yrcd {
       server.log("User connected from %s with ID %d".printf(host,id));
     }
     private uint setup_ping_timer() {
-      uint t = Timeout.add_seconds_full(Priority.LOW, 10, () => {
+      uint t = Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
           if (!sock.get_socket().is_connected()) { return false; }
           check_ping();
           return true;
@@ -57,7 +57,7 @@ namespace yrcd {
           if (awaiting_response) {
             quit("Ping timeout: %d seconds".printf(server.config.ping_invertal));
           } else {
-            send_line("PING :" + server.config.sname, Priority.HIGH);
+            send_line("PING :" + server.config.sname, Priority.DEFAULT);
             awaiting_response = true;
           }
         }
@@ -87,7 +87,7 @@ namespace yrcd {
           rec.concat(k.get_users());
           k.remove_user(this);
         }
-        server.send_to_many(rec, ":%s QUIT :%s".printf(get_hostmask(), msg), Priority.LOW);
+        server.send_to_many(rec, ":%s QUIT :%s".printf(get_hostmask(), msg), Priority.DEFAULT);
         send_line("Error :Closing Link: %s (%s)".printf(host,msg));
         foreach (uint k in asources) {
           Source.remove(k);
@@ -257,7 +257,7 @@ namespace yrcd {
       string msg = ":%s %.3d %s ".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
-      send_line(msg, Priority.LOW);
+      send_line(msg, Priority.DEFAULT);
     }
     public void send_notice (string msg) {
       send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));

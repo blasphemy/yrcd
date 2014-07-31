@@ -185,12 +185,7 @@ namespace yrcd {
       }
       while (user.sock.get_socket().is_connected()) {
         try {
-          string msg;
-          if (user.registered) {
-            msg = yield user.dis.read_line_async (Priority.DEFAULT);
-          } else {
-            msg = yield user.dis.read_line_async (Priority.LOW);
-          }
+          string msg = yield user.dis.read_line_async (Priority.DEFAULT);
           route(user, msg);
         } catch (Error e) {
           server.log("Encountered error reading socket: %s".printf(e.message));

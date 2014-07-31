@@ -41,7 +41,7 @@ namespace yrcd {
       users.append(user);
       foreach (User k in users) {
         string msg = ":%s JOIN %s".printf(user.get_hostmask(), this.name);
-        k.send_line(msg, Priority.LOW);
+        k.send_line(msg, Priority.DEFAULT);
       }
       user.fire_numeric(RPL_TOPIC, name, topic);
       user.fire_numeric(RPL_TOPICWHOTIME, name, topic_host, topictime);
@@ -60,7 +60,7 @@ namespace yrcd {
     }
     public void part(User user, string msg) {
       foreach(User k in users) {
-        k.send_line(":%s PART %s :%s".printf(user.get_hostmask(),name,msg), Priority.LOW);
+        k.send_line(":%s PART %s :%s".printf(user.get_hostmask(),name,msg), Priority.DEFAULT);
       }
       users.remove(user);
     }
@@ -84,7 +84,7 @@ namespace yrcd {
       server.log(@"channel $name sending message $msg");
       GLib.List<User> rec = get_users();
       rec.remove(user);
-      server.send_to_many(rec,to_send, Priority.HIGH);
+      server.send_to_many(rec,to_send, Priority.DEFAULT);
     }
     public void who_response (User user) {
       foreach (User k in users) {
