@@ -199,18 +199,22 @@ namespace yrcd {
       string hm = "%s!%s@%s".printf(nick,ident,get_host());
       return hm;
     }
-    public void send_line(string msg, int p = Priority.DEFAULT) {
+    private void send_to_socket (string msg) {
       try {
         if (sock.get_socket().is_connected()) {
           dos.put_string("%s\n".printf(msg));
-          server.log("-> %s : %s".printf(nick, msg));
-        } else {
-          quit("Error");
+          server.log("Send to %s: %s".printf(nick,msg));
         } 
       } catch (Error e) {
-        server.log("Error sending to %s : %s".printf(nick,msg));
-        quit("Error"); 
-        }
+        server.log("Error sending data to socket %s".printf(e.message));
+      }
+
+    }
+    public void send_line(string msg, int p = Priority.DEFAULT) {
+      asources.append(Idle.add(() => {
+          send_to_socket(msg);
+          return false;
+          }, p));
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
