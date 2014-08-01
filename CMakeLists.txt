@@ -40,9 +40,12 @@ vala_precompile(YRCD_C ${YRCD_NAME}
     src/channel.vala
     src/config.vala
     src/utils.vala
+    src/base-object.vala
 PACKAGES
     gio-2.0
     gee-1.0
+OPTIONS
+    -D REF_TRACKING
 )
 add_executable(${YRCD_NAME} ${YRCD_C})
 install (TARGETS ${YRCD_NAME} RUNTIME DESTINATION bin)

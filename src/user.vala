@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class User : Object {
+  class User : BaseObject {
     public SocketConnection sock { get; set; }
     public DataInputStream dis { get; set; }
     public DataOutputStream dos { get; set; }
@@ -41,7 +41,7 @@ namespace yrcd {
       server.log("User connected from %s with ID %d".printf(host,id));
     }
     private uint setup_ping_timer() {
-      uint t = Timeout.add_seconds_full(Priority.LOW, 10, () => {
+      uint t = Timeout.add_seconds_full(Priority.DEFAULT, 10, () => {
           if (!sock.get_socket().is_connected()) { return false; }
           check_ping();
           return true;
@@ -57,7 +57,7 @@ namespace yrcd {
           if (awaiting_response) {
             quit("Ping timeout: %d seconds".printf(server.config.ping_invertal));
           } else {
-            send_line("PING :" + server.config.sname, Priority.HIGH);
+            send_line("PING :" + server.config.sname, Priority.DEFAULT);
             awaiting_response = true;
           }
         }
@@ -87,7 +87,7 @@ namespace yrcd {
           rec.concat(k.get_users());
           k.remove_user(this);
         }
-        server.send_to_many(rec, ":%s QUIT :%s".printf(get_hostmask(), msg), Priority.LOW);
+        server.send_to_many(rec, ":%s QUIT :%s".printf(get_hostmask(), msg), Priority.DEFAULT);
         send_line("Error :Closing Link: %s (%s)".printf(host,msg));
         foreach (uint k in asources) {
           Source.remove(k);
@@ -98,6 +98,7 @@ namespace yrcd {
       } catch (Error e) {
         server.log("Error closing socket: %s".printf(e.message));
       }
+      this.unref();
     }
     public void part (Channel chan, string? msg) {
       if (user_chanels[chan.name] == null) {
@@ -122,6 +123,10 @@ namespace yrcd {
         fire_numeric(ERR_NONICKNAMEGIVEN);
         return;
       }
+      if (args[1].length > server.config.max_nick_length && server.config.max_nick_length > 0) { // if they're dumb enough to set it to 0, make it unlimited.
+        fire_numeric(ERR_ERRONEOUSNICKNAME);
+        return;
+      }
       if (server.get_user_by_nick(args[1]) != null) {
         fire_numeric(ERR_NICKNAMEINUSE, args[1]);
         return;
@@ -144,6 +149,7 @@ namespace yrcd {
       } else {
         server.log("User %d changed nick from %s to %s".printf(id,oldnick,nick));
         var rec = new GLib.List<User>();
+        rec.append(this);
         foreach (Channel k in user_chanels.values) {
           rec.concat(k.get_users());
         }
@@ -207,9 +213,9 @@ namespace yrcd {
     }
     public void send_line(string msg, int p = Priority.DEFAULT) {
       asources.append(Idle.add(() => {
-          send_to_socket(msg);
-          return false;
-          }, p));
+            send_to_socket(msg);
+            return false;
+            }, p));
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
@@ -252,7 +258,7 @@ namespace yrcd {
       string msg = ":%s %.3d %s ".printf(server.config.sname,numeric,nick);
       string msg2 = server.numeric_wrapper.numerics[numeric].vprintf(args);
       msg += msg2;
-      send_line(msg, Priority.LOW);
+      send_line(msg, Priority.DEFAULT);
     }
     public void send_notice (string msg) {
       send_line(":%s NOTICE %s :%s".printf(server.config.sname,nick,msg));

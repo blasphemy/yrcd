@@ -1,5 +1,5 @@
 namespace yrcd {
-  public class Config : Object {
+  public class Config : BaseObject {
     private KeyFile file = new KeyFile();
     public string sname { get; set; }
     public List<uint16> listen_ports;
@@ -7,6 +7,7 @@ namespace yrcd {
     public List<string> motd;
     public int ping_invertal;
     public int max_users;
+    public int max_nick_length;
     public bool config_error = false;
     public bool cloaking;
     public string salt;
@@ -30,14 +31,19 @@ namespace yrcd {
         ping_invertal = file.get_integer("ServerVariables", "ping_invertal");
         salt = file.get_string("ServerVariables","host_salt");
         if (file.has_key("ServerVariables", "cloaking")) {
-            cloaking = file.get_boolean("ServerVariables", "cloaking");
+          cloaking = file.get_boolean("ServerVariables", "cloaking");
         } else {
-            cloaking = false;
+          cloaking = false;
         }
         if (file.has_key("ServerVariables", "max_connections")) {
-            max_users = file.get_integer("ServerVariables", "max_connections");
+          max_users = file.get_integer("ServerVariables", "max_connections");
         } else {
-            max_users = 0;
+          max_users = 0;
+        }
+        if (file.has_key("ServerVariables", "max_nick_length")) {
+          max_nick_length = file.get_integer("ServerVariables", "max_nick_length");
+        } else {
+          max_nick_length = 30; //sane default?
         }
       } catch (Error e) {
         stdout.printf("Error Loading config file: %s\n".printf(e.message));

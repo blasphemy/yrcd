@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class NumericWrapper : Object {
+  class NumericWrapper : BaseObject {
     public HashMap<int,string> numerics = new HashMap<int,string>();
     public NumericWrapper() {
       numerics[RPL_WELCOME] = "Welcome to the Internet Relay Network %s!%s@%s";

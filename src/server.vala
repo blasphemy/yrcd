@@ -1,10 +1,10 @@
 using Gee;
 
 namespace yrcd {
-  class Server : Object {
+  class Server : BaseObject {
     private SocketService ss = new SocketService();
     private Router router;
-    public HashMap<int, User> userlist = new HashMap<int, User>();
+    public HashMap<int, weak User> userlist = new HashMap<int, weak User>();
     public HashMap<string, Channel> channellist;
     private int user_counter = 0;
     public int64 epoch;
@@ -27,6 +27,9 @@ namespace yrcd {
       channellist = new HashMap<string, Channel>();
       ss.incoming.connect(accept_connection);
       ss.start();
+#if REF_TRACKING
+      Timeout.add_seconds_full(Priority.DEFAULT, 10, () => { BaseObject.dump_refs(stdout); return true; });
+#endif
     }
     public void remove_user (int id) {
       userlist.unset(id);
@@ -58,7 +61,7 @@ namespace yrcd {
       return time.to_string();
     }
     public User? get_user_by_nick (string nicktocheck) {
-      foreach (User k in userlist) {
+      foreach (User k in userlist.values) {
         if (k.nick.down() == nicktocheck.down()) { //we are case-insensitive in this context.
           return k;
         }
@@ -68,9 +71,9 @@ namespace yrcd {
     }
     public Channel get_channel_by_name(string nametocheck) {
       log(@"Looking for channel $nametocheck");
-      if (channellist[nametocheck] != null) {
+      if (channellist[nametocheck.down()] != null) {
         log(@"channel $nametocheck  found");
-        return channellist[nametocheck];
+        return channellist[nametocheck.down()];
       }
       //Nothing found, so return null. This is useful in other functions to find if a channel exists by that name at all.
       log(@"Channel $nametocheck not found, creating it");
