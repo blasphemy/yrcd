@@ -208,6 +208,7 @@ namespace yrcd {
         } 
       } catch (Error e) {
         server.log("Error sending data to socket %s".printf(e.message));
+        quit("Error");
       }
 
     }

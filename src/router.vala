@@ -191,7 +191,7 @@ namespace yrcd {
         } catch (Error e) {
           server.log("Encountered error reading socket: %s".printf(e.message));
           user.quit(null);
-          return;
+          break;
         }
       }
     }
