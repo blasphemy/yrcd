@@ -82,16 +82,10 @@ namespace yrcd {
       return chan;
     }
     public void send_to_many(GLib.List<User> users,string msg, int p = Priority.DEFAULT) {
-      GLib.List<User> final = new GLib.List<User>();
+      ArrayList<User> final = new ArrayList<User>();
       foreach (User k in users) {
-        bool dup = false;
-        foreach(User j in final) {
-          if (k == j) {
-            dup = true;
-          }
-        }
-        if (!dup) {
-          final.append(k);
+        if (!final.contains(k)) {
+          final.add(k);
         }
       }
       foreach (User k in final) {
