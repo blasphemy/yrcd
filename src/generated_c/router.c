@@ -1339,15 +1339,7 @@ static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_) 
 			_data_->_tmp65_ = _data_->user;
 			yrcd_user_quit (_data_->_tmp65_, NULL);
 			_g_error_free0 (_data_->_vala1_e);
-			_g_object_unref0 (_data_->socket);
-			_g_object_unref0 (_data_->user);
-			if (_data_->_state_ == 0) {
-				g_simple_async_result_complete_in_idle (_data_->_async_result);
-			} else {
-				g_simple_async_result_complete (_data_->_async_result);
-			}
-			g_object_unref (_data_->_async_result);
-			return FALSE;
+			break;
 		}
 		__finally2:
 		if (G_UNLIKELY (_data_->_inner_error_ != NULL)) {

@@ -1500,6 +1500,7 @@ static void yrcd_user_send_to_socket (yrcdUser* self, const gchar* msg) {
 		_tmp16_ = _tmp15_;
 		yrcd_server_log (_tmp12_, _tmp16_);
 		_g_free0 (_tmp16_);
+		yrcd_user_quit (self, "Error");
 		_g_error_free0 (e);
 	}
 	__finally7:

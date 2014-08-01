@@ -87,7 +87,6 @@ typedef struct _yrcdRouterClass yrcdRouterClass;
 #define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
-#define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 
 struct _yrcdBaseObject {
 	GObject parent_instance;
@@ -179,8 +178,6 @@ yrcdChannel* yrcd_channel_construct (GType object_type, yrcdServer* _server, con
 const gchar* yrcd_channel_get_name (yrcdChannel* self);
 void yrcd_server_send_to_many (yrcdServer* self, GList* users, const gchar* msg, gint p);
 void yrcd_user_send_line (yrcdUser* self, const gchar* msg, gint p);
-static void _g_object_unref0_ (gpointer var);
-static void _g_list_free__g_object_unref0_ (GList* self);
 static void yrcd_server_finalize (GObject* obj);
 
 
@@ -618,96 +615,90 @@ yrcdChannel* yrcd_server_get_channel_by_name (yrcdServer* self, const gchar* nam
 }
 
 
-static void _g_object_unref0_ (gpointer var) {
-	(var == NULL) ? NULL : (var = (g_object_unref (var), NULL));
-}
-
-
-static void _g_list_free__g_object_unref0_ (GList* self) {
-	g_list_foreach (self, (GFunc) _g_object_unref0_, NULL);
-	g_list_free (self);
-}
-
-
 void yrcd_server_send_to_many (yrcdServer* self, GList* users, const gchar* msg, gint p) {
-	GList* final = NULL;
-	GList* _tmp0_ = NULL;
-	GList* _tmp9_ = NULL;
+	GeeArrayList* final = NULL;
+	GeeArrayList* _tmp0_ = NULL;
+	GList* _tmp1_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (msg != NULL);
-	final = NULL;
-	_tmp0_ = users;
+	_tmp0_ = gee_array_list_new (YRCD_TYPE_USER, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL);
+	final = _tmp0_;
+	_tmp1_ = users;
 	{
 		GList* k_collection = NULL;
 		GList* k_it = NULL;
-		k_collection = _tmp0_;
+		k_collection = _tmp1_;
 		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
-			yrcdUser* _tmp1_ = NULL;
+			yrcdUser* _tmp2_ = NULL;
 			yrcdUser* k = NULL;
-			_tmp1_ = _g_object_ref0 ((yrcdUser*) k_it->data);
-			k = _tmp1_;
+			_tmp2_ = _g_object_ref0 ((yrcdUser*) k_it->data);
+			k = _tmp2_;
 			{
-				gboolean dup = FALSE;
-				GList* _tmp2_ = NULL;
-				gboolean _tmp6_ = FALSE;
-				dup = FALSE;
-				_tmp2_ = final;
-				{
-					GList* j_collection = NULL;
-					GList* j_it = NULL;
-					j_collection = _tmp2_;
-					for (j_it = j_collection; j_it != NULL; j_it = j_it->next) {
-						yrcdUser* _tmp3_ = NULL;
-						yrcdUser* j = NULL;
-						_tmp3_ = _g_object_ref0 ((yrcdUser*) j_it->data);
-						j = _tmp3_;
-						{
-							yrcdUser* _tmp4_ = NULL;
-							yrcdUser* _tmp5_ = NULL;
-							_tmp4_ = k;
-							_tmp5_ = j;
-							if (_tmp4_ == _tmp5_) {
-								dup = TRUE;
-							}
-							_g_object_unref0 (j);
-						}
-					}
-				}
-				_tmp6_ = dup;
-				if (!_tmp6_) {
+				GeeArrayList* _tmp3_ = NULL;
+				yrcdUser* _tmp4_ = NULL;
+				gboolean _tmp5_ = FALSE;
+				_tmp3_ = final;
+				_tmp4_ = k;
+				_tmp5_ = gee_abstract_collection_contains ((GeeAbstractCollection*) _tmp3_, _tmp4_);
+				if (!_tmp5_) {
+					GeeArrayList* _tmp6_ = NULL;
 					yrcdUser* _tmp7_ = NULL;
-					yrcdUser* _tmp8_ = NULL;
+					_tmp6_ = final;
 					_tmp7_ = k;
-					_tmp8_ = _g_object_ref0 (_tmp7_);
-					final = g_list_append (final, _tmp8_);
+					gee_abstract_collection_add ((GeeAbstractCollection*) _tmp6_, _tmp7_);
 				}
 				_g_object_unref0 (k);
 			}
 		}
 	}
-	_tmp9_ = final;
 	{
-		GList* k_collection = NULL;
-		GList* k_it = NULL;
-		k_collection = _tmp9_;
-		for (k_it = k_collection; k_it != NULL; k_it = k_it->next) {
-			yrcdUser* _tmp10_ = NULL;
+		GeeArrayList* _k_list = NULL;
+		GeeArrayList* _tmp8_ = NULL;
+		GeeArrayList* _tmp9_ = NULL;
+		gint _k_size = 0;
+		GeeArrayList* _tmp10_ = NULL;
+		gint _tmp11_ = 0;
+		gint _tmp12_ = 0;
+		gint _k_index = 0;
+		_tmp8_ = final;
+		_tmp9_ = _g_object_ref0 (_tmp8_);
+		_k_list = _tmp9_;
+		_tmp10_ = _k_list;
+		_tmp11_ = gee_abstract_collection_get_size ((GeeCollection*) _tmp10_);
+		_tmp12_ = _tmp11_;
+		_k_size = _tmp12_;
+		_k_index = -1;
+		while (TRUE) {
+			gint _tmp13_ = 0;
+			gint _tmp14_ = 0;
+			gint _tmp15_ = 0;
 			yrcdUser* k = NULL;
-			_tmp10_ = _g_object_ref0 ((yrcdUser*) k_it->data);
-			k = _tmp10_;
-			{
-				yrcdUser* _tmp11_ = NULL;
-				const gchar* _tmp12_ = NULL;
-				gint _tmp13_ = 0;
-				_tmp11_ = k;
-				_tmp12_ = msg;
-				_tmp13_ = p;
-				yrcd_user_send_line (_tmp11_, _tmp12_, _tmp13_);
-				_g_object_unref0 (k);
+			GeeArrayList* _tmp16_ = NULL;
+			gint _tmp17_ = 0;
+			gpointer _tmp18_ = NULL;
+			yrcdUser* _tmp19_ = NULL;
+			const gchar* _tmp20_ = NULL;
+			gint _tmp21_ = 0;
+			_tmp13_ = _k_index;
+			_k_index = _tmp13_ + 1;
+			_tmp14_ = _k_index;
+			_tmp15_ = _k_size;
+			if (!(_tmp14_ < _tmp15_)) {
+				break;
 			}
+			_tmp16_ = _k_list;
+			_tmp17_ = _k_index;
+			_tmp18_ = gee_abstract_list_get ((GeeAbstractList*) _tmp16_, _tmp17_);
+			k = (yrcdUser*) _tmp18_;
+			_tmp19_ = k;
+			_tmp20_ = msg;
+			_tmp21_ = p;
+			yrcd_user_send_line (_tmp19_, _tmp20_, _tmp21_);
+			_g_object_unref0 (k);
 		}
+		_g_object_unref0 (_k_list);
 	}
-	__g_list_free__g_object_unref0_0 (final);
+	_g_object_unref0 (final);
 }
 
 
