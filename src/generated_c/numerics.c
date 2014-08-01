@@ -9,6 +9,17 @@
 #include <string.h>
 
 
+#define YRCD_TYPE_BASE_OBJECT (yrcd_base_object_get_type ())
+#define YRCD_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObject))
+#define YRCD_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+#define YRCD_IS_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_IS_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_BASE_OBJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+
+typedef struct _yrcdBaseObject yrcdBaseObject;
+typedef struct _yrcdBaseObjectClass yrcdBaseObjectClass;
+typedef struct _yrcdBaseObjectPrivate yrcdBaseObjectPrivate;
+
 #define YRCD_TYPE_NUMERIC_WRAPPER (yrcd_numeric_wrapper_get_type ())
 #define YRCD_NUMERIC_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapper))
 #define YRCD_NUMERIC_WRAPPER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_NUMERIC_WRAPPER, yrcdNumericWrapperClass))
@@ -21,25 +32,36 @@ typedef struct _yrcdNumericWrapperClass yrcdNumericWrapperClass;
 typedef struct _yrcdNumericWrapperPrivate yrcdNumericWrapperPrivate;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
-struct _yrcdNumericWrapper {
+struct _yrcdBaseObject {
 	GObject parent_instance;
+	yrcdBaseObjectPrivate * priv;
+};
+
+struct _yrcdBaseObjectClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdNumericWrapper {
+	yrcdBaseObject parent_instance;
 	yrcdNumericWrapperPrivate * priv;
 	GeeHashMap* numerics;
 };
 
 struct _yrcdNumericWrapperClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 
 static gpointer yrcd_numeric_wrapper_parent_class = NULL;
 
+GType yrcd_base_object_get_type (void) G_GNUC_CONST;
 GType yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 enum  {
 	YRCD_NUMERIC_WRAPPER_DUMMY_PROPERTY
 };
 yrcdNumericWrapper* yrcd_numeric_wrapper_new (void);
 yrcdNumericWrapper* yrcd_numeric_wrapper_construct (GType object_type);
+yrcdBaseObject* yrcd_base_object_construct (GType object_type);
 #define YRCD_RPL_WELCOME 001
 #define YRCD_RPL_YOURHOST 002
 #define YRCD_RPL_CREATED 003
@@ -87,7 +109,7 @@ yrcdNumericWrapper* yrcd_numeric_wrapper_construct (GType object_type) {
 	GeeHashMap* _tmp18_ = NULL;
 	GeeHashMap* _tmp19_ = NULL;
 	GeeHashMap* _tmp20_ = NULL;
-	self = (yrcdNumericWrapper*) g_object_new (object_type, NULL);
+	self = (yrcdNumericWrapper*) yrcd_base_object_construct (object_type);
 	_tmp0_ = self->numerics;
 	gee_abstract_map_set ((GeeAbstractMap*) _tmp0_, (gpointer) ((gintptr) YRCD_RPL_WELCOME), "Welcome to the Internet Relay Network %s!%s@%s");
 	_tmp1_ = self->numerics;
@@ -165,7 +187,7 @@ GType yrcd_numeric_wrapper_get_type (void) {
 	if (g_once_init_enter (&yrcd_numeric_wrapper_type_id__volatile)) {
 		static const GTypeInfo g_define_type_info = { sizeof (yrcdNumericWrapperClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_numeric_wrapper_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdNumericWrapper), 0, (GInstanceInitFunc) yrcd_numeric_wrapper_instance_init, NULL };
 		GType yrcd_numeric_wrapper_type_id;
-		yrcd_numeric_wrapper_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdNumericWrapper", &g_define_type_info, 0);
+		yrcd_numeric_wrapper_type_id = g_type_register_static (YRCD_TYPE_BASE_OBJECT, "yrcdNumericWrapper", &g_define_type_info, 0);
 		g_once_init_leave (&yrcd_numeric_wrapper_type_id__volatile, yrcd_numeric_wrapper_type_id);
 	}
 	return yrcd_numeric_wrapper_type_id__volatile;

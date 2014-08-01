@@ -9,6 +9,17 @@
 #include <gee.h>
 
 
+#define YRCD_TYPE_BASE_OBJECT (yrcd_base_object_get_type ())
+#define YRCD_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObject))
+#define YRCD_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+#define YRCD_IS_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_IS_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_BASE_OBJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+
+typedef struct _yrcdBaseObject yrcdBaseObject;
+typedef struct _yrcdBaseObjectClass yrcdBaseObjectClass;
+typedef struct _yrcdBaseObjectPrivate yrcdBaseObjectPrivate;
+
 #define YRCD_TYPE_CHANNEL (yrcd_channel_get_type ())
 #define YRCD_CHANNEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_CHANNEL, yrcdChannel))
 #define YRCD_CHANNEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_CHANNEL, yrcdChannelClass))
@@ -67,8 +78,17 @@ typedef struct _yrcdConfigClass yrcdConfigClass;
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
-struct _yrcdChannel {
+struct _yrcdBaseObject {
 	GObject parent_instance;
+	yrcdBaseObjectPrivate * priv;
+};
+
+struct _yrcdBaseObjectClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdChannel {
+	yrcdBaseObject parent_instance;
 	yrcdChannelPrivate * priv;
 	gchar** modes;
 	gint modes_length1;
@@ -83,7 +103,7 @@ struct _yrcdChannel {
 };
 
 struct _yrcdChannelClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 struct _yrcdChannelPrivate {
@@ -91,7 +111,7 @@ struct _yrcdChannelPrivate {
 };
 
 struct _yrcdServer {
-	GObject parent_instance;
+	yrcdBaseObject parent_instance;
 	yrcdServerPrivate * priv;
 	GeeHashMap* userlist;
 	GeeHashMap* channellist;
@@ -102,12 +122,13 @@ struct _yrcdServer {
 };
 
 struct _yrcdServerClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 
 static gpointer yrcd_channel_parent_class = NULL;
 
+GType yrcd_base_object_get_type (void) G_GNUC_CONST;
 GType yrcd_channel_get_type (void) G_GNUC_CONST;
 GType yrcd_server_get_type (void) G_GNUC_CONST;
 GType yrcd_user_get_type (void) G_GNUC_CONST;
@@ -118,6 +139,7 @@ enum  {
 };
 yrcdChannel* yrcd_channel_new (yrcdServer* _server, const gchar* _name);
 yrcdChannel* yrcd_channel_construct (GType object_type, yrcdServer* _server, const gchar* _name);
+yrcdBaseObject* yrcd_base_object_construct (GType object_type);
 void yrcd_channel_set_topic (yrcdChannel* self, const gchar* newtopic, const gchar* hostmask);
 GType yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 GType yrcd_config_get_type (void) G_GNUC_CONST;
@@ -191,7 +213,7 @@ yrcdChannel* yrcd_channel_construct (GType object_type, yrcdServer* _server, con
 	gchar* _tmp14_ = NULL;
 	g_return_val_if_fail (_server != NULL, NULL);
 	g_return_val_if_fail (_name != NULL, NULL);
-	self = (yrcdChannel*) g_object_new (object_type, NULL);
+	self = (yrcdChannel*) yrcd_base_object_construct (object_type);
 	_tmp0_ = _server;
 	_tmp1_ = _g_object_ref0 (_tmp0_);
 	_g_object_unref0 (self->server);
@@ -254,6 +276,14 @@ static gboolean __lambda6_ (yrcdChannel* self) {
 		_tmp9_ = _tmp8_;
 		yrcd_server_log (_tmp5_, _tmp9_);
 		_g_free0 (_tmp9_);
+		while (TRUE) {
+			guint _tmp10_ = 0U;
+			_tmp10_ = ((GObject*) self)->ref_count;
+			if (!(_tmp10_ > ((guint) 1))) {
+				break;
+			}
+			g_object_unref ((GObject*) self);
+		}
 		result = FALSE;
 		return result;
 	} else {
@@ -361,7 +391,7 @@ gboolean yrcd_channel_add_user (yrcdChannel* self, yrcdUser* user) {
 				msg = _tmp22_;
 				_tmp23_ = k;
 				_tmp24_ = msg;
-				yrcd_user_send_line (_tmp23_, _tmp24_, G_PRIORITY_LOW);
+				yrcd_user_send_line (_tmp23_, _tmp24_, G_PRIORITY_DEFAULT);
 				_g_free0 (msg);
 				_g_object_unref0 (k);
 			}
@@ -467,7 +497,7 @@ void yrcd_channel_part (yrcdChannel* self, yrcdUser* user, const gchar* msg) {
 				_tmp7_ = msg;
 				_tmp8_ = g_strdup_printf (":%s PART %s :%s", _tmp5_, _tmp6_, _tmp7_);
 				_tmp9_ = _tmp8_;
-				yrcd_user_send_line (_tmp2_, _tmp9_, G_PRIORITY_LOW);
+				yrcd_user_send_line (_tmp2_, _tmp9_, G_PRIORITY_DEFAULT);
 				_g_free0 (_tmp9_);
 				_g_free0 (_tmp5_);
 				_g_object_unref0 (k);
@@ -617,7 +647,7 @@ void yrcd_channel_privmsg (yrcdChannel* self, yrcdUser* user, const gchar* msg) 
 	_tmp15_ = user;
 	rec = g_list_remove (rec, _tmp15_);
 	_tmp16_ = self->server;
-	yrcd_server_send_to_many (_tmp16_, rec, to_send, G_PRIORITY_HIGH);
+	yrcd_server_send_to_many (_tmp16_, rec, to_send, G_PRIORITY_DEFAULT);
 	__g_list_free__g_object_unref0_0 (rec);
 	_g_free0 (to_send);
 }
@@ -743,7 +773,7 @@ GType yrcd_channel_get_type (void) {
 	if (g_once_init_enter (&yrcd_channel_type_id__volatile)) {
 		static const GTypeInfo g_define_type_info = { sizeof (yrcdChannelClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_channel_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdChannel), 0, (GInstanceInitFunc) yrcd_channel_instance_init, NULL };
 		GType yrcd_channel_type_id;
-		yrcd_channel_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdChannel", &g_define_type_info, 0);
+		yrcd_channel_type_id = g_type_register_static (YRCD_TYPE_BASE_OBJECT, "yrcdChannel", &g_define_type_info, 0);
 		g_once_init_leave (&yrcd_channel_type_id__volatile, yrcd_channel_type_id);
 	}
 	return yrcd_channel_type_id__volatile;

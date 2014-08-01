@@ -10,6 +10,17 @@
 #include <stdio.h>
 
 
+#define YRCD_TYPE_BASE_OBJECT (yrcd_base_object_get_type ())
+#define YRCD_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObject))
+#define YRCD_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+#define YRCD_IS_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_IS_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_BASE_OBJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+
+typedef struct _yrcdBaseObject yrcdBaseObject;
+typedef struct _yrcdBaseObjectClass yrcdBaseObjectClass;
+typedef struct _yrcdBaseObjectPrivate yrcdBaseObjectPrivate;
+
 #define YRCD_TYPE_CONFIG (yrcd_config_get_type ())
 #define YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_CONFIG, yrcdConfig))
 #define YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_CONFIG, yrcdConfigClass))
@@ -27,8 +38,17 @@ typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 
-struct _yrcdConfig {
+struct _yrcdBaseObject {
 	GObject parent_instance;
+	yrcdBaseObjectPrivate * priv;
+};
+
+struct _yrcdBaseObjectClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdConfig {
+	yrcdBaseObject parent_instance;
 	yrcdConfigPrivate * priv;
 	GList* listen_ports;
 	gchar** listen_ips;
@@ -36,13 +56,14 @@ struct _yrcdConfig {
 	GList* motd;
 	gint ping_invertal;
 	gint max_users;
+	gint max_nick_length;
 	gboolean config_error;
 	gboolean cloaking;
 	gchar* salt;
 };
 
 struct _yrcdConfigClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 struct _yrcdConfigPrivate {
@@ -53,6 +74,7 @@ struct _yrcdConfigPrivate {
 
 static gpointer yrcd_config_parent_class = NULL;
 
+GType yrcd_base_object_get_type (void) G_GNUC_CONST;
 GType yrcd_config_get_type (void) G_GNUC_CONST;
 #define YRCD_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), YRCD_TYPE_CONFIG, yrcdConfigPrivate))
 enum  {
@@ -63,6 +85,7 @@ static void _g_free0_ (gpointer var);
 static void _g_list_free__g_free0_ (GList* self);
 yrcdConfig* yrcd_config_new (const gchar* filepath);
 yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath);
+yrcdBaseObject* yrcd_base_object_construct (GType object_type);
 void yrcd_config_set_sname (yrcdConfig* self, const gchar* value);
 const gchar* yrcd_config_get_sname (yrcdConfig* self);
 static void yrcd_config_finalize (GObject* obj);
@@ -87,7 +110,7 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 	yrcdConfig * self = NULL;
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (filepath != NULL, NULL);
-	self = (yrcdConfig*) g_object_new (object_type, NULL);
+	self = (yrcdConfig*) yrcd_base_object_construct (object_type);
 	{
 		GKeyFile* _tmp0_ = NULL;
 		const gchar* _tmp1_ = NULL;
@@ -136,6 +159,9 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 		gboolean _tmp44_ = FALSE;
 		GKeyFile* _tmp45_ = NULL;
 		gboolean _tmp46_ = FALSE;
+		gboolean _tmp50_ = FALSE;
+		GKeyFile* _tmp51_ = NULL;
+		gboolean _tmp52_ = FALSE;
 		_tmp0_ = self->priv->file;
 		_tmp1_ = filepath;
 		g_key_file_load_from_file (_tmp0_, _tmp1_, G_KEY_FILE_NONE, &_inner_error_);
@@ -366,6 +392,44 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 		} else {
 			self->max_users = 0;
 		}
+		_tmp51_ = self->priv->file;
+		_tmp52_ = g_key_file_has_key (_tmp51_, "ServerVariables", "max_nick_length", &_inner_error_);
+		_tmp50_ = _tmp52_;
+		if (G_UNLIKELY (_inner_error_ != NULL)) {
+			_g_free0 (_tmp34_);
+			_g_free0 (motd_line);
+			_g_object_unref0 (dis);
+			_g_object_unref0 (_tmp20_);
+			_g_object_unref0 (motdfile);
+			_g_free0 (motdpath);
+			_tmp11_ = (_vala_array_free (_tmp11_, _tmp11__length1, (GDestroyNotify) g_free), NULL);
+			tmplist = (g_free (tmplist), NULL);
+			_g_free0 (_tmp3_);
+			goto __catch0_g_error;
+		}
+		if (_tmp50_) {
+			gint _tmp53_ = 0;
+			GKeyFile* _tmp54_ = NULL;
+			gint _tmp55_ = 0;
+			_tmp54_ = self->priv->file;
+			_tmp55_ = g_key_file_get_integer (_tmp54_, "ServerVariables", "max_nick_length", &_inner_error_);
+			_tmp53_ = _tmp55_;
+			if (G_UNLIKELY (_inner_error_ != NULL)) {
+				_g_free0 (_tmp34_);
+				_g_free0 (motd_line);
+				_g_object_unref0 (dis);
+				_g_object_unref0 (_tmp20_);
+				_g_object_unref0 (motdfile);
+				_g_free0 (motdpath);
+				_tmp11_ = (_vala_array_free (_tmp11_, _tmp11__length1, (GDestroyNotify) g_free), NULL);
+				tmplist = (g_free (tmplist), NULL);
+				_g_free0 (_tmp3_);
+				goto __catch0_g_error;
+			}
+			self->max_nick_length = _tmp53_;
+		} else {
+			self->max_nick_length = 30;
+		}
 		_g_free0 (_tmp34_);
 		_g_free0 (motd_line);
 		_g_object_unref0 (dis);
@@ -380,20 +444,20 @@ yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath) {
 	__catch0_g_error:
 	{
 		GError* e = NULL;
-		FILE* _tmp50_ = NULL;
-		GError* _tmp51_ = NULL;
-		const gchar* _tmp52_ = NULL;
-		gchar* _tmp53_ = NULL;
-		gchar* _tmp54_ = NULL;
+		FILE* _tmp56_ = NULL;
+		GError* _tmp57_ = NULL;
+		const gchar* _tmp58_ = NULL;
+		gchar* _tmp59_ = NULL;
+		gchar* _tmp60_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp50_ = stdout;
-		_tmp51_ = e;
-		_tmp52_ = _tmp51_->message;
-		_tmp53_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp52_);
-		_tmp54_ = _tmp53_;
-		fprintf (_tmp50_, "%s", _tmp54_);
-		_g_free0 (_tmp54_);
+		_tmp56_ = stdout;
+		_tmp57_ = e;
+		_tmp58_ = _tmp57_->message;
+		_tmp59_ = g_strdup_printf ("Error Loading config file: %s\n", _tmp58_);
+		_tmp60_ = _tmp59_;
+		fprintf (_tmp56_, "%s", _tmp60_);
+		_g_free0 (_tmp60_);
 		self->config_error = TRUE;
 		_g_error_free0 (e);
 	}
@@ -471,7 +535,7 @@ GType yrcd_config_get_type (void) {
 	if (g_once_init_enter (&yrcd_config_type_id__volatile)) {
 		static const GTypeInfo g_define_type_info = { sizeof (yrcdConfigClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_config_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdConfig), 0, (GInstanceInitFunc) yrcd_config_instance_init, NULL };
 		GType yrcd_config_type_id;
-		yrcd_config_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdConfig", &g_define_type_info, 0);
+		yrcd_config_type_id = g_type_register_static (YRCD_TYPE_BASE_OBJECT, "yrcdConfig", &g_define_type_info, 0);
 		g_once_init_leave (&yrcd_config_type_id__volatile, yrcd_config_type_id);
 	}
 	return yrcd_config_type_id__volatile;

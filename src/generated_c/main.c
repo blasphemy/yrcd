@@ -8,6 +8,16 @@
 #include <string.h>
 
 
+#define YRCD_TYPE_BASE_OBJECT (yrcd_base_object_get_type ())
+#define YRCD_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObject))
+#define YRCD_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+#define YRCD_IS_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_IS_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_BASE_OBJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+
+typedef struct _yrcdBaseObject yrcdBaseObject;
+typedef struct _yrcdBaseObjectClass yrcdBaseObjectClass;
+
 #define YRCD_TYPE_CONFIG (yrcd_config_get_type ())
 #define YRCD_CONFIG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_CONFIG, yrcdConfig))
 #define YRCD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_CONFIG, yrcdConfigClass))
@@ -17,6 +27,7 @@
 
 typedef struct _yrcdConfig yrcdConfig;
 typedef struct _yrcdConfigClass yrcdConfigClass;
+typedef struct _yrcdBaseObjectPrivate yrcdBaseObjectPrivate;
 typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 
@@ -31,8 +42,17 @@ typedef struct _yrcdServer yrcdServer;
 typedef struct _yrcdServerClass yrcdServerClass;
 #define _g_main_loop_unref0(var) ((var == NULL) ? NULL : (var = (g_main_loop_unref (var), NULL)))
 
-struct _yrcdConfig {
+struct _yrcdBaseObject {
 	GObject parent_instance;
+	yrcdBaseObjectPrivate * priv;
+};
+
+struct _yrcdBaseObjectClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdConfig {
+	yrcdBaseObject parent_instance;
 	yrcdConfigPrivate * priv;
 	GList* listen_ports;
 	gchar** listen_ips;
@@ -40,18 +60,20 @@ struct _yrcdConfig {
 	GList* motd;
 	gint ping_invertal;
 	gint max_users;
+	gint max_nick_length;
 	gboolean config_error;
 	gboolean cloaking;
 	gchar* salt;
 };
 
 struct _yrcdConfigClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 
 
 void yrcd_main (void);
+GType yrcd_base_object_get_type (void) G_GNUC_CONST;
 GType yrcd_config_get_type (void) G_GNUC_CONST;
 yrcdConfig* yrcd_config_new (const gchar* filepath);
 yrcdConfig* yrcd_config_construct (GType object_type, const gchar* filepath);

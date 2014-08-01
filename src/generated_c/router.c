@@ -10,6 +10,17 @@
 #include <gee.h>
 
 
+#define YRCD_TYPE_BASE_OBJECT (yrcd_base_object_get_type ())
+#define YRCD_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObject))
+#define YRCD_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+#define YRCD_IS_BASE_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_IS_BASE_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), YRCD_TYPE_BASE_OBJECT))
+#define YRCD_BASE_OBJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), YRCD_TYPE_BASE_OBJECT, yrcdBaseObjectClass))
+
+typedef struct _yrcdBaseObject yrcdBaseObject;
+typedef struct _yrcdBaseObjectClass yrcdBaseObjectClass;
+typedef struct _yrcdBaseObjectPrivate yrcdBaseObjectPrivate;
+
 #define YRCD_TYPE_ROUTER (yrcd_router_get_type ())
 #define YRCD_ROUTER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), YRCD_TYPE_ROUTER, yrcdRouter))
 #define YRCD_ROUTER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), YRCD_TYPE_ROUTER, yrcdRouterClass))
@@ -79,18 +90,27 @@ typedef struct _yrcdConfigPrivate yrcdConfigPrivate;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 typedef struct _YrcdRouterProcessUserData YrcdRouterProcessUserData;
 
-struct _yrcdRouter {
+struct _yrcdBaseObject {
 	GObject parent_instance;
+	yrcdBaseObjectPrivate * priv;
+};
+
+struct _yrcdBaseObjectClass {
+	GObjectClass parent_class;
+};
+
+struct _yrcdRouter {
+	yrcdBaseObject parent_instance;
 	yrcdRouterPrivate * priv;
 	yrcdServer* server;
 };
 
 struct _yrcdRouterClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 struct _yrcdChannel {
-	GObject parent_instance;
+	yrcdBaseObject parent_instance;
 	yrcdChannelPrivate * priv;
 	gchar** modes;
 	gint modes_length1;
@@ -105,11 +125,11 @@ struct _yrcdChannel {
 };
 
 struct _yrcdChannelClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 struct _yrcdServer {
-	GObject parent_instance;
+	yrcdBaseObject parent_instance;
 	yrcdServerPrivate * priv;
 	GeeHashMap* userlist;
 	GeeHashMap* channellist;
@@ -120,11 +140,11 @@ struct _yrcdServer {
 };
 
 struct _yrcdServerClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 struct _yrcdConfig {
-	GObject parent_instance;
+	yrcdBaseObject parent_instance;
 	yrcdConfigPrivate * priv;
 	GList* listen_ports;
 	gchar** listen_ips;
@@ -132,13 +152,14 @@ struct _yrcdConfig {
 	GList* motd;
 	gint ping_invertal;
 	gint max_users;
+	gint max_nick_length;
 	gboolean config_error;
 	gboolean cloaking;
 	gchar* salt;
 };
 
 struct _yrcdConfigClass {
-	GObjectClass parent_class;
+	yrcdBaseObjectClass parent_class;
 };
 
 struct _YrcdRouterProcessUserData {
@@ -197,38 +218,35 @@ struct _YrcdRouterProcessUserData {
 	gint _tmp44_;
 	gchar* _tmp45_;
 	gchar* _tmp46_;
+	GSocket* socket;
 	yrcdUser* _tmp47_;
 	GSocketConnection* _tmp48_;
 	GSocketConnection* _tmp49_;
 	GSocket* _tmp50_;
-	gboolean _tmp51_;
-	gchar* msg;
-	yrcdUser* _tmp52_;
+	GSocket* _tmp51_;
+	GSocket* _tmp52_;
 	gboolean _tmp53_;
-	gboolean _tmp54_;
-	gchar* _tmp55_;
-	yrcdUser* _tmp56_;
-	GDataInputStream* _tmp57_;
-	GDataInputStream* _tmp58_;
-	gchar* _tmp59_;
-	gchar* _tmp60_;
-	gchar* _tmp61_;
-	yrcdUser* _tmp62_;
-	GDataInputStream* _tmp63_;
-	GDataInputStream* _tmp64_;
-	gchar* _tmp65_;
-	gchar* _tmp66_;
-	yrcdUser* _tmp67_;
-	const gchar* _tmp68_;
+	gchar* msg;
+	yrcdUser* _tmp54_;
+	GDataInputStream* _tmp55_;
+	GDataInputStream* _tmp56_;
+	gchar* _tmp57_;
+	yrcdUser* _tmp58_;
+	const gchar* _tmp59_;
 	GError* _vala1_e;
-	yrcdServer* _tmp69_;
-	yrcdUser* _tmp70_;
+	yrcdServer* _tmp60_;
+	GError* _tmp61_;
+	const gchar* _tmp62_;
+	gchar* _tmp63_;
+	gchar* _tmp64_;
+	yrcdUser* _tmp65_;
 	GError * _inner_error_;
 };
 
 
 static gpointer yrcd_router_parent_class = NULL;
 
+GType yrcd_base_object_get_type (void) G_GNUC_CONST;
 GType yrcd_router_get_type (void) G_GNUC_CONST;
 GType yrcd_server_get_type (void) G_GNUC_CONST;
 enum  {
@@ -236,6 +254,7 @@ enum  {
 };
 yrcdRouter* yrcd_router_new (yrcdServer* k);
 yrcdRouter* yrcd_router_construct (GType object_type, yrcdServer* k);
+yrcdBaseObject* yrcd_base_object_construct (GType object_type);
 GType yrcd_user_get_type (void) G_GNUC_CONST;
 void yrcd_router_route (yrcdRouter* self, yrcdUser* user, const gchar* msg);
 yrcdServer* yrcd_user_get_server (yrcdUser* self);
@@ -298,7 +317,7 @@ yrcdRouter* yrcd_router_construct (GType object_type, yrcdServer* k) {
 	yrcdServer* _tmp0_ = NULL;
 	yrcdServer* _tmp1_ = NULL;
 	g_return_val_if_fail (k != NULL, NULL);
-	self = (yrcdRouter*) g_object_new (object_type, NULL);
+	self = (yrcdRouter*) yrcd_base_object_construct (object_type);
 	_tmp0_ = k;
 	_tmp1_ = _g_object_ref0 (_tmp0_);
 	_g_object_unref0 (self->server);
@@ -1117,8 +1136,6 @@ static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_) 
 		goto _state_0;
 		case 1:
 		goto _state_1;
-		case 2:
-		goto _state_2;
 		default:
 		g_assert_not_reached ();
 	}
@@ -1258,81 +1275,47 @@ static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_) 
 		yrcd_server_log (_data_->_tmp42_, _data_->_tmp46_);
 		_g_free0 (_data_->_tmp46_);
 	}
+	_data_->_tmp47_ = NULL;
+	_data_->_tmp47_ = _data_->user;
+	_data_->_tmp48_ = NULL;
+	_data_->_tmp48_ = yrcd_user_get_sock (_data_->_tmp47_);
+	_data_->_tmp49_ = NULL;
+	_data_->_tmp49_ = _data_->_tmp48_;
+	_data_->_tmp50_ = NULL;
+	_data_->_tmp50_ = g_socket_connection_get_socket (_data_->_tmp49_);
+	_data_->_tmp51_ = NULL;
+	_data_->_tmp51_ = _g_object_ref0 (_data_->_tmp50_);
+	_data_->socket = _data_->_tmp51_;
 	while (TRUE) {
-		_data_->_tmp47_ = NULL;
-		_data_->_tmp47_ = _data_->user;
-		_data_->_tmp48_ = NULL;
-		_data_->_tmp48_ = yrcd_user_get_sock (_data_->_tmp47_);
-		_data_->_tmp49_ = NULL;
-		_data_->_tmp49_ = _data_->_tmp48_;
-		_data_->_tmp50_ = NULL;
-		_data_->_tmp50_ = g_socket_connection_get_socket (_data_->_tmp49_);
-		_data_->_tmp51_ = FALSE;
-		_data_->_tmp51_ = g_socket_is_connected (_data_->_tmp50_);
-		if (!_data_->_tmp51_) {
+		_data_->_tmp52_ = NULL;
+		_data_->_tmp52_ = _data_->socket;
+		_data_->_tmp53_ = FALSE;
+		_data_->_tmp53_ = g_socket_is_connected (_data_->_tmp52_);
+		if (!_data_->_tmp53_) {
 			break;
 		}
 		{
-			_data_->_tmp52_ = NULL;
-			_data_->_tmp52_ = _data_->user;
-			_data_->_tmp53_ = FALSE;
-			_data_->_tmp53_ = yrcd_user_get_registered (_data_->_tmp52_);
-			_data_->_tmp54_ = FALSE;
-			_data_->_tmp54_ = _data_->_tmp53_;
-			if (_data_->_tmp54_) {
-				_data_->_tmp56_ = NULL;
-				_data_->_tmp56_ = _data_->user;
-				_data_->_tmp57_ = NULL;
-				_data_->_tmp57_ = yrcd_user_get_dis (_data_->_tmp56_);
-				_data_->_tmp58_ = NULL;
-				_data_->_tmp58_ = _data_->_tmp57_;
-				_data_->_state_ = 1;
-				g_data_input_stream_read_line_async (_data_->_tmp58_, G_PRIORITY_DEFAULT, NULL, yrcd_router_process_user_ready, _data_);
-				return FALSE;
-				_state_1:
-				_data_->_tmp59_ = NULL;
-				_data_->_tmp59_ = g_data_input_stream_read_line_finish (_data_->_tmp58_, _data_->_res_, NULL, &_data_->_inner_error_);
-				_data_->_tmp55_ = _data_->_tmp59_;
-				if (G_UNLIKELY (_data_->_inner_error_ != NULL)) {
-					_g_free0 (_data_->msg);
-					goto __catch2_g_error;
-				}
-				_data_->_tmp60_ = NULL;
-				_data_->_tmp60_ = _data_->_tmp55_;
-				_data_->_tmp55_ = NULL;
-				_g_free0 (_data_->msg);
-				_data_->msg = _data_->_tmp60_;
-				_g_free0 (_data_->_tmp55_);
-			} else {
-				_data_->_tmp62_ = NULL;
-				_data_->_tmp62_ = _data_->user;
-				_data_->_tmp63_ = NULL;
-				_data_->_tmp63_ = yrcd_user_get_dis (_data_->_tmp62_);
-				_data_->_tmp64_ = NULL;
-				_data_->_tmp64_ = _data_->_tmp63_;
-				_data_->_state_ = 2;
-				g_data_input_stream_read_line_async (_data_->_tmp64_, G_PRIORITY_LOW, NULL, yrcd_router_process_user_ready, _data_);
-				return FALSE;
-				_state_2:
-				_data_->_tmp65_ = NULL;
-				_data_->_tmp65_ = g_data_input_stream_read_line_finish (_data_->_tmp64_, _data_->_res_, NULL, &_data_->_inner_error_);
-				_data_->_tmp61_ = _data_->_tmp65_;
-				if (G_UNLIKELY (_data_->_inner_error_ != NULL)) {
-					_g_free0 (_data_->msg);
-					goto __catch2_g_error;
-				}
-				_data_->_tmp66_ = NULL;
-				_data_->_tmp66_ = _data_->_tmp61_;
-				_data_->_tmp61_ = NULL;
-				_g_free0 (_data_->msg);
-				_data_->msg = _data_->_tmp66_;
-				_g_free0 (_data_->_tmp61_);
+			_data_->_tmp54_ = NULL;
+			_data_->_tmp54_ = _data_->user;
+			_data_->_tmp55_ = NULL;
+			_data_->_tmp55_ = yrcd_user_get_dis (_data_->_tmp54_);
+			_data_->_tmp56_ = NULL;
+			_data_->_tmp56_ = _data_->_tmp55_;
+			_data_->_state_ = 1;
+			g_data_input_stream_read_line_async (_data_->_tmp56_, G_PRIORITY_DEFAULT, NULL, yrcd_router_process_user_ready, _data_);
+			return FALSE;
+			_state_1:
+			_data_->_tmp57_ = NULL;
+			_data_->_tmp57_ = g_data_input_stream_read_line_finish (_data_->_tmp56_, _data_->_res_, NULL, &_data_->_inner_error_);
+			_data_->msg = _data_->_tmp57_;
+			if (G_UNLIKELY (_data_->_inner_error_ != NULL)) {
+				goto __catch2_g_error;
 			}
-			_data_->_tmp67_ = NULL;
-			_data_->_tmp67_ = _data_->user;
-			_data_->_tmp68_ = NULL;
-			_data_->_tmp68_ = _data_->msg;
-			yrcd_router_route (_data_->self, _data_->_tmp67_, _data_->_tmp68_);
+			_data_->_tmp58_ = NULL;
+			_data_->_tmp58_ = _data_->user;
+			_data_->_tmp59_ = NULL;
+			_data_->_tmp59_ = _data_->msg;
+			yrcd_router_route (_data_->self, _data_->_tmp58_, _data_->_tmp59_);
 			_g_free0 (_data_->msg);
 		}
 		goto __finally2;
@@ -1340,13 +1323,23 @@ static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_) 
 		{
 			_data_->_vala1_e = _data_->_inner_error_;
 			_data_->_inner_error_ = NULL;
-			_data_->_tmp69_ = NULL;
-			_data_->_tmp69_ = _data_->self->server;
-			yrcd_server_log (_data_->_tmp69_, "Encountered error reading %s (%d) socket...");
-			_data_->_tmp70_ = NULL;
-			_data_->_tmp70_ = _data_->user;
-			yrcd_user_quit (_data_->_tmp70_, NULL);
+			_data_->_tmp60_ = NULL;
+			_data_->_tmp60_ = _data_->self->server;
+			_data_->_tmp61_ = NULL;
+			_data_->_tmp61_ = _data_->_vala1_e;
+			_data_->_tmp62_ = NULL;
+			_data_->_tmp62_ = _data_->_tmp61_->message;
+			_data_->_tmp63_ = NULL;
+			_data_->_tmp63_ = g_strdup_printf ("Encountered error reading socket: %s", _data_->_tmp62_);
+			_data_->_tmp64_ = NULL;
+			_data_->_tmp64_ = _data_->_tmp63_;
+			yrcd_server_log (_data_->_tmp60_, _data_->_tmp64_);
+			_g_free0 (_data_->_tmp64_);
+			_data_->_tmp65_ = NULL;
+			_data_->_tmp65_ = _data_->user;
+			yrcd_user_quit (_data_->_tmp65_, NULL);
 			_g_error_free0 (_data_->_vala1_e);
+			_g_object_unref0 (_data_->socket);
 			_g_object_unref0 (_data_->user);
 			if (_data_->_state_ == 0) {
 				g_simple_async_result_complete_in_idle (_data_->_async_result);
@@ -1358,12 +1351,14 @@ static gboolean yrcd_router_process_user_co (YrcdRouterProcessUserData* _data_) 
 		}
 		__finally2:
 		if (G_UNLIKELY (_data_->_inner_error_ != NULL)) {
+			_g_object_unref0 (_data_->socket);
 			_g_object_unref0 (_data_->user);
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _data_->_inner_error_->message, g_quark_to_string (_data_->_inner_error_->domain), _data_->_inner_error_->code);
 			g_clear_error (&_data_->_inner_error_);
 			return FALSE;
 		}
 	}
+	_g_object_unref0 (_data_->socket);
 	_g_object_unref0 (_data_->user);
 	if (_data_->_state_ == 0) {
 		g_simple_async_result_complete_in_idle (_data_->_async_result);
@@ -1535,7 +1530,7 @@ GType yrcd_router_get_type (void) {
 	if (g_once_init_enter (&yrcd_router_type_id__volatile)) {
 		static const GTypeInfo g_define_type_info = { sizeof (yrcdRouterClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) yrcd_router_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (yrcdRouter), 0, (GInstanceInitFunc) yrcd_router_instance_init, NULL };
 		GType yrcd_router_type_id;
-		yrcd_router_type_id = g_type_register_static (G_TYPE_OBJECT, "yrcdRouter", &g_define_type_info, 0);
+		yrcd_router_type_id = g_type_register_static (YRCD_TYPE_BASE_OBJECT, "yrcdRouter", &g_define_type_info, 0);
 		g_once_init_leave (&yrcd_router_type_id__volatile, yrcd_router_type_id);
 	}
 	return yrcd_router_type_id__volatile;
