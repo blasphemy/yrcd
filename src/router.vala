@@ -3,7 +3,7 @@ using Gee;
    Router.vala. I absolutely hate this file, because if I wasn't so stupid, I would have made commands modular.
  */
 namespace yrcd {
-  class Router : Object {
+  class Router : BaseObject {
     public Server server;
     public Router(Server k) {
       server = k;
@@ -183,7 +183,8 @@ namespace yrcd {
         server.max_users = server.userlist.size;
         server.log("New max amount of users: %d".printf(server.max_users));
       }
-      while (user.sock.get_socket().is_connected()) {
+      var socket = user.sock.get_socket();
+      while (socket.is_connected()) {
         try {
           string msg = yield user.dis.read_line_async (Priority.DEFAULT);
           route(user, msg);

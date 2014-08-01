@@ -1,5 +1,5 @@
 namespace yrcd {
-  class Constants : Object {
+  class Constants : BaseObject {
     public const string version = "0.2";
     public const string software = "yrcd";
     public const string[] cmodes = {};

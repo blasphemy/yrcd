@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class Channel : Object {
+  class Channel : BaseObject {
     public string name { get; set; } 
     public string[] modes;
     public string topic;
@@ -23,18 +23,21 @@ namespace yrcd {
     public void check_users() {
       timer = Timeout.add_seconds_full(Priority.DEFAULT, 30, () => {
           if (users.length() < 1) {
-            server.remove_channel(name);
-            Source.remove(timer);
-            server.log(@"channel $name has no users, destroying");
-            return false;
-            } else {
-            return true;
-            }
+          server.remove_channel(name);
+          Source.remove(timer);
+          server.log(@"channel $name has no users, destroying");
+          while (this.ref_count > 1) {
+          this.unref();
+          }
+          return false;
+          } else {
+          return true;
+          }
           });
     }
     public bool add_user(User user) {
       if (users.find(user) != null) {
-        string nick = user.nick;
+       string nick = user.nick;
         server.log(@"user $nick attempted to join $name while already joined... doing nothing");
         return false;
       }

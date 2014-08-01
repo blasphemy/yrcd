@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class Server : Object {
+  class Server : BaseObject {
     private SocketService ss = new SocketService();
     private Router router;
     public HashMap<int, weak User> userlist = new HashMap<int, weak User>();
@@ -27,6 +27,9 @@ namespace yrcd {
       channellist = new HashMap<string, Channel>();
       ss.incoming.connect(accept_connection);
       ss.start();
+#if REF_TRACKING
+      Timeout.add_seconds_full(Priority.DEFAULT, 10, () => { BaseObject.dump_refs(stdout); return true; });
+#endif
     }
     public void remove_user (int id) {
       userlist.unset(id);

@@ -1,7 +1,7 @@
 using Gee;
 
 namespace yrcd {
-  class User : Object {
+  class User : BaseObject {
     public SocketConnection sock { get; set; }
     public DataInputStream dis { get; set; }
     public DataOutputStream dos { get; set; }
@@ -98,6 +98,7 @@ namespace yrcd {
       } catch (Error e) {
         server.log("Error closing socket: %s".printf(e.message));
       }
+      this.unref();
     }
     public void part (Channel chan, string? msg) {
       if (user_chanels[chan.name] == null) {
@@ -212,9 +213,9 @@ namespace yrcd {
     }
     public void send_line(string msg, int p = Priority.DEFAULT) {
       asources.append(Idle.add(() => {
-          send_to_socket(msg);
-          return false;
-          }, p));
+            send_to_socket(msg);
+            return false;
+            }, p));
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
