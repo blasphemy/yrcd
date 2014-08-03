@@ -28,6 +28,7 @@ namespace yrcd {
       ip = get_ip();
       dis = new DataInputStream(sock.input_stream);
       outs = sock.output_stream;
+      asources.append(Idle.add(() => { return sflush(); }, Priority.DEFAULT));
       id = server.new_userid();
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
@@ -214,18 +215,25 @@ namespace yrcd {
 
     }
     */
+    private bool sflush() {
+      try {
+        outs.flush();
+        return true;
+      } catch (Error e) {
+        server.log("Error flushing user %s socket".printf(nick));
+        return false;
+      }
+    }
     public void send_line(string msg, int p = Priority.DEFAULT) {
-      size_t bytes_written;
-      string buffer = "%s\n".printf(msg);
-      outs.write_all(buffer.data, out bytes_written);
-      outs.flush();
-      /*
-      asources.append(Idle.add(() => {
-            send_to_socket(msg);
-            return false;
-            }, p));
-            */
-
+      try {
+        size_t bytes_written;
+        string buffer = "%s\n".printf(msg);
+        outs.write_all(buffer.data, out bytes_written);
+        server.log(@"$bytes_written bytes written to $nick buffer");
+      } catch (Error e) {
+        server.log(@"Error writing to $nick buffer");
+        quit("Error");
+      }
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
