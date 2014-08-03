@@ -201,20 +201,6 @@ namespace yrcd {
       string hm = "%s!%s@%s".printf(nick,ident,get_host());
       return hm;
     }
-    /*
-    private void send_to_socket (string msg) {
-      try {
-        if (sock.get_socket().is_connected()) {
-          dos.put_string("%s\n".printf(msg));
-          server.log("Send to %s: %s".printf(nick,msg));
-        } 
-      } catch (Error e) {
-        server.log("Error sending data to socket %s".printf(e.message));
-        quit("Error");
-      }
-
-    }
-    */
     private bool sflush() {
       try {
         outs.flush();
@@ -229,7 +215,7 @@ namespace yrcd {
         size_t bytes_written;
         string buffer = "%s\n".printf(msg);
         outs.write_all(buffer.data, out bytes_written);
-        server.log(@"$bytes_written bytes written to $nick buffer");
+        server.log("%s -> %s : %s".printf(server.sname,nick,msg));
       } catch (Error e) {
         server.log(@"Error writing to $nick buffer");
         quit("Error");
