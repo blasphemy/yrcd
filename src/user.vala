@@ -215,7 +215,7 @@ namespace yrcd {
         size_t bytes_written;
         string buffer = "%s\n".printf(msg);
         outs.write_all(buffer.data, out bytes_written);
-        server.log("%s -> %s : %s".printf(server.sname,nick,msg));
+        server.log("%s -> %s : %s".printf(server.config.sname,nick,msg));
       } catch (Error e) {
         server.log(@"Error writing to $nick buffer");
         quit("Error");
