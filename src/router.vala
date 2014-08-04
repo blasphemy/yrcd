@@ -49,11 +49,25 @@ namespace yrcd {
           case "part" :
             part_handler(user, args);
             break;
+          case "list" :
+            list_handler(user);
+            break;
           default :
             unknown_command_handler(user, args);
             break;
         }
       }
+    }
+    public void list_handler(User user) {
+      if (!user.registered) {
+        user.fire_numeric(ERR_NOTREGISTERED);
+        return;
+      }
+      user.fire_numeric(RPL_LISTSTART);
+      foreach(Channel k in server.channellist.values) {
+        user.fire_numeric(RPL_LIST, k.name, k.users.length(), k.topic);
+      }
+      user.fire_numeric(RPL_LISTEND);
     }
     public void part_handler(User user, string[] args) {
       if (!user.registered) {

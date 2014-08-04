@@ -9,6 +9,9 @@ namespace yrcd {
       numerics[RPL_CREATED] = "This server was created %s";
       numerics[RPL_MYINFO] = "%s %s %s %s";
       numerics[RPL_ENDOFWHO] = "%s :End of WHO list";
+      numerics[RPL_LISTSTART] = "Channel :Users Name";
+      numerics[RPL_LIST] = "%s %d :%s";
+      numerics[RPL_LISTEND] = ":End of channel list";
       numerics[RPL_TOPIC] =  "%s :%s";
       numerics[RPL_TOPICWHOTIME] = "%s %s %d";
       numerics[RPL_WHOREPLY] = "%s %s %s %s %s %s %s %s";
@@ -38,6 +41,9 @@ Easy.
   public const int RPL_CREATED = 003;
   public const int RPL_MYINFO = 004;
   public const int RPL_ENDOFWHO = 315;
+  public const int RPL_LISTSTART = 321;
+  public const int RPL_LISTEND = 323;
+  public const int RPL_LIST = 322;
   public const int RPL_TOPIC = 332;
   public const int RPL_TOPICWHOTIME = 333;
   public const int RPL_WHOREPLY = 352;
