@@ -12,5 +12,9 @@ namespace yrcd {
       builder.truncate(in.length);
       return builder.str;
     }
+    public int64 now_unix() {
+      var time = new DateTime.now_utc();
+      return time.to_unix();
+    }
   }
 }

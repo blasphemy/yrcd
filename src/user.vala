@@ -4,7 +4,7 @@ namespace yrcd {
   class User : BaseObject {
     public SocketConnection sock { get; set; }
     public DataInputStream dis { get; set; }
-    public DataOutputStream dos { get; set; }
+    public OutputStream outs { get; set; }
     public Server server { get; set; }
     public int id { get; set; }
     private DateTime time_last_rcv;
@@ -27,7 +27,8 @@ namespace yrcd {
       server = _server;
       ip = get_ip();
       dis = new DataInputStream(sock.input_stream);
-      dos = new DataOutputStream(sock.output_stream);
+      outs = sock.output_stream;
+      asources.append(Idle.add(() => { return sflush(); }, Priority.DEFAULT));
       id = server.new_userid();
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
@@ -200,23 +201,25 @@ namespace yrcd {
       string hm = "%s!%s@%s".printf(nick,ident,get_host());
       return hm;
     }
-    private void send_to_socket (string msg) {
+    private bool sflush() {
       try {
-        if (sock.get_socket().is_connected()) {
-          dos.put_string("%s\n".printf(msg));
-          server.log("Send to %s: %s".printf(nick,msg));
-        } 
+        outs.flush();
+        return true;
       } catch (Error e) {
-        server.log("Error sending data to socket %s".printf(e.message));
-        quit("Error");
+        server.log("Error flushing user %s socket".printf(nick));
+        return false;
       }
-
     }
     public void send_line(string msg, int p = Priority.DEFAULT) {
-      asources.append(Idle.add(() => {
-            send_to_socket(msg);
-            return false;
-            }, p));
+      try {
+        size_t bytes_written;
+        string buffer = "%s\n".printf(msg);
+        outs.write_all(buffer.data, out bytes_written);
+        server.log("%s -> %s : %s".printf(server.config.sname,nick,msg));
+      } catch (Error e) {
+        server.log(@"Error writing to $nick buffer");
+        quit("Error");
+      }
     }
     public async void hostname_lookup() {
       send_notice("*** Looking up your hostname...");
