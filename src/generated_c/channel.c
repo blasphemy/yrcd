@@ -74,7 +74,6 @@ typedef struct _yrcdNumericWrapperClass yrcdNumericWrapperClass;
 
 typedef struct _yrcdConfig yrcdConfig;
 typedef struct _yrcdConfigClass yrcdConfigClass;
-#define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 #define __g_list_free__g_object_unref0_0(var) ((var == NULL) ? NULL : (var = (_g_list_free__g_object_unref0_ (var), NULL)))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
 
@@ -144,6 +143,7 @@ void yrcd_channel_set_topic (yrcdChannel* self, const gchar* newtopic, const gch
 GType yrcd_numeric_wrapper_get_type (void) G_GNUC_CONST;
 GType yrcd_config_get_type (void) G_GNUC_CONST;
 const gchar* yrcd_config_get_sname (yrcdConfig* self);
+gint64 yrcd_utils_now_unix (void);
 void yrcd_channel_set_name (yrcdChannel* self, const gchar* value);
 void yrcd_server_log (yrcdServer* self, const gchar* msg);
 const gchar* yrcd_channel_get_name (yrcdChannel* self);
@@ -202,15 +202,13 @@ yrcdChannel* yrcd_channel_construct (GType object_type, yrcdServer* _server, con
 	yrcdConfig* _tmp3_ = NULL;
 	const gchar* _tmp4_ = NULL;
 	const gchar* _tmp5_ = NULL;
-	GDateTime* _tmp6_ = NULL;
-	GDateTime* _tmp7_ = NULL;
-	gint64 _tmp8_ = 0LL;
+	gint64 _tmp6_ = 0LL;
+	const gchar* _tmp7_ = NULL;
+	yrcdServer* _tmp8_ = NULL;
 	const gchar* _tmp9_ = NULL;
-	yrcdServer* _tmp10_ = NULL;
-	const gchar* _tmp11_ = NULL;
-	const gchar* _tmp12_ = NULL;
-	gchar* _tmp13_ = NULL;
-	gchar* _tmp14_ = NULL;
+	const gchar* _tmp10_ = NULL;
+	gchar* _tmp11_ = NULL;
+	gchar* _tmp12_ = NULL;
 	g_return_val_if_fail (_server != NULL, NULL);
 	g_return_val_if_fail (_name != NULL, NULL);
 	self = (yrcdChannel*) yrcd_base_object_construct (object_type);
@@ -223,20 +221,17 @@ yrcdChannel* yrcd_channel_construct (GType object_type, yrcdServer* _server, con
 	_tmp4_ = yrcd_config_get_sname (_tmp3_);
 	_tmp5_ = _tmp4_;
 	yrcd_channel_set_topic (self, "", _tmp5_);
-	_tmp6_ = g_date_time_new_now_utc ();
-	_tmp7_ = _tmp6_;
-	_tmp8_ = g_date_time_to_unix (_tmp7_);
-	self->epoch = _tmp8_;
-	_g_date_time_unref0 (_tmp7_);
-	_tmp9_ = _name;
-	yrcd_channel_set_name (self, _tmp9_);
-	_tmp10_ = self->server;
-	_tmp11_ = self->priv->_name;
-	_tmp12_ = string_to_string (_tmp11_);
-	_tmp13_ = g_strconcat ("New channel created ", _tmp12_, NULL);
-	_tmp14_ = _tmp13_;
-	yrcd_server_log (_tmp10_, _tmp14_);
-	_g_free0 (_tmp14_);
+	_tmp6_ = yrcd_utils_now_unix ();
+	self->epoch = _tmp6_;
+	_tmp7_ = _name;
+	yrcd_channel_set_name (self, _tmp7_);
+	_tmp8_ = self->server;
+	_tmp9_ = self->priv->_name;
+	_tmp10_ = string_to_string (_tmp9_);
+	_tmp11_ = g_strconcat ("New channel created ", _tmp10_, NULL);
+	_tmp12_ = _tmp11_;
+	yrcd_server_log (_tmp8_, _tmp12_);
+	_g_free0 (_tmp12_);
 	_g_list_free0 (self->users);
 	self->users = NULL;
 	yrcd_channel_check_users (self);
@@ -514,6 +509,7 @@ void yrcd_channel_set_topic (yrcdChannel* self, const gchar* newtopic, const gch
 	gchar* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
 	gchar* _tmp3_ = NULL;
+	gint64 _tmp4_ = 0LL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (newtopic != NULL);
 	g_return_if_fail (hostmask != NULL);
@@ -525,6 +521,8 @@ void yrcd_channel_set_topic (yrcdChannel* self, const gchar* newtopic, const gch
 	_tmp3_ = g_strdup (_tmp2_);
 	_g_free0 (self->topic_host);
 	self->topic_host = _tmp3_;
+	_tmp4_ = yrcd_utils_now_unix ();
+	self->topictime = _tmp4_;
 }
 
 

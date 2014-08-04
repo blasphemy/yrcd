@@ -9,10 +9,12 @@
 
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_string_free0(var) ((var == NULL) ? NULL : (var = (g_string_free (var, TRUE), NULL)))
+#define _g_date_time_unref0(var) ((var == NULL) ? NULL : (var = (g_date_time_unref (var), NULL)))
 
 
 
 gchar* yrcd_utils_secure_hash (const gchar* in, const gchar* salt);
+gint64 yrcd_utils_now_unix (void);
 
 
 gchar* yrcd_utils_secure_hash (const gchar* in, const gchar* salt) {
@@ -88,6 +90,20 @@ gchar* yrcd_utils_secure_hash (const gchar* in, const gchar* salt) {
 	_tmp26_ = g_strdup (_tmp25_);
 	result = _tmp26_;
 	_g_string_free0 (builder);
+	return result;
+}
+
+
+gint64 yrcd_utils_now_unix (void) {
+	gint64 result = 0LL;
+	GDateTime* time = NULL;
+	GDateTime* _tmp0_ = NULL;
+	gint64 _tmp1_ = 0LL;
+	_tmp0_ = g_date_time_new_now_utc ();
+	time = _tmp0_;
+	_tmp1_ = g_date_time_to_unix (time);
+	result = _tmp1_;
+	_g_date_time_unref0 (time);
 	return result;
 }
 
