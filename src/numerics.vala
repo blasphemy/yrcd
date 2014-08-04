@@ -10,7 +10,7 @@ namespace yrcd {
       numerics[RPL_MYINFO] = "%s %s %s %s";
       numerics[RPL_ENDOFWHO] = "%s :End of WHO list";
       numerics[RPL_TOPIC] =  "%s :%s";
-      numerics[RPL_TOPICWHOTIME] = "%s %s %s";
+      numerics[RPL_TOPICWHOTIME] = "%s %s %d";
       numerics[RPL_WHOREPLY] = "%s %s %s %s %s %s %s %s";
       numerics[RPL_NAMEPLY] = "= %s :%s";
       numerics[RPL_ENDOFNAMES] = "%s :End of /NAMES list.";

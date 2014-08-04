@@ -14,7 +14,7 @@ namespace yrcd {
     public Channel(Server _server, string _name) {
       server = _server;
       set_topic("", server.config.sname);
-      epoch = new DateTime.now_utc().to_unix();
+      epoch = Utils.now_unix();
       name = _name;
       server.log (@"New channel created $name");
       users = new GLib.List<User>();
@@ -70,7 +70,7 @@ namespace yrcd {
     public void set_topic(string newtopic, string hostmask) {
       topic = newtopic;
       topic_host = hostmask;
-      //topictime = new DateTime.now_utc().to_unix();
+      topictime = Utils.now_unix();
     }
     public void fire_names(User user) {
       StringBuilder builder = new StringBuilder();
