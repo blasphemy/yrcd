@@ -97,6 +97,7 @@ struct _yrcdBaseObjectClass {
 struct _yrcdUser {
 	yrcdBaseObject parent_instance;
 	yrcdUserPrivate * priv;
+	gint64 socketbytes;
 	gchar* ip;
 	GeeHashMap* user_chanels;
 	GList* asources;
@@ -381,6 +382,7 @@ yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdS
 	g_return_val_if_fail (conn != NULL, NULL);
 	g_return_val_if_fail (_server != NULL, NULL);
 	self = (yrcdUser*) yrcd_base_object_construct (object_type);
+	self->socketbytes = (gint64) 0;
 	_tmp0_ = gee_hash_map_new (G_TYPE_STRING, (GBoxedCopyFunc) g_strdup, g_free, YRCD_TYPE_CHANNEL, (GBoxedCopyFunc) g_object_ref, g_object_unref, NULL, NULL, NULL);
 	_g_object_unref0 (self->user_chanels);
 	self->user_chanels = _tmp0_;
@@ -402,7 +404,7 @@ yrcdUser* yrcd_user_construct (GType object_type, GSocketConnection* conn, yrcdS
 	_tmp10_ = g_io_stream_get_output_stream ((GIOStream*) _tmp9_);
 	_tmp11_ = _tmp10_;
 	yrcd_user_set_outs (self, _tmp11_);
-	_tmp12_ = g_idle_add_full (G_PRIORITY_DEFAULT, ___lambda4__gsource_func, g_object_ref (self), g_object_unref);
+	_tmp12_ = g_timeout_add_full (G_PRIORITY_LOW, (guint) 50, ___lambda4__gsource_func, g_object_ref (self), g_object_unref);
 	self->asources = g_list_append (self->asources, (gpointer) ((guintptr) _tmp12_));
 	_tmp13_ = self->priv->_server;
 	_tmp14_ = yrcd_server_new_userid (_tmp13_);
@@ -1453,12 +1455,31 @@ static gboolean yrcd_user_sflush (yrcdUser* self) {
 	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (self != NULL, FALSE);
 	{
-		GOutputStream* _tmp0_ = NULL;
-		_tmp0_ = self->priv->_outs;
-		g_output_stream_flush (_tmp0_, NULL, &_inner_error_);
+		gint64 _tmp0_ = 0LL;
+		GOutputStream* _tmp1_ = NULL;
+		yrcdServer* _tmp2_ = NULL;
+		const gchar* _tmp3_ = NULL;
+		const gchar* _tmp4_ = NULL;
+		gchar* _tmp5_ = NULL;
+		gchar* _tmp6_ = NULL;
+		_tmp0_ = self->socketbytes;
+		if (_tmp0_ < ((gint64) 1)) {
+			result = TRUE;
+			return result;
+		}
+		_tmp1_ = self->priv->_outs;
+		g_output_stream_flush (_tmp1_, NULL, &_inner_error_);
 		if (G_UNLIKELY (_inner_error_ != NULL)) {
 			goto __catch7_g_error;
 		}
+		self->socketbytes = (gint64) 0;
+		_tmp2_ = self->priv->_server;
+		_tmp3_ = self->priv->_nick;
+		_tmp4_ = string_to_string (_tmp3_);
+		_tmp5_ = g_strconcat (_tmp4_, " buffer flushed", NULL);
+		_tmp6_ = _tmp5_;
+		yrcd_server_log (_tmp2_, _tmp6_);
+		_g_free0 (_tmp6_);
 		result = TRUE;
 		return result;
 	}
@@ -1466,18 +1487,18 @@ static gboolean yrcd_user_sflush (yrcdUser* self) {
 	__catch7_g_error:
 	{
 		GError* e = NULL;
-		yrcdServer* _tmp1_ = NULL;
-		const gchar* _tmp2_ = NULL;
-		gchar* _tmp3_ = NULL;
-		gchar* _tmp4_ = NULL;
+		yrcdServer* _tmp7_ = NULL;
+		const gchar* _tmp8_ = NULL;
+		gchar* _tmp9_ = NULL;
+		gchar* _tmp10_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp1_ = self->priv->_server;
-		_tmp2_ = self->priv->_nick;
-		_tmp3_ = g_strdup_printf ("Error flushing user %s socket", _tmp2_);
-		_tmp4_ = _tmp3_;
-		yrcd_server_log (_tmp1_, _tmp4_);
-		_g_free0 (_tmp4_);
+		_tmp7_ = self->priv->_server;
+		_tmp8_ = self->priv->_nick;
+		_tmp9_ = g_strdup_printf ("Error flushing user %s socket", _tmp8_);
+		_tmp10_ = _tmp9_;
+		yrcd_server_log (_tmp7_, _tmp10_);
+		_g_free0 (_tmp10_);
 		result = FALSE;
 		_g_error_free0 (e);
 		return result;
@@ -1526,70 +1547,72 @@ void yrcd_user_send_line (yrcdUser* self, const gchar* msg, gint p) {
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (msg != NULL);
 	{
-		gsize bytes_written = 0UL;
 		gchar* buffer = NULL;
 		const gchar* _tmp0_ = NULL;
 		gchar* _tmp1_ = NULL;
-		GOutputStream* _tmp2_ = NULL;
-		guint8* _tmp3_ = NULL;
-		gint _tmp3__length1 = 0;
+		gssize _tmp2_ = 0L;
+		GOutputStream* _tmp3_ = NULL;
 		guint8* _tmp4_ = NULL;
 		gint _tmp4__length1 = 0;
-		gsize _tmp5_ = 0UL;
-		yrcdServer* _tmp6_ = NULL;
-		yrcdServer* _tmp7_ = NULL;
-		yrcdConfig* _tmp8_ = NULL;
-		const gchar* _tmp9_ = NULL;
-		const gchar* _tmp10_ = NULL;
+		guint8* _tmp5_ = NULL;
+		gint _tmp5__length1 = 0;
+		gssize _tmp6_ = 0L;
+		gint64 _tmp7_ = 0LL;
+		yrcdServer* _tmp8_ = NULL;
+		yrcdServer* _tmp9_ = NULL;
+		yrcdConfig* _tmp10_ = NULL;
 		const gchar* _tmp11_ = NULL;
 		const gchar* _tmp12_ = NULL;
-		gchar* _tmp13_ = NULL;
-		gchar* _tmp14_ = NULL;
+		const gchar* _tmp13_ = NULL;
+		const gchar* _tmp14_ = NULL;
+		gchar* _tmp15_ = NULL;
+		gchar* _tmp16_ = NULL;
 		_tmp0_ = msg;
 		_tmp1_ = g_strdup_printf ("%s\n", _tmp0_);
 		buffer = _tmp1_;
-		_tmp2_ = self->priv->_outs;
-		_tmp3_ = string_get_data (buffer, &_tmp3__length1);
-		_tmp4_ = _tmp3_;
-		_tmp4__length1 = _tmp3__length1;
-		g_output_stream_write_all (_tmp2_, _tmp4_, (gsize) _tmp4__length1, &_tmp5_, NULL, &_inner_error_);
-		bytes_written = _tmp5_;
+		_tmp3_ = self->priv->_outs;
+		_tmp4_ = string_get_data (buffer, &_tmp4__length1);
+		_tmp5_ = _tmp4_;
+		_tmp5__length1 = _tmp4__length1;
+		_tmp6_ = g_output_stream_write (_tmp3_, _tmp5_, (gsize) _tmp5__length1, NULL, &_inner_error_);
+		_tmp2_ = _tmp6_;
 		if (G_UNLIKELY (_inner_error_ != NULL)) {
 			_g_free0 (buffer);
 			goto __catch8_g_error;
 		}
-		_tmp6_ = self->priv->_server;
-		_tmp7_ = self->priv->_server;
-		_tmp8_ = _tmp7_->config;
-		_tmp9_ = yrcd_config_get_sname (_tmp8_);
-		_tmp10_ = _tmp9_;
-		_tmp11_ = self->priv->_nick;
-		_tmp12_ = msg;
-		_tmp13_ = g_strdup_printf ("%s -> %s : %s", _tmp10_, _tmp11_, _tmp12_);
-		_tmp14_ = _tmp13_;
-		yrcd_server_log (_tmp6_, _tmp14_);
-		_g_free0 (_tmp14_);
+		_tmp7_ = self->socketbytes;
+		self->socketbytes = _tmp7_ + _tmp2_;
+		_tmp8_ = self->priv->_server;
+		_tmp9_ = self->priv->_server;
+		_tmp10_ = _tmp9_->config;
+		_tmp11_ = yrcd_config_get_sname (_tmp10_);
+		_tmp12_ = _tmp11_;
+		_tmp13_ = self->priv->_nick;
+		_tmp14_ = msg;
+		_tmp15_ = g_strdup_printf ("%s -> %s : %s", _tmp12_, _tmp13_, _tmp14_);
+		_tmp16_ = _tmp15_;
+		yrcd_server_log (_tmp8_, _tmp16_);
+		_g_free0 (_tmp16_);
 		_g_free0 (buffer);
 	}
 	goto __finally8;
 	__catch8_g_error:
 	{
 		GError* e = NULL;
-		yrcdServer* _tmp15_ = NULL;
-		const gchar* _tmp16_ = NULL;
-		const gchar* _tmp17_ = NULL;
-		gchar* _tmp18_ = NULL;
-		gchar* _tmp19_ = NULL;
+		yrcdServer* _tmp17_ = NULL;
+		const gchar* _tmp18_ = NULL;
+		const gchar* _tmp19_ = NULL;
+		gchar* _tmp20_ = NULL;
+		gchar* _tmp21_ = NULL;
 		e = _inner_error_;
 		_inner_error_ = NULL;
-		_tmp15_ = self->priv->_server;
-		_tmp16_ = self->priv->_nick;
-		_tmp17_ = string_to_string (_tmp16_);
-		_tmp18_ = g_strconcat ("Error writing to ", _tmp17_, " buffer", NULL);
-		_tmp19_ = _tmp18_;
-		yrcd_server_log (_tmp15_, _tmp19_);
-		_g_free0 (_tmp19_);
-		yrcd_user_quit (self, "Error");
+		_tmp17_ = self->priv->_server;
+		_tmp18_ = self->priv->_nick;
+		_tmp19_ = string_to_string (_tmp18_);
+		_tmp20_ = g_strconcat ("Error writing to ", _tmp19_, " buffer", NULL);
+		_tmp21_ = _tmp20_;
+		yrcd_server_log (_tmp17_, _tmp21_);
+		_g_free0 (_tmp21_);
 		_g_error_free0 (e);
 	}
 	__finally8:
