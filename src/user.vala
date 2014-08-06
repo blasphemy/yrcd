@@ -17,18 +17,21 @@ namespace yrcd {
     public bool user_set { get; set; }
     public bool nick_set { get; set; }
     public bool registered { get; set; }
+    public int64 socketbytes;
     public string ip; 
     private string host;
     public HashMap<string,Channel> user_chanels;
     public GLib.List<uint> asources;
     public User (SocketConnection conn, Server _server) {
+      socketbytes = 0;
       user_chanels = new HashMap<string,Channel>();
       sock = conn;
       server = _server;
       ip = get_ip();
       dis = new DataInputStream(sock.input_stream);
       outs = sock.output_stream;
-      asources.append(Idle.add(() => { return sflush(); }, Priority.DEFAULT));
+      //asources.append(Idle.add(() => { return sflush(); }, Priority.DEFAULT));
+      asources.append(Timeout.add_full(Priority.LOW, 50, () => { return sflush(); } ));
       id = server.new_userid();
       epoch = new DateTime.now_utc();
       time_last_rcv = new DateTime.now_utc();
@@ -203,7 +206,12 @@ namespace yrcd {
     }
     private bool sflush() {
       try {
+        if (socketbytes < 1) {
+          return true;
+        }
         outs.flush();
+        socketbytes = 0;
+        server.log(@"$nick buffer flushed");
         return true;
       } catch (Error e) {
         server.log("Error flushing user %s socket".printf(nick));
@@ -212,13 +220,11 @@ namespace yrcd {
     }
     public void send_line(string msg, int p = Priority.DEFAULT) {
       try {
-        size_t bytes_written;
         string buffer = "%s\n".printf(msg);
-        outs.write_all(buffer.data, out bytes_written);
+        socketbytes += outs.write(buffer.data);
         server.log("%s -> %s : %s".printf(server.config.sname,nick,msg));
       } catch (Error e) {
         server.log(@"Error writing to $nick buffer");
-        quit("Error");
       }
     }
     public async void hostname_lookup() {

@@ -6,25 +6,26 @@ branches:
   except:
     - c
 env:
-  - TRAVIS_VALA_VERSION="0.24"
-  - TRAVIS_VALA_VERSION="0.22"
-  - TRAVIS_VALA_VERSION="0.20"
-  - TRAVIS_VALA_VERSION="0.18"
-  - TRAVIS_VALA_VERSION="0.16"
-  - TRAVIS_VALA_VERSION="0.14"
+  - VALA_VERSION="0.26"
+  - VALA_VERSION="0.24"
+  - VALA_VERSION="0.22"
+  - VALA_VERSION="0.20"
+  - VALA_VERSION="0.18"
+  - VALA_VERSION="0.16"
+  - VALA_VERSION="0.14"
 
 matrix:
   allow_failures:
-    - env: TRAVIS_VALA_VERSION="0.14"
-#    - env: TRAVIS_VALA_VERSION="0.16"
-#    - env: TRAVIS_VALA_VERSION="0.18"
-#    - env: TRAVIS_VALA_VERSION="0.20"
+    - env: VALA_VERSION="0.14"
+#    - env: VALA_VERSION="0.16"
+#    - env: VALA_VERSION="0.18"
+#    - env: VALA_VERSION="0.20"
 #    - compiler: clang
 
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq --force-yes gnome-common libglib2.0-dev libvala-$TRAVIS_VALA_VERSION-dev valac-$TRAVIS_VALA_VERSION gobject-introspection libgee-dev
+  - sudo apt-get install -qq --force-yes gnome-common libglib2.0-dev libvala-$VALA_VERSION-dev valac-$VALA_VERSION gobject-introspection libgee-dev
 script:
   - cmake .
   - make
