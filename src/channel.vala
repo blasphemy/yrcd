@@ -53,7 +53,6 @@ namespace yrcd {
     }
     public void remove_user (User user) {
       users.remove(user);
-      user.unref();
     }
     public GLib.List<User> get_users() {
       GLib.List<User> response = new GLib.List<User>();
